@@ -1,0 +1,325 @@
+// ============================================
+// Controller: Super Admin Analytics
+// ============================================
+
+const prisma = require('../config/database');
+const { successResponse } = require('../utils/response');
+
+/**
+ * Get SaaS Analytics
+ * GET /api/v1/superadmin/analytics
+ * Hanya dapat diakses oleh role SUPER_ADMIN
+ */
+const getAnalytics = async (req, res, next) => {
+  try {
+    // 1. Total Klien Aktif (Sekolah)
+    const totalKlien = await prisma.sekolah.count({
+      where: { status: 'AKTIF' },
+    });
+
+    // 2. Total Pengguna Keseluruhan (Admin + Orang Tua)
+    const totalPengguna = await prisma.user.count({
+      where: { role: { in: ['ADMIN_KOMITE', 'ORANG_TUA'] } }
+    });
+
+    // 3. Estimasi Transaksi (Bulan Ini)
+    // Filter transaksi yang LUNAS pada bulan berjalan
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    // Kita hitung manual karena nominal ada di tabel tagihan
+    const lunasPayments = await prisma.pembayaran.findMany({
+      where: {
+        status: 'LUNAS',
+        tanggal_bayar: {
+          gte: startOfMonth
+        }
+      },
+      include: {
+        tagihan: {
+          select: { nominal: true }
+        }
+      }
+    });
+
+    const estimasiTransaksi = lunasPayments.reduce((acc, pay) => acc + (pay.tagihan?.nominal || 0), 0);
+
+    // 4. Status Sistem
+    const statusSistem = "Berjalan Normal";
+
+    return successResponse(res, 'Berhasil mengambil data analitik SaaS', {
+      totalKlien,
+      totalPengguna,
+      estimasiTransaksi,
+      statusSistem,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const bcrypt = require('bcryptjs');
+const { errorResponse } = require('../utils/response');
+
+/**
+ * Get Semua Tenant (Sekolah)
+ * GET /api/v1/superadmin/tenants
+ */
+const getTenants = async (req, res, next) => {
+  try {
+    const tenants = await prisma.sekolah.findMany({
+      orderBy: { created_at: 'desc' },
+      include: {
+        _count: {
+          select: { users: true, siswa: true, tagihan: true }
+        },
+        users: {
+          where: { role: 'ADMIN_KOMITE' },
+          select: { id: true, nama_lengkap: true, email: true },
+          take: 1
+        }
+      }
+    });
+
+    return successResponse(res, 'Berhasil mengambil daftar tenant', tenants);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Create Tenant Baru + Admin Perdana (DB Transaction)
+ * POST /api/v1/superadmin/tenants
+ */
+const createTenant = async (req, res, next) => {
+  try {
+    const { nama_sekolah, alamat, admin_nama, admin_email, admin_password, paket_berlangganan } = req.body;
+
+    if (!nama_sekolah || !admin_nama || !admin_email || !admin_password) {
+      return errorResponse(res, 'Semua field wajib diisi.', 400);
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: admin_email },
+    });
+    if (existingUser) {
+      return errorResponse(res, 'Email admin sudah digunakan.', 400);
+    }
+
+    const password_hash = await bcrypt.hash(admin_password, 10);
+
+    // DB Transaction: Create Sekolah & User berbarengan
+    const newTenant = await prisma.$transaction(async (tx) => {
+      const sekolah = await tx.sekolah.create({
+        data: {
+          nama_sekolah,
+          alamat,
+          paket_berlangganan: paket_berlangganan || 'BASIC',
+        }
+      });
+
+      await tx.user.create({
+        data: {
+          nama_lengkap: admin_nama,
+          email: admin_email,
+          password_hash,
+          role: 'ADMIN_KOMITE',
+          sekolah_id: sekolah.id
+        }
+      });
+
+      return sekolah;
+    });
+
+    return successResponse(res, 'Tenant baru dan akun Admin Komite berhasil dibuat.', newTenant, 201);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Toggle Status Tenant (Aktif/Nonaktif)
+ * PATCH /api/v1/superadmin/tenants/:id/status
+ */
+const toggleTenantStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const sekolah = await prisma.sekolah.findUnique({ where: { id } });
+    if (!sekolah) {
+      return errorResponse(res, 'Tenant tidak ditemukan', 404);
+    }
+
+    const newStatus = sekolah.status === 'AKTIF' ? 'NONAKTIF' : 'AKTIF';
+    
+    const updated = await prisma.sekolah.update({
+      where: { id },
+      data: { status: newStatus }
+    });
+
+    return successResponse(res, `Status tenant berhasil diubah menjadi ${newStatus}`, updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const jwt = require('jsonwebtoken');
+
+/**
+ * Impersonate Tenant (Login as Admin Komite)
+ * POST /api/v1/superadmin/tenants/:id/impersonate
+ */
+const impersonateTenant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    // Cari admin komite untuk sekolah ini
+    const admin = await prisma.user.findFirst({
+      where: { sekolah_id: id, role: 'ADMIN_KOMITE' }
+    });
+
+    if (!admin) {
+      return errorResponse(res, 'Admin Komite untuk sekolah ini tidak ditemukan', 404);
+    }
+
+    // Generate JWT khusus untuk admin ini
+    const token = jwt.sign(
+      { userId: admin.id, role: admin.role, sekolahId: admin.sekolah_id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' } // Token impersonate cukup 1 jam
+    );
+
+    return successResponse(res, 'Impersonate berhasil', {
+      token,
+      user: {
+        id: admin.id,
+        nama_lengkap: admin.nama_lengkap,
+        email: admin.email,
+        role: admin.role,
+        sekolah_id: admin.sekolah_id
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Reset Password Klien
+ * POST /api/v1/superadmin/tenants/:id/reset-password
+ */
+const resetPasswordTenant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const admin = await prisma.user.findFirst({
+      where: { sekolah_id: id, role: 'ADMIN_KOMITE' }
+    });
+
+    if (!admin) {
+      return errorResponse(res, 'Admin Komite untuk sekolah ini tidak ditemukan', 404);
+    }
+
+    const defaultPassword = 'komite' + '1234';
+    const password_hash = await bcrypt.hash(defaultPassword, 10);
+
+    await prisma.user.update({
+      where: { id: admin.id },
+      data: { password_hash }
+    });
+
+    return successResponse(res, `Password berhasil direset ke default (${defaultPassword})`, null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get System Logs (Audit Trail)
+ * GET /api/v1/superadmin/logs
+ */
+const getSystemLogs = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [logs, total] = await Promise.all([
+      prisma.systemLog.findMany({
+        skip,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+        include: {
+          user: { select: { nama_lengkap: true } },
+          sekolah: { select: { nama_sekolah: true } }
+        }
+      }),
+      prisma.systemLog.count()
+    ]);
+
+    return successResponse(res, 'Berhasil mengambil log sistem', {
+      logs,
+      pagination: {
+        total,
+        page,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get App Settings
+ * GET /api/v1/superadmin/settings
+ */
+const getSettings = async (req, res, next) => {
+  try {
+    const settings = await prisma.appSetting.findMany();
+    // Konversi array of {key, value} menjadi object map
+    const map = {};
+    settings.forEach(s => map[s.key] = s.value);
+    
+    return successResponse(res, 'Berhasil mengambil pengaturan sistem', map);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Update App Settings
+ * POST /api/v1/superadmin/settings
+ */
+const updateSettings = async (req, res, next) => {
+  try {
+    const data = req.body; // { midtrans_server_key: 'xxx', wa_token: 'yyy' }
+    
+    // Upsert setiap setting dalam transaksi
+    await prisma.$transaction(
+      Object.entries(data).map(([key, value]) => {
+        return prisma.appSetting.upsert({
+          where: { key },
+          update: { value: String(value) },
+          create: { key, value: String(value) }
+        });
+      })
+    );
+
+    return successResponse(res, 'Pengaturan sistem berhasil disimpan', null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getAnalytics,
+  getTenants,
+  createTenant,
+  toggleTenantStatus,
+  impersonateTenant,
+  resetPasswordTenant,
+  getSystemLogs,
+  getSettings,
+  updateSettings
+};

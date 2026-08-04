@@ -1,0 +1,187 @@
+// ============================================
+// Prisma Schema — E-Komite Pintar (SQLite Version)
+// Multi-Tenant / SaaS Ready
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ============================================
+// SaaS Models
+// ============================================
+
+model Sekolah {
+  id              String   @id @default(uuid())
+  nama_sekolah    String
+  alamat          String?
+  status              String   @default("AKTIF") // AKTIF / NONAKTIF
+  paket_berlangganan  String   @default("BASIC") // BASIC, PREMIUM, ENTERPRISE
+  created_at          DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  users      User[]
+  siswa      Siswa[]
+  tagihan    Tagihan[]
+  voting     Voting[]
+  system_logs SystemLog[]
+
+  @@map("sekolah")
+}
+
+// ============================================
+// Models
+// ============================================
+
+model User {
+  id            String   @id @default(uuid())
+  nama_lengkap  String
+  email         String   @unique
+  password_hash String
+  no_whatsapp   String?
+  role          String   @default("ORANG_TUA")
+  status        Boolean  @default(true)
+  sekolah_id    String?  // Nullable karena SUPER_ADMIN tidak terikat sekolah
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  sekolah      Sekolah?      @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  siswa        Siswa[]
+  tagihan      Tagihan[]
+  voting_suara VotingSuara[]
+  system_logs  SystemLog[]
+
+  @@map("users")
+}
+
+model Siswa {
+  id           String   @id @default(uuid())
+  nama_siswa   String
+  nisn         String   @unique
+  kelas        String
+  orang_tua_id String
+  sekolah_id   String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  sekolah    Sekolah     @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  orang_tua  User        @relation(fields: [orang_tua_id], references: [id], onDelete: Cascade)
+  pembayaran Pembayaran[]
+
+  @@map("siswa")
+}
+
+model Tagihan {
+  id            String   @id @default(uuid())
+  judul         String
+  deskripsi     String?
+  nominal       Float
+  tenggat_waktu DateTime
+  admin_id      String
+  sekolah_id    String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  sekolah    Sekolah     @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  admin      User        @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+  pembayaran Pembayaran[]
+
+  @@map("tagihan")
+}
+
+model Pembayaran {
+  id            String    @id @default(uuid())
+  tagihan_id    String
+  siswa_id      String
+  status        String    @default("PENDING")
+  metode_bayar  String?
+  tanggal_bayar DateTime?
+  payment_token String?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  tagihan Tagihan @relation(fields: [tagihan_id], references: [id], onDelete: Cascade)
+  siswa   Siswa   @relation(fields: [siswa_id], references: [id], onDelete: Cascade)
+
+  @@map("pembayaran")
+}
+
+// ============================================
+// E-Voting Models
+// ============================================
+
+model Voting {
+  id              String   @id @default(uuid())
+  judul           String
+  deskripsi       String?
+  tanggal_berakhir DateTime
+  status          String   @default("AKTIF") // AKTIF / SELESAI
+  sekolah_id      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  sekolah  Sekolah          @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  kandidat VotingKandidat[]
+  suara    VotingSuara[]
+
+  @@map("voting")
+}
+
+model VotingKandidat {
+  id            String   @id @default(uuid())
+  voting_id     String
+  nama_kandidat String
+  created_at    DateTime @default(now())
+
+  voting Voting        @relation(fields: [voting_id], references: [id], onDelete: Cascade)
+  suara  VotingSuara[]
+
+  @@map("voting_kandidat")
+}
+
+model VotingSuara {
+  id          String   @id @default(uuid())
+  voting_id   String
+  kandidat_id String
+  user_id     String
+  created_at  DateTime @default(now())
+
+  voting   Voting         @relation(fields: [voting_id], references: [id], onDelete: Cascade)
+  kandidat VotingKandidat @relation(fields: [kandidat_id], references: [id], onDelete: Cascade)
+  user     User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // 1 User hanya boleh memberikan 1 suara pada 1 voting
+  @@unique([voting_id, user_id])
+  @@map("voting_suara")
+}
+
+// ============================================
+// System Models (SaaS Backend)
+// ============================================
+
+model SystemLog {
+  id          String   @id @default(uuid())
+  user_id     String?
+  sekolah_id  String?
+  action      String   
+  detail      String?
+  created_at  DateTime @default(now())
+
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  sekolah     Sekolah? @relation(fields: [sekolah_id], references: [id], onDelete: SetNull)
+
+  @@map("system_log")
+}
+
+model AppSetting {
+  key         String   @id
+  value       String
+  updated_at  DateTime @updatedAt
+
+  @@map("app_setting")
+}

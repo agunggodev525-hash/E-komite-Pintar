@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* ============================================
+   E-Komite Pintar — Design System (Navy + Gold)
+   ============================================ */
+
+:root {
+  --background: #101D3A;
+  --foreground: #FAFAFA;
+
+  /* Navy tones */
+  --navy-950: #060D1F;
+  --navy-900: #0A1128;
+  --navy-800: #101D3A;
+  --navy-700: #1B2A4A;
+  --navy-600: #243557;
+  --navy-500: #2C3E6B;
+  --navy-400: #3D5280;
+
+  /* Gold tones */
+  --gold-500: #D4A012;
+  --gold-400: #F4C753;
+  --gold-300: #F7D36E;
+  --gold-200: #FBE89A;
+  --gold-100: #FFF3CC;
+
+  /* Status colors */
+  --status-lunas: #4CAF50;
+  --status-lunas-bg: #1B3A1E;
+  --status-pending: #FF9800;
+  --status-pending-bg: #3A2E0D;
+  --status-gagal: #EF5350;
+  --status-gagal-bg: #3A1515;
+
+  /* Misc */
+  --white: #FAFAFA;
+  --white-80: rgba(250, 250, 250, 0.8);
+  --white-60: rgba(250, 250, 250, 0.6);
+  --white-40: rgba(250, 250, 250, 0.4);
+  --white-10: rgba(250, 250, 250, 0.1);
+  --error: #CF6679;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+
+  /* Navy */
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-500: var(--navy-500);
+  --color-navy-400: var(--navy-400);
+
+  /* Gold */
+  --color-gold-500: var(--gold-500);
+  --color-gold-400: var(--gold-400);
+  --color-gold-300: var(--gold-300);
+  --color-gold-200: var(--gold-200);
+  --color-gold-100: var(--gold-100);
+
+  /* Status */
+  --color-status-lunas: var(--status-lunas);
+  --color-status-lunas-bg: var(--status-lunas-bg);
+  --color-status-pending: var(--status-pending);
+  --color-status-pending-bg: var(--status-pending-bg);
+  --color-status-gagal: var(--status-gagal);
+  --color-status-gagal-bg: var(--status-gagal-bg);
+
+  /* Misc */
+  --color-white-80: var(--white-80);
+  --color-white-60: var(--white-60);
+  --color-white-40: var(--white-40);
+  --color-white-10: var(--white-10);
+  --color-error: var(--error);
+}
+
+/* ============================================
+   Global Styles
+   ============================================ */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--navy-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--navy-500);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-400);
+}
+
+/* Input focus ring */
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 1px;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, opacity, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}

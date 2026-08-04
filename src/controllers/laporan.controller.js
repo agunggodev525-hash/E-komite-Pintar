@@ -1,0 +1,132 @@
+// ============================================
+// Controller: Laporan Keuangan
+// ============================================
+
+const prisma = require('../config/database');
+const { successResponse } = require('../utils/response');
+
+/**
+ * Laporan keuangan — total pemasukan dari pembayaran LUNAS
+ * GET /api/v1/laporan/keuangan
+ * Akses: SUPER_ADMIN, ADMIN_KOMITE, SEKOLAH
+ */
+const getKeuangan = async (req, res, next) => {
+  try {
+    const { bulan, tahun } = req.query;
+
+    // Base filter: hanya pembayaran LUNAS dari sekolah terkait
+    const whereClause = {
+      status: 'LUNAS',
+      tagihan: { sekolah_id: req.user.sekolah_id }
+    };
+
+    // Filter opsional berdasarkan bulan/tahun
+    if (tahun) {
+      const year = parseInt(tahun);
+      const month = bulan ? parseInt(bulan) : null;
+
+      const startDate = month
+        ? new Date(year, month - 1, 1)
+        : new Date(year, 0, 1);
+      const endDate = month
+        ? new Date(year, month, 0, 23, 59, 59, 999)
+        : new Date(year, 11, 31, 23, 59, 59, 999);
+
+      whereClause.tanggal_bayar = {
+        gte: startDate,
+        lte: endDate,
+      };
+    }
+
+    // 1. Hitung jumlah pembayaran lunas
+    const totalLunas = await prisma.pembayaran.count({
+      where: whereClause,
+    });
+
+    // 2. Ambil detail pembayaran lunas dengan nominal tagihan
+    const pembayaranLunas = await prisma.pembayaran.findMany({
+      where: whereClause,
+      include: {
+        tagihan: {
+          select: {
+            id: true,
+            judul: true,
+            nominal: true,
+          },
+        },
+        siswa: {
+          select: {
+            id: true,
+            nama_siswa: true,
+            kelas: true,
+          },
+        },
+      },
+      orderBy: { tanggal_bayar: 'desc' },
+    });
+
+    const transaksiList = pembayaranLunas.map((p) => ({
+      id: p.id,
+      tanggal: p.tanggal_bayar,
+      siswa: p.siswa.nama_siswa,
+      kelas: p.siswa.kelas,
+      keterangan: p.tagihan.judul,
+      nominal: Number(p.tagihan.nominal),
+    }));
+
+    // 3. Hitung total pemasukan dari nominal tagihan
+    const totalPemasukan = pembayaranLunas.reduce((sum, p) => {
+      return sum + Number(p.tagihan.nominal);
+    }, 0);
+
+    // 4. Ringkasan per tagihan
+    const perTagihan = {};
+    pembayaranLunas.forEach((p) => {
+      const key = p.tagihan.id;
+      if (!perTagihan[key]) {
+        perTagihan[key] = {
+          tagihan_id: p.tagihan.id,
+          judul: p.tagihan.judul,
+          nominal_per_siswa: Number(p.tagihan.nominal),
+          jumlah_lunas: 0,
+          subtotal: 0,
+        };
+      }
+      perTagihan[key].jumlah_lunas += 1;
+      perTagihan[key].subtotal += Number(p.tagihan.nominal);
+    });
+
+    // 5. Hitung total tagihan dan berapa persen sudah lunas
+    const totalSemuaTagihan = await prisma.tagihan.count({
+      where: { sekolah_id: req.user.sekolah_id }
+    });
+    const totalSemuaPembayaran = await prisma.pembayaran.count({
+      where: { tagihan: { sekolah_id: req.user.sekolah_id } }
+    });
+
+
+    return successResponse(res, 'Laporan keuangan berhasil diambil.', {
+      total_pemasukan: totalPemasukan,
+      total_pemasukan_formatted: `Rp ${totalPemasukan.toLocaleString('id-ID')}`,
+      jumlah_transaksi_lunas: totalLunas,
+      filter: {
+        bulan: bulan || 'semua',
+        tahun: tahun || 'semua',
+      },
+      ringkasan_per_tagihan: Object.values(perTagihan),
+      statistik: {
+        total_tagihan_dibuat: totalSemuaTagihan,
+        total_pembayaran: totalSemuaPembayaran,
+        total_lunas: totalLunas,
+        persentase_lunas: totalSemuaPembayaran > 0
+          ? `${((totalLunas / totalSemuaPembayaran) * 100).toFixed(1)}%`
+          : '0%',
+      },
+      detail_transaksi: transaksiList
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getKeuangan };

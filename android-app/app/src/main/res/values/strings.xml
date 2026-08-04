@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">E-Komite Pintar</string>
+    <string name="login_title">Masuk ke Akun Anda</string>
+    <string name="login_subtitle">Kelola pembayaran komite sekolah dengan mudah</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="btn_login">Masuk</string>
+    <string name="dashboard_greeting">Halo, %1$s! 👋</string>
+    <string name="dashboard_subtitle">Berikut ringkasan tagihan anak Anda</string>
+    <string name="tagihan_aktif">Tagihan Aktif</string>
+    <string name="btn_bayar">Bayar Sekarang</string>
+    <string name="tenggat_label">Tenggat: %1$s</string>
+    <string name="nominal_label">Rp %1$s</string>
+    <string name="status_lunas">LUNAS</string>
+    <string name="status_pending">PENDING</string>
+    <string name="status_belum_bayar">BELUM BAYAR</string>
+    <string name="total_tagihan">Total Tagihan</string>
+    <string name="sudah_lunas">Sudah Lunas</string>
+    <string name="belum_lunas">Belum Lunas</string>
+</resources>
