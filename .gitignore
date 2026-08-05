@@ -20,3 +20,17 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Android build outputs
+android-app/app/build/
+android-app/.gradle/
+android-app/build/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Kotlin/Java compiled files
+*.class
+*.dex
+*.jar

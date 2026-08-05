@@ -1,7 +1,6 @@
 package com.ekomitepintar.ui.transparansi
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ekomitepintar.model.TransparansiData
 import com.ekomitepintar.model.TransparansiHistory
@@ -276,9 +276,9 @@ private fun formatDate(isoDate: String): String {
     return try {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val outputFormat = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
-        val date = inputFormat.parse(isoDate.substring(0, 10))
+        val date = inputFormat.parse(isoDate.take(10))
         date?.let { outputFormat.format(it) } ?: isoDate
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         isoDate
     }
 }
