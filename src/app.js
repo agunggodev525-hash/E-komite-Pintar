@@ -21,6 +21,7 @@ const votingRoutes = require('./routes/voting.routes');
 const superadminRoutes = require('./routes/superadmin.routes');
 const sekolahRoutes = require('./routes/sekolah.routes'); // <-- SUPER_ADMIN routes
 const siswaRoutes = require('./routes/siswa.routes');
+const pengeluaranRoutes = require('./routes/pengeluaran.routes');
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use('/api/v1/voting', votingRoutes);
 app.use('/api/v1/sekolah', sekolahRoutes);
 app.use('/api/v1/superadmin', superadminRoutes);
 app.use('/api/v1/siswa', siswaRoutes);
+app.use('/api/v1/pengeluaran', pengeluaranRoutes);
 
 // Webhook dipisah dari v1 untuk memudahkan integrasi eksternal
 app.use('/api/payment', webhookRoutes);

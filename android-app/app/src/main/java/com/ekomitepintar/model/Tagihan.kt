@@ -78,12 +78,10 @@ data class CheckoutRequest(
  * Response data dari checkout.
  */
 data class CheckoutData(
-    val pembayaran: PembayaranDetail,
-    @SerializedName("payment_token")
-    val paymentToken: String,
-    @SerializedName("dummy_payment_url")
-    val dummyPaymentUrl: String,
-    val instruksi: String
+    @SerializedName("snap_token")
+    val snapToken: String,
+    @SerializedName("order_id")
+    val orderId: String
 )
 
 data class PembayaranDetail(

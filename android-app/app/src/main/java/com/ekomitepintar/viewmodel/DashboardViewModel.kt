@@ -22,7 +22,7 @@ data class DashboardUiState(
     val tagihanList: List<Tagihan> = emptyList(),
     val summary: TagihanSummary? = null,
     val errorMessage: String? = null,
-    val checkoutMessage: String? = null,
+    val checkoutToken: String? = null,
     val isLoggedOut: Boolean = false
 )
 
@@ -101,7 +101,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 onSuccess = { checkoutData ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        checkoutMessage = "Pembayaran berhasil diinisiasi!\n\nURL: ${checkoutData.dummyPaymentUrl}"
+                        checkoutToken = checkoutData.snapToken
                     )
                     // Refresh tagihan list
                     loadTagihan(siswaId)
@@ -126,8 +126,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun clearCheckoutMessage() {
-        _uiState.value = _uiState.value.copy(checkoutMessage = null)
+    fun clearCheckoutToken() {
+        _uiState.value = _uiState.value.copy(checkoutToken = null)
     }
 
     fun clearError() {

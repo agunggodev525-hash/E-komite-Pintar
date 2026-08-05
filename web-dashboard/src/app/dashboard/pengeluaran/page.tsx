@@ -1,22 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { formatRupiah } from "@/lib/api";
+import { formatRupiah, apiFetch, formatDate } from "@/lib/api";
 import { Plus, Camera, UploadCloud, X, Search, FileText } from "lucide-react";
 
-// Data dummy sementara
-const dummyPengeluaranList = [
-  { id: "P-001", tanggal: "2026-07-02", keterangan: "Beli Alat Tulis Kantor", nominal: 150000, kategori: "Operasional", hasNota: true },
-  { id: "P-002", tanggal: "2026-07-05", keterangan: "Konsumsi Rapat Guru", nominal: 300000, kategori: "Konsumsi", hasNota: true },
-  { id: "P-003", tanggal: "2026-07-10", keterangan: "Fotokopi Soal Ujian", nominal: 250000, kategori: "Akademik", hasNota: false },
-  { id: "P-004", tanggal: "2026-07-12", keterangan: "Perbaikan Kipas Angin Kelas", nominal: 180000, kategori: "Pemeliharaan", hasNota: true },
-  { id: "P-005", tanggal: "2026-07-15", keterangan: "Uang Muka Baju Seragam", nominal: 2500000, kategori: "Inventaris", hasNota: true },
-];
-
 export default function PengeluaranPage() {
-  const [pengeluaran, setPengeluaran] = useState(dummyPengeluaranList);
+  const [pengeluaran, setPengeluaran] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   
+  const fetchPengeluaran = async () => {
+    try {
+      setLoading(true);
+      const res = await apiFetch<any[]>("/pengeluaran");
+      setPengeluaran(res.data);
+    } catch (error: any) {
+      alert("Gagal memuat data: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPengeluaran();
+  }, []);
+
   // States for Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -45,25 +53,30 @@ export default function PengeluaranPage() {
     alert("File " + (e.dataTransfer.files[0]?.name || "") + " disimulasikan terupload!");
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formKeterangan || !formNominal || !formTanggal) return;
     
-    const newItem = {
-      id: "P-" + Math.floor(Math.random() * 1000),
-      tanggal: formTanggal,
-      keterangan: formKeterangan,
-      nominal: parseInt(formNominal.replace(/[^0-9]/g, '') || "0"),
-      kategori: formKategori || "Lain-lain",
-      hasNota: true
-    };
-    
-    setPengeluaran([newItem, ...pengeluaran]);
-    setShowAddModal(false);
-    setFormKeterangan("");
-    setFormNominal("");
-    setFormTanggal("");
-    setFormKategori("");
+    try {
+      await apiFetch("/pengeluaran", {
+        method: "POST",
+        body: JSON.stringify({
+          tanggal: formTanggal,
+          keterangan: formKeterangan,
+          nominal: parseInt(formNominal.replace(/[^0-9]/g, '') || "0"),
+          kategori: formKategori || "Lain-lain",
+        })
+      });
+      
+      setShowAddModal(false);
+      setFormKeterangan("");
+      setFormNominal("");
+      setFormTanggal("");
+      setFormKategori("");
+      fetchPengeluaran();
+    } catch (error: any) {
+      alert("Gagal menyimpan pengeluaran: " + error.message);
+    }
   };
 
   return (
@@ -105,9 +118,17 @@ export default function PengeluaranPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {pengeluaran.map((item) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-slate-400 text-sm">Memuat data...</td>
+                </tr>
+              ) : pengeluaran.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-slate-400 text-sm">Belum ada data pengeluaran.</td>
+                </tr>
+              ) : pengeluaran.map((item) => (
                 <tr key={item.id} className="hover:bg-white/5 transition-colors group">
-                  <td className="px-6 py-4 text-slate-400 whitespace-nowrap">{item.tanggal}</td>
+                  <td className="px-6 py-4 text-slate-400 whitespace-nowrap">{formatDate(item.tanggal)}</td>
                   <td className="px-6 py-4 font-medium text-white">{item.keterangan}</td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-white/10 text-slate-300 border border-white/20 uppercase tracking-wide">
@@ -118,9 +139,9 @@ export default function PengeluaranPage() {
                     - {formatRupiah(item.nominal)}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {item.hasNota ? (
+                    {item.nota_url ? (
                       <button 
-                        onClick={() => setPreviewImage("/nota-dummy.jpg")} // We'll just show a dummy placeholder modal
+                        onClick={() => setPreviewImage(item.nota_url)}
                         className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-lg text-xs font-semibold transition-colors shadow-sm"
                         title="Lihat Foto Nota"
                       >

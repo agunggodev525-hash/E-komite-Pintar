@@ -5,11 +5,13 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { validate } = require('../middlewares/validate');
+const { protect } = require('../middlewares/auth');
 const {
   register,
   login,
   requestOtp,
   verifyOtp,
+  updateFcmToken,
 } = require('../controllers/auth.controller');
 
 const router = express.Router();
@@ -101,6 +103,17 @@ router.post(
   ],
   validate,
   verifyOtp
+);
+
+// POST /api/v1/auth/fcm-token
+router.post(
+  '/fcm-token',
+  protect,
+  [
+    body('fcm_token').notEmpty().withMessage('FCM Token wajib diisi'),
+  ],
+  validate,
+  updateFcmToken
 );
 
 module.exports = router;

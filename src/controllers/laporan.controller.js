@@ -129,4 +129,74 @@ const getKeuangan = async (req, res, next) => {
   }
 };
 
-module.exports = { getKeuangan };
+/**
+ * Laporan Transparansi — Total Pemasukan vs Pengeluaran (Saldo)
+ * GET /api/v1/laporan/transparansi
+ * Akses: SUPER_ADMIN, ADMIN_KOMITE, SEKOLAH, ORANG_TUA
+ */
+const getTransparansi = async (req, res, next) => {
+  try {
+    const sekolah_id = req.user.sekolah_id;
+    const { bulan, tahun } = req.query;
+
+    const wherePembayaran = { status: 'LUNAS', tagihan: { sekolah_id } };
+    const wherePengeluaran = { sekolah_id };
+
+    if (tahun) {
+      const year = parseInt(tahun);
+      const month = bulan ? parseInt(bulan) : null;
+      const startDate = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
+      const endDate = month ? new Date(year, month, 0, 23, 59, 59, 999) : new Date(year, 11, 31, 23, 59, 59, 999);
+
+      wherePembayaran.tanggal_bayar = { gte: startDate, lte: endDate };
+      wherePengeluaran.tanggal = { gte: startDate, lte: endDate };
+    }
+
+    // 1. Ambil semua pembayaran lunas (Pemasukan)
+    const pemasukan = await prisma.pembayaran.findMany({
+      where: wherePembayaran,
+      include: { tagihan: { select: { judul: true, nominal: true } } },
+      orderBy: { tanggal_bayar: 'asc' },
+    });
+
+    const totalPemasukan = pemasukan.reduce((sum, p) => sum + Number(p.tagihan.nominal), 0);
+    const detailPemasukan = pemasukan.map(p => ({
+      id: p.id,
+      jenis: 'PEMASUKAN',
+      tanggal: p.tanggal_bayar,
+      keterangan: `Pembayaran: ${p.tagihan.judul}`,
+      nominal: Number(p.tagihan.nominal)
+    }));
+
+    // 2. Ambil semua pengeluaran
+    const pengeluaran = await prisma.pengeluaran.findMany({
+      where: wherePengeluaran,
+      orderBy: { tanggal: 'asc' },
+    });
+
+    const totalPengeluaran = pengeluaran.reduce((sum, p) => sum + Number(p.nominal), 0);
+    const detailPengeluaran = pengeluaran.map(p => ({
+      id: p.id,
+      jenis: 'PENGELUARAN',
+      tanggal: p.tanggal,
+      keterangan: p.keterangan,
+      nominal: Number(p.nominal)
+    }));
+
+    // 3. Gabungkan history dan hitung saldo
+    const history = [...detailPemasukan, ...detailPengeluaran].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); // Descending
+
+    const saldo = totalPemasukan - totalPengeluaran;
+
+    return successResponse(res, 'Laporan transparansi berhasil diambil.', {
+      total_pemasukan: totalPemasukan,
+      total_pengeluaran: totalPengeluaran,
+      saldo_akhir: saldo,
+      history,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getKeuangan, getTransparansi };

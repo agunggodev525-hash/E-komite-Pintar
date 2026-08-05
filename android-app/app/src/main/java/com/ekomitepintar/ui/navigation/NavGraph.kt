@@ -25,6 +25,8 @@ object Routes {
     const val DASHBOARD = "dashboard"
     const val VOTING_LIST = "voting_list"
     const val VOTING_DETAIL = "voting_detail"
+    const val PAYMENT = "payment"
+    const val TRANSPARANSI = "transparansi"
 }
 
 /**
@@ -113,6 +115,12 @@ fun NavGraph() {
                 },
                 onNavigateToVoting = {
                     navController.navigate(Routes.VOTING_LIST)
+                },
+                onNavigateToPayment = { snapToken ->
+                    navController.navigate("${Routes.PAYMENT}/$snapToken")
+                },
+                onNavigateToTransparansi = {
+                    navController.navigate(Routes.TRANSPARANSI)
                 }
             )
         }
@@ -143,6 +151,30 @@ fun NavGraph() {
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
+        }
+
+        // ============================================
+        // Payment (Midtrans) Screen
+        // ============================================
+        composable(
+            route = "${Routes.PAYMENT}/{snapToken}"
+        ) { backStackEntry ->
+            val snapToken = backStackEntry.arguments?.getString("snapToken") ?: ""
+            com.ekomitepintar.ui.dashboard.MidtransWebViewScreen(
+                snapToken = snapToken,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // ============================================
+        // Transparansi Screen
+        // ============================================
+        composable(Routes.TRANSPARANSI) {
+            val transparansiViewModel: com.ekomitepintar.viewmodel.TransparansiViewModel = viewModel()
+            com.ekomitepintar.ui.transparansi.TransparansiScreen(
+                viewModel = transparansiViewModel,
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

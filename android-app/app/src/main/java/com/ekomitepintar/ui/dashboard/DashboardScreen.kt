@@ -39,7 +39,9 @@ import java.util.*
 fun DashboardScreen(
     viewModel: DashboardViewModel,
     onLogout: () -> Unit,
-    onNavigateToVoting: () -> Unit
+    onNavigateToVoting: () -> Unit,
+    onNavigateToPayment: (String) -> Unit,
+    onNavigateToTransparansi: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -48,12 +50,14 @@ fun DashboardScreen(
         if (uiState.isLoggedOut) onLogout()
     }
 
-    // Snackbar untuk checkout message
+    // Snackbar state for general errors if needed
     val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(uiState.checkoutMessage) {
-        uiState.checkoutMessage?.let {
-            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Long)
-            viewModel.clearCheckoutMessage()
+
+    // Navigate on checkout token
+    LaunchedEffect(uiState.checkoutToken) {
+        uiState.checkoutToken?.let { token ->
+            onNavigateToPayment(token)
+            viewModel.clearCheckoutToken()
         }
     }
 
@@ -139,42 +143,77 @@ fun DashboardScreen(
                 }
 
                 // ============================================
-                // Menu E-Voting
+                // Menu E-Voting & Transparansi
                 // ============================================
                 item {
                     AnimatedVisibility(
                         visible = showContent,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { 50 })
                     ) {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.medium,
-                            colors = CardDefaults.cardColors(containerColor = Gold400),
-                            onClick = onNavigateToVoting
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.medium,
+                                colors = CardDefaults.cardColors(containerColor = Gold400),
+                                onClick = onNavigateToVoting
                             ) {
-                                Icon(
-                                    Icons.Filled.HowToVote,
-                                    contentDescription = "E-Voting",
-                                    tint = Navy900,
-                                    modifier = Modifier.size(32.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Column {
-                                    Text(
-                                        text = "E-Voting Komite",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = Navy900,
-                                        fontWeight = FontWeight.Bold
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Filled.HowToVote,
+                                        contentDescription = "E-Voting",
+                                        tint = Navy900,
+                                        modifier = Modifier.size(32.dp)
                                     )
-                                    Text(
-                                        text = "Beri suara untuk keputusan sekolah",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Navy900.copy(alpha = 0.8f)
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Column {
+                                        Text(
+                                            text = "E-Voting Komite",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = Navy900,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = "Beri suara untuk keputusan sekolah",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Navy900.copy(alpha = 0.8f)
+                                        )
+                                    }
+                                }
+                            }
+                            
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.medium,
+                                colors = CardDefaults.cardColors(containerColor = White),
+                                onClick = onNavigateToTransparansi
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Filled.AccountBalanceWallet,
+                                        contentDescription = "Transparansi",
+                                        tint = Navy900,
+                                        modifier = Modifier.size(32.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Column {
+                                        Text(
+                                            text = "Transparansi Keuangan",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = Navy900,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = "Lihat laporan kas & pengeluaran komite",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Navy900.copy(alpha = 0.8f)
+                                        )
+                                    }
                                 }
                             }
                         }

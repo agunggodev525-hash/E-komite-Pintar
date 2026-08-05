@@ -22,4 +22,16 @@ router.get(
   laporanController.getKeuangan
 );
 
+/**
+ * GET /api/v1/laporan/transparansi
+ * Laporan transparansi (pemasukan & pengeluaran)
+ * Akses: SUPER_ADMIN, ADMIN_KOMITE, SEKOLAH, ORANG_TUA
+ */
+router.get(
+  '/transparansi',
+  authenticate,
+  authorize('SUPER_ADMIN', 'ADMIN_KOMITE', 'SEKOLAH', 'ORANG_TUA'),
+  laporanController.getTransparansi
+);
+
 module.exports = router;

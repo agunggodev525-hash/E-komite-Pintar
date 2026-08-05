@@ -249,4 +249,26 @@ const verifyOtp = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, requestOtp, verifyOtp };
+/**
+ * Update FCM Token for current user
+ * POST /api/v1/auth/fcm-token
+ */
+const updateFcmToken = async (req, res) => {
+  try {
+    const { fcm_token } = req.body;
+    if (!fcm_token) {
+      return errorResponse(res, 'FCM Token tidak boleh kosong', 400);
+    }
+
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { fcm_token },
+    });
+
+    return successResponse(res, 'FCM Token berhasil diperbarui');
+  } catch (error) {
+    return errorResponse(res, 'Gagal memperbarui FCM Token', 500, error.message);
+  }
+};
+
+module.exports = { register, login, requestOtp, verifyOtp, updateFcmToken };

@@ -57,21 +57,30 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     debugImplementation(libs.androidx.ui.tooling)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    // Retrofit + OkHttp
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp.logging)
-    implementation(libs.gson)
+    // Retrofit & Networking
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    // DataStore
-    implementation(libs.androidx.datastore)
+    // DataStore (untuk simpan token lokal)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // ViewModel Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+
+    // Firebase Messaging (FCM)
+    // Note: Karena belum ada google-services.json, kita masukkan dependency untuk compile saja
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)

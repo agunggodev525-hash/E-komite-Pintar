@@ -30,6 +30,7 @@ model Sekolah {
   tagihan    Tagihan[]
   voting     Voting[]
   system_logs SystemLog[]
+  pengeluaran Pengeluaran[]
 
   @@map("sekolah")
 }
@@ -47,6 +48,7 @@ model User {
   role          String   @default("ORANG_TUA")
   status        Boolean  @default(true)
   sekolah_id    String?  // Nullable karena SUPER_ADMIN tidak terikat sekolah
+  fcm_token     String?
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
@@ -55,6 +57,7 @@ model User {
   tagihan      Tagihan[]
   voting_suara VotingSuara[]
   system_logs  SystemLog[]
+  pengeluaran  Pengeluaran[]
 
   @@map("users")
 }
@@ -184,4 +187,22 @@ model AppSetting {
   updated_at  DateTime @updatedAt
 
   @@map("app_setting")
+}
+
+model Pengeluaran {
+  id          String   @id @default(uuid())
+  keterangan  String
+  nominal     Float
+  tanggal     DateTime
+  kategori    String   
+  nota_url    String?  
+  admin_id    String
+  sekolah_id  String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  sekolah     Sekolah  @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  admin       User     @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  @@map("pengeluaran")
 }

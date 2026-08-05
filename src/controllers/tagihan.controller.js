@@ -4,6 +4,7 @@
 
 const prisma = require('../config/database');
 const { successResponse, errorResponse } = require('../utils/response');
+const { sendPushNotification } = require('../services/notification.service');
 
 /**
  * Buat tagihan baru
@@ -16,10 +17,15 @@ const create = async (req, res, next) => {
     const sekolah_id = req.user.sekolah_id;
     const admin_id = req.user.id;
 
-    // Ambil daftar seluruh siswa di sekolah ini
+    // Ambil daftar seluruh siswa di sekolah ini beserta fcm_token orang tuanya
     const siswaList = await prisma.siswa.findMany({
       where: { sekolah_id },
-      select: { id: true }
+      select: { 
+        id: true,
+        orang_tua: {
+          select: { fcm_token: true }
+        }
+      }
     });
 
     if (siswaList.length === 0) {
@@ -57,6 +63,23 @@ const create = async (req, res, next) => {
 
       return tagihan;
     });
+
+    // 4. Kumpulkan FCM Tokens dari orang tua
+    const tokens = [];
+    siswaList.forEach(siswa => {
+      if (siswa.orang_tua && siswa.orang_tua.fcm_token) {
+        if (!tokens.includes(siswa.orang_tua.fcm_token)) {
+          tokens.push(siswa.orang_tua.fcm_token);
+        }
+      }
+    });
+
+    // 5. Kirim Push Notification
+    if (tokens.length > 0) {
+      const title = 'Tagihan Baru: ' + judul;
+      const body = `Ada tagihan baru sebesar Rp ${nominal} yang perlu dibayar sebelum ${new Date(tenggat_waktu).toLocaleDateString('id-ID')}.`;
+      await sendPushNotification(tokens, title, body, { tagihan_id: result.id });
+    }
 
     return successResponse(res, `Tagihan berhasil dibuat. ${siswaList.length} tagihan telah disebarkan ke siswa.`, result, 201);
   } catch (error) {

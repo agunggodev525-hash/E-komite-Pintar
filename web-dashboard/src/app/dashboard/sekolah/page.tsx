@@ -165,19 +165,27 @@ export default function SekolahPage() {
 
   return (
     <DashboardLayout title="Manajemen Klien Sekolah">
-      {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <div>
-          <p className="text-white-60 text-sm mt-1">
-            Pusat kendali untuk mengelola seluruh komite sekolah yang terdaftar pada platform.
-          </p>
+      {/* Header Description & Toolbar */}
+      <div className="mb-6">
+        <p className="text-slate-400 text-sm mt-1 mb-6">
+          Pusat kendali untuk mengelola seluruh komite sekolah yang terdaftar pada platform.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="relative w-full sm:w-96">
+            <svg className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input 
+              type="text" 
+              placeholder="Cari nama sekolah..." 
+              className="w-full rounded-full bg-slate-800/50 border border-slate-700 px-5 py-2.5 pl-12 text-sm text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+            />
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 font-extrabold px-6 py-2.5 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:scale-105 hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <span className="text-lg">+</span> Tambah Sekolah Baru
+          </button>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold px-6 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,193,7,0.4)] flex items-center gap-2"
-        >
-          <span className="text-lg">+</span> Tambah Sekolah Baru
-        </button>
       </div>
 
       {/* Error Message */}
@@ -188,10 +196,10 @@ export default function SekolahPage() {
       )}
 
       {/* Data Table */}
-      <div className="bg-navy-800 rounded-2xl border border-white-10 overflow-hidden shadow-2xl">
+      <div className="bg-slate-800/40 backdrop-blur-xl border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-white-60 whitespace-nowrap">
-            <thead className="bg-navy-900 text-white font-medium">
+          <table className="w-full text-left text-sm text-slate-300 whitespace-nowrap">
+            <thead className="bg-slate-900/50 border-b border-slate-700/50 text-slate-300 text-xs uppercase tracking-wider font-semibold">
               <tr>
                 <th className="px-6 py-5">Nama Sekolah</th>
                 <th className="px-6 py-5">Kontak Admin</th>
@@ -225,11 +233,16 @@ export default function SekolahPage() {
                   return (
                     <tr
                       key={sk.id}
-                      className="hover:bg-white-5 transition-colors group"
+                      className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors group"
                     >
-                      <td className="px-6 py-4">
-                        <p className="font-semibold text-white">{sk.nama_sekolah}</p>
-                        <p className="text-xs text-white-40 mt-0.5 truncate max-w-[200px]">{sk.alamat || '-'}</p>
+                      <td className="px-6 py-4 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-sm shadow-inner shrink-0">
+                          {sk.nama_sekolah.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-white font-medium text-sm">{sk.nama_sekolah}</p>
+                          <p className="text-slate-400 text-xs mt-0.5 truncate max-w-[200px]">{sk.alamat || '-'}</p>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-medium text-white-80">{admin.nama_lengkap || '-'}</p>
@@ -237,15 +250,15 @@ export default function SekolahPage() {
                       </td>
                       <td className="px-6 py-4">
                         {sk.paket_berlangganan === 'PREMIUM' ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-gold-400/20 to-gold-500/20 text-gold-400 border border-gold-400/30">
+                          <span className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(245,158,11,0.15)]">
                             👑 Premium
                           </span>
                         ) : sk.paket_berlangganan === 'ENTERPRISE' ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-400/20 to-purple-500/20 text-purple-400 border border-purple-400/30">
+                          <span className="inline-flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(168,85,247,0.15)]">
                             🚀 Enterprise
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-400/10 text-blue-400 border border-blue-400/20">
+                          <span className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(59,130,246,0.15)]">
                             ⭐ Basic
                           </span>
                         )}
@@ -263,39 +276,41 @@ export default function SekolahPage() {
                         </button>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button 
-                            onClick={() => handleImpersonate(sk.id)}
-                            title="Impersonate / Login Sebagai Klien"
-                            className="w-9 h-9 rounded-xl bg-navy-700 hover:bg-cyan-500/20 border border-white-10 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all duration-200 hover:scale-105"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          </button>
-                          <button 
-                            onClick={() => {
-                              setSelectedSekolah(sk);
-                              setNewPackage(sk.paket_berlangganan);
-                              setIsEditPackageModalOpen(true);
-                            }}
-                            title="Ubah Paket"
-                            className="w-9 h-9 rounded-xl bg-navy-700 hover:bg-gold-500/20 border border-white-10 flex items-center justify-center text-gold-400 hover:text-gold-300 transition-all duration-200 hover:scale-105"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                            </svg>
-                          </button>
-                          <button 
-                            onClick={() => handleResetPassword(sk.id)}
-                            title="Reset Password Klien"
-                            className="w-9 h-9 rounded-xl bg-navy-700 hover:bg-orange-500/20 border border-white-10 flex items-center justify-center text-orange-400 hover:text-orange-300 transition-all duration-200 hover:scale-105"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                            </svg>
-                          </button>
+                        <div className="flex justify-end">
+                          <div className="flex items-center gap-1 bg-slate-900/50 border border-slate-700/50 rounded-full p-1 w-fit">
+                            <button 
+                              onClick={() => handleImpersonate(sk.id)}
+                              title="Impersonate / Login Sebagai Klien"
+                              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-all"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setSelectedSekolah(sk);
+                                setNewPackage(sk.paket_berlangganan);
+                                setIsEditPackageModalOpen(true);
+                              }}
+                              title="Ubah Paket"
+                              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-all"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => handleResetPassword(sk.id)}
+                              title="Reset Password Klien"
+                              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-all"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>

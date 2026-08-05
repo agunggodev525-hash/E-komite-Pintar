@@ -28,6 +28,11 @@ interface ApiService {
         @Body request: OtpVerifyRequest
     ): Response<ApiResponse<LoginData>>
 
+    @POST("auth/fcm-token")
+    suspend fun updateFcmToken(
+        @Body request: Map<String, String>
+    ): Response<ApiResponse<Any>>
+
     // ============================================
     // Tagihan
     // ============================================
@@ -63,4 +68,11 @@ interface ApiService {
     suspend fun submitVote(
         @Body request: VoteRequest
     ): Response<ApiResponse<Any>>
+
+    // ============================================
+    // Transparansi
+    // ============================================
+
+    @GET("laporan/transparansi")
+    suspend fun getTransparansi(): Response<ApiResponse<TransparansiData>>
 }
