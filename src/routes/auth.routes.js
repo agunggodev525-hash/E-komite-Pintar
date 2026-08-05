@@ -5,7 +5,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { validate } = require('../middlewares/validate');
-const { protect } = require('../middlewares/auth');
+const { authenticate } = require('../middlewares/auth');
 const {
   register,
   login,
@@ -108,7 +108,7 @@ router.post(
 // POST /api/v1/auth/fcm-token
 router.post(
   '/fcm-token',
-  protect,
+  authenticate,
   [
     body('fcm_token').notEmpty().withMessage('FCM Token wajib diisi'),
   ],
