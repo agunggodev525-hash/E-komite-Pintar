@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     // URL Vercel Backend Production
-    private const val BASE_URL = "https://e-komite-pintar-h8u7wk404-agung-developer-s-projects.vercel.app/api/v1/"
+    private const val BASE_URL = "https://e-komite-pintar-hecwp1n5l-agung-developer-s-projects.vercel.app/api/v1/"
 
     private var token: String? = null
     private var apiService: ApiService? = null
