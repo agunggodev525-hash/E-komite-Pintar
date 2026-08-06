@@ -3,7 +3,7 @@
 // ============================================
 
 const express = require('express');
-const { getAnalytics, getTenants, createTenant, toggleTenantStatus, impersonateTenant, resetPasswordTenant, getSystemLogs, getSettings, updateSettings } = require('../controllers/superadmin.controller');
+const { getAnalytics, getTenants, createTenant, toggleTenantStatus, impersonateTenant, resetPasswordTenant, updateTenant, getSystemLogs, getSettings, updateSettings } = require('../controllers/superadmin.controller');
 const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 
@@ -20,6 +20,7 @@ router.get('/analytics', getAnalytics);
 router.get('/tenants', getTenants);
 router.post('/tenants', createTenant);
 router.patch('/tenants/:id/status', toggleTenantStatus);
+router.put('/tenants/:id', updateTenant);
 
 // Troubleshooting
 router.post('/tenants/:id/impersonate', impersonateTenant);

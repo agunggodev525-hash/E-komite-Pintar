@@ -184,7 +184,7 @@ const impersonateTenant = async (req, res, next) => {
 
     // Generate JWT khusus untuk admin ini
     const token = jwt.sign(
-      { userId: admin.id, role: admin.role, sekolahId: admin.sekolah_id },
+      { id: admin.id, role: admin.role, sekolahId: admin.sekolah_id },
       process.env.JWT_SECRET,
       { expiresIn: '1h' } // Token impersonate cukup 1 jam
     );
@@ -312,6 +312,36 @@ const updateSettings = async (req, res, next) => {
   }
 };
 
+/**
+ * Update Tenant (Ubah Paket Berlangganan, dll)
+ * PUT /api/v1/superadmin/tenants/:id
+ */
+const updateTenant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { paket_berlangganan, nama_sekolah, alamat } = req.body;
+
+    const sekolah = await prisma.sekolah.findUnique({ where: { id } });
+    if (!sekolah) {
+      return errorResponse(res, 'Tenant tidak ditemukan', 404);
+    }
+
+    const updateData = {};
+    if (paket_berlangganan) updateData.paket_berlangganan = paket_berlangganan;
+    if (nama_sekolah) updateData.nama_sekolah = nama_sekolah;
+    if (alamat !== undefined) updateData.alamat = alamat;
+
+    const updated = await prisma.sekolah.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return successResponse(res, 'Tenant berhasil diperbarui.', updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAnalytics,
   getTenants,
@@ -319,6 +349,7 @@ module.exports = {
   toggleTenantStatus,
   impersonateTenant,
   resetPasswordTenant,
+  updateTenant,
   getSystemLogs,
   getSettings,
   updateSettings

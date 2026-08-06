@@ -5,17 +5,13 @@
 const crypto = require('crypto');
 const prisma = require('../config/database');
 const { successResponse, errorResponse } = require('../utils/response');
+const midtransClient = require('midtrans-client');
 
 /**
  * Inisiasi pembayaran (checkout)
  * POST /api/v1/pembayaran/checkout
  * Untuk role ORANG_TUA — membayar tagihan untuk siswa mereka
- *
- * Saat ini mengembalikan dummy_payment_url.
- * Akan diganti dengan integrasi Payment Gateway (Midtrans/Xendit) di fase berikutnya.
  */
-const midtransClient = require('midtrans-client');
-
 const checkout = async (req, res, next) => {
   try {
     const { tagihan_id, siswa_id } = req.body;
@@ -106,9 +102,11 @@ const checkout = async (req, res, next) => {
   }
 };
 
-module.exports = { checkout };
-
-
+/**
+ * Ambil semua pembayaran untuk sekolah admin
+ * GET /api/v1/pembayaran
+ * Akses: ADMIN_KOMITE, SUPER_ADMIN
+ */
 const getAllPembayaran = async (req, res, next) => {
   try {
     const { status, bulan, limit = 50, page = 1 } = req.query;
@@ -139,6 +137,11 @@ const getAllPembayaran = async (req, res, next) => {
   }
 };
 
+/**
+ * Tandai pembayaran LUNAS (manual/tunai)
+ * POST /api/v1/pembayaran/:id/lunas
+ * Akses: ADMIN_KOMITE, SUPER_ADMIN
+ */
 const markLunas = async (req, res, next) => {
   try {
     const { id } = req.params;

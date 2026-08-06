@@ -131,8 +131,8 @@ const getAll = async (req, res, next) => {
       ...(kelas && { kelas }),
       ...(search && {
         OR: [
-          { nama_siswa: { contains: search } },
-          { nisn: { contains: search } },
+          { nama_siswa: { contains: search, mode: 'insensitive' } },
+          { nisn: { contains: search, mode: 'insensitive' } },
         ],
       }),
     };
