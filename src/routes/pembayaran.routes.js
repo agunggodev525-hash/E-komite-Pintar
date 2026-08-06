@@ -45,6 +45,9 @@ router.post(
 );
 
 router.get('/', authenticate, authorize('ADMIN_KOMITE', 'SUPER_ADMIN'), pembayaranController.getAllPembayaran);
-router.post('/:id/lunas', authenticate, authorize('ADMIN_KOMITE', 'SUPER_ADMIN'), pembayaranController.markLunas);
+router.post('/:id/lunas', authenticate, authorize('ADMIN_KOMITE', 'SUPER_ADMIN'), pembayaranController.bayarManual); // Alias untuk backward compatibility
+router.post('/:id/bayar', authenticate, authorize('ADMIN_KOMITE', 'SUPER_ADMIN'), pembayaranController.bayarManual);
+router.post('/:id/dispensasi', authenticate, authorize('ADMIN_KOMITE', 'SUPER_ADMIN'), pembayaranController.setDispensasi);
+router.post('/peringatan-massal', authenticate, authorize('ADMIN_KOMITE', 'SUPER_ADMIN'), pembayaranController.kirimPeringatanMassal);
 
 module.exports = router;

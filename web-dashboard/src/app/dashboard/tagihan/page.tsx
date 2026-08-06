@@ -84,21 +84,15 @@ export default function DaftarTagihanPage() {
     if (selectedTagihan) {
       try {
         const bayar = parseInt(nominalDiterima || "0");
-        // Di backend kita hanya punya status LUNAS/PENDING tanpa cicilan saat ini
-        if (bayar >= selectedTagihan.sisa_tagihan) {
-          const res = await apiFetch(`/pembayaran/${selectedTagihan.id}/lunas`, {
-            method: 'POST'
-          });
-          if (res.success) {
-            alert("Pembayaran berhasil dicatat sebagai LUNAS");
-            fetchTagihan(); // Refresh data
-          } else {
-            alert("Gagal mencatat pembayaran: " + res.message);
-          }
+        const res = await apiFetch(`/pembayaran/${selectedTagihan.id}/bayar`, {
+          method: 'POST',
+          body: JSON.stringify({ nominal_bayar: bayar })
+        });
+        if (res.success) {
+          alert("Pembayaran berhasil dicatat");
+          fetchTagihan(); // Refresh data
         } else {
-          // Dummy update untuk cicilan (hanya di UI sementara)
-          alert("Fitur pembayaran sebagian (cicilan) akan segera tersedia. Untuk sekarang, silakan lunasi penuh.");
-          return;
+          alert("Gagal mencatat pembayaran: " + res.message);
         }
       } catch (error) {
         console.error("Gagal melunaskan tagihan", error);
@@ -108,10 +102,47 @@ export default function DaftarTagihanPage() {
     }
   };
 
-  const handleSaveDispensasi = () => {
+  const [nominalDiskon, setNominalDiskon] = useState<string>("");
+  const [keteranganDiskon, setKeteranganDiskon] = useState<string>("");
+
+  const handleSaveDispensasi = async () => {
     if (selectedDispensasi) {
-      alert(`Berhasil menyimpan pengaturan keringanan biaya untuk ${selectedDispensasi.nama}`);
-      setSelectedDispensasi(null);
+      try {
+        const diskon = parseInt(nominalDiskon || "0");
+        const res = await apiFetch(`/pembayaran/${selectedDispensasi.id}/dispensasi`, {
+          method: 'POST',
+          body: JSON.stringify({ nominal_diskon: diskon, keterangan: keteranganDiskon })
+        });
+        if (res.success) {
+          alert(`Berhasil menyimpan pengaturan keringanan biaya untuk ${selectedDispensasi.nama}`);
+          fetchTagihan();
+        } else {
+          alert("Gagal menyimpan dispensasi: " + res.message);
+        }
+      } catch (error) {
+        console.error("Gagal update dispensasi", error);
+      } finally {
+        setSelectedDispensasi(null);
+      }
+    }
+  };
+
+  const handleKirimPeringatan = async () => {
+    try {
+      const res = await apiFetch(`/pembayaran/peringatan-massal`, {
+        method: 'POST',
+        body: JSON.stringify({ pembayaran_ids: selectedRows, pesan: pesanMassal })
+      });
+      if (res.success) {
+        alert(res.message);
+        setSelectedRows([]);
+      } else {
+        alert("Gagal mengirim pesan: " + res.message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setShowPeringatanModal(false);
     }
   };
 
@@ -439,7 +470,9 @@ export default function DaftarTagihanPage() {
                       <div className="relative flex-1">
                         <input 
                           type="number" 
-                          placeholder="Nominal / Persentase" 
+                          placeholder="Nominal Diskon"
+                          value={nominalDiskon}
+                          onChange={(e) => setNominalDiskon(e.target.value)}
                           className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-500"
                         />
                       </div>
@@ -454,6 +487,8 @@ export default function DaftarTagihanPage() {
                     <textarea 
                       rows={3}
                       placeholder="Misal: Beasiswa Anak Berprestasi, Keringanan Yatim Piatu..."
+                      value={keteranganDiskon}
+                      onChange={(e) => setKeteranganDiskon(e.target.value)}
                       className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none placeholder:text-slate-500"
                     />
                   </div>
@@ -536,10 +571,7 @@ export default function DaftarTagihanPage() {
                 Batal
               </button>
               <button 
-                onClick={() => {
-                  alert("Sistem sedang mengirim pesan peringatan massal di latar belakang...");
-                  setShowPeringatanModal(false);
-                }}
+                onClick={handleKirimPeringatan}
                 className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all shadow-sm text-sm"
               >
                 Ya, Kirim Sekarang

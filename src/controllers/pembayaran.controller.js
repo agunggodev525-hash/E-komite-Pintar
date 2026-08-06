@@ -138,24 +138,132 @@ const getAllPembayaran = async (req, res, next) => {
 };
 
 /**
- * Tandai pembayaran LUNAS (manual/tunai)
- * POST /api/v1/pembayaran/:id/lunas
+ * Pembayaran manual (tunai) atau cicilan
+ * POST /api/v1/pembayaran/:id/bayar
  * Akses: ADMIN_KOMITE, SUPER_ADMIN
  */
-const markLunas = async (req, res, next) => {
+const bayarManual = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { nominal_bayar } = req.body; // nominal yang dibayar saat ini
+
     const payment = await prisma.pembayaran.findUnique({ where: { id }, include: { tagihan: true } });
     if (!payment) return errorResponse(res, 'Data tagihan tidak ditemukan', 404);
     if (payment.tagihan.sekolah_id !== req.user.sekolah_id) return errorResponse(res, 'Forbidden', 403);
+
+    const bayarSekarang = parseFloat(nominal_bayar || 0);
+    const totalDibayar = payment.nominal_dibayar + bayarSekarang;
+    const tagihanAkhir = payment.tagihan.nominal - payment.nominal_diskon;
+
+    let status = 'PENDING';
+    if (totalDibayar >= tagihanAkhir) {
+      status = 'LUNAS';
+    } else if (totalDibayar > 0) {
+      status = 'DICICIL';
+    }
+
     const updated = await prisma.pembayaran.update({
       where: { id },
-      data: { status: 'LUNAS', tanggal_bayar: new Date(), metode_bayar: 'TUNAI_MANUAL' }
+      data: {
+        nominal_dibayar: totalDibayar,
+        status: status,
+        tanggal_bayar: new Date(),
+        metode_bayar: 'TUNAI_MANUAL'
+      }
     });
-    return successResponse(res, 'Pembayaran berhasil ditandai LUNAS', updated);
+
+    return successResponse(res, `Pembayaran berhasil dicatat. Status: ${status}`, updated);
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { checkout, getAllPembayaran, markLunas };
+/**
+ * Set Dispensasi (Diskon/Beasiswa)
+ * POST /api/v1/pembayaran/:id/dispensasi
+ * Akses: ADMIN_KOMITE, SUPER_ADMIN
+ */
+const setDispensasi = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { nominal_diskon, keterangan } = req.body;
+
+    const payment = await prisma.pembayaran.findUnique({ where: { id }, include: { tagihan: true } });
+    if (!payment) return errorResponse(res, 'Data tagihan tidak ditemukan', 404);
+    if (payment.tagihan.sekolah_id !== req.user.sekolah_id) return errorResponse(res, 'Forbidden', 403);
+
+    const diskon = parseFloat(nominal_diskon || 0);
+    const tagihanAkhir = payment.tagihan.nominal - diskon;
+
+    let status = payment.status;
+    if (payment.nominal_dibayar >= tagihanAkhir) {
+      status = 'LUNAS';
+    }
+
+    const updated = await prisma.pembayaran.update({
+      where: { id },
+      data: {
+        nominal_diskon: diskon,
+        status: status
+      }
+    });
+
+    // Opsional: simpan alasan dispensasi jika ada tabel riwayat atau log, sementara kita biarkan.
+    
+    return successResponse(res, 'Keringanan biaya berhasil disimpan', updated);
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Kirim Peringatan Massal (WhatsApp Gateway Mock)
+ * POST /api/v1/pembayaran/peringatan-massal
+ * Akses: ADMIN_KOMITE, SUPER_ADMIN
+ */
+const kirimPeringatanMassal = async (req, res, next) => {
+  try {
+    const { pembayaran_ids, pesan } = req.body;
+    
+    if (!pembayaran_ids || !Array.isArray(pembayaran_ids) || pembayaran_ids.length === 0) {
+      return errorResponse(res, 'Daftar ID pembayaran tidak valid', 400);
+    }
+
+    const payments = await prisma.pembayaran.findMany({
+      where: { 
+        id: { in: pembayaran_ids },
+        tagihan: { sekolah_id: req.user.sekolah_id }
+      },
+      include: {
+        siswa: {
+          include: { orang_tua: true }
+        },
+        tagihan: true
+      }
+    });
+
+    // Mock integrasi Notification Service (bisa menggunakan WA Gateway atau Push Notif)
+    const { sendPushNotification } = require('../services/notification.service');
+    const tokens = [];
+
+    payments.forEach(p => {
+      // Mock kirim pesan
+      let pesanCustom = pesan.replace('[Nama Siswa]', p.siswa.nama_siswa);
+      console.log(`[WA MOCK] To: ${p.siswa.orang_tua?.no_whatsapp || 'No WA'} -> ${pesanCustom}`);
+      
+      if (p.siswa.orang_tua?.fcm_token) {
+        tokens.push(p.siswa.orang_tua.fcm_token);
+      }
+    });
+
+    if (tokens.length > 0) {
+      await sendPushNotification(tokens, "Peringatan Tagihan", "Harap periksa tagihan Anda yang belum lunas.");
+    }
+
+    return successResponse(res, `Peringatan massal berhasil dikirim ke ${payments.length} siswa`);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { checkout, getAllPembayaran, bayarManual, setDispensasi, kirimPeringatanMassal };

@@ -105,6 +105,8 @@ model Pembayaran {
   metode_bayar  String?
   tanggal_bayar DateTime?
   payment_token String?
+  nominal_dibayar Float   @default(0)
+  nominal_diskon  Float   @default(0)
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
 

@@ -56,10 +56,13 @@ const authenticate = async (req, res, next) => {
     if (error.name === 'TokenExpiredError') {
       return errorResponse(res, 'Token telah kedaluwarsa. Silakan login ulang.', 401);
     }
-    if (error.name === 'JsonWebTokenError') {
+    if (error.name === 'JsonWebTokenError' || error.name === 'NotBeforeError') {
       return errorResponse(res, 'Token tidak valid.', 401);
     }
-    return errorResponse(res, 'Terjadi kesalahan autentikasi.', 500);
+    
+    // Jika error bukan karena JWT (misal: koneksi database gagal saat mencari user),
+    // teruskan ke global error handler agar dilog dengan benar.
+    next(error);
   }
 };
 
