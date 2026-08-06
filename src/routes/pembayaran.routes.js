@@ -30,9 +30,7 @@ router.post(
 
     body('siswa_id')
       .notEmpty()
-      .withMessage('ID siswa wajib diisi.')
-      .isUUID()
-      .withMessage('ID siswa harus berformat UUID.'),
+      .withMessage('ID siswa wajib diisi.'),
 
     body('metode_bayar')
       .optional()
