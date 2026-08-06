@@ -5,13 +5,27 @@ const prisma = new PrismaClient();
 
 async function main() {
   const passwordHash = await bcrypt.hash('password123', 10);
+  const demoPasswordHash = await bcrypt.hash('admin123', 10);
 
-  // 1. Buat SUPER ADMIN
+  // 1. Buat SUPER ADMIN (email sesuai dengan tampilan demo di halaman login)
   const superAdmin = await prisma.user.upsert({
+    where: { email: 'superadmin@ekomite.com' },
+    update: { password_hash: demoPasswordHash, role: 'SUPER_ADMIN' },
+    create: {
+      nama_lengkap: 'SaaS Super Admin',
+      email: 'superadmin@ekomite.com',
+      password_hash: demoPasswordHash,
+      role: 'SUPER_ADMIN',
+      status: true
+    },
+  });
+
+  // 1b. Juga tetap buat user lama agar backward compatible
+  await prisma.user.upsert({
     where: { email: 'superadmin@ekomite.id' },
     update: { password_hash: passwordHash, role: 'SUPER_ADMIN' },
     create: {
-      nama_lengkap: 'SaaS Super Admin',
+      nama_lengkap: 'SaaS Super Admin (Legacy)',
       email: 'superadmin@ekomite.id',
       password_hash: passwordHash,
       role: 'SUPER_ADMIN',
@@ -76,11 +90,13 @@ async function main() {
     },
   });
 
-  console.log('Seeding selesai!');
-  console.log('Super Admin:', superAdmin.email);
-  console.log('Admin Komite:', admin.email);
-  console.log('Orang Tua:', ortu.email);
-  console.log('Sekolah:', pihakSekolah.email);
+  console.log('\n✅ Seeding selesai!');
+  console.log('\n=== Akun Demo ==========================');
+  console.log('Super Admin  :', superAdmin.email, '/ admin123');
+  console.log('Admin Komite :', admin.email, '/ password123');
+  console.log('Orang Tua    :', ortu.email, '/ password123');
+  console.log('Sekolah      :', pihakSekolah.email, '/ password123');
+  console.log('========================================\n');
 }
 
 main()

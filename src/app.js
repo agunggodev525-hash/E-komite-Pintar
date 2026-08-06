@@ -2,6 +2,7 @@
 // Express Application Setup
 // ============================================
 
+
 require('dotenv').config();
 
 const express = require('express');
@@ -19,7 +20,7 @@ const laporanRoutes = require('./routes/laporan.routes');
 const webhookRoutes = require('./routes/webhook.routes');
 const votingRoutes = require('./routes/voting.routes');
 const superadminRoutes = require('./routes/superadmin.routes');
-const sekolahRoutes = require('./routes/sekolah.routes'); // <-- SUPER_ADMIN routes
+const sekolahRoutes = require('./routes/sekolah.routes');
 const siswaRoutes = require('./routes/siswa.routes');
 const pengeluaranRoutes = require('./routes/pengeluaran.routes');
 

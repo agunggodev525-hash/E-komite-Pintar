@@ -1,8 +1,24 @@
 {
+  "version": 2,
+  "buildCommand": "cd web-dashboard && npm install && npm run build",
+  "outputDirectory": "web-dashboard/.next",
+  "installCommand": "cd web-dashboard && npm install",
+  "framework": "nextjs",
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index.js"
+      "source": "/api/v1/:path*",
+      "destination": "/api/backend/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
     }
   ]
 }
+
