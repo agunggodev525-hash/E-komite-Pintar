@@ -14,18 +14,32 @@ const midtransClient = require('midtrans-client');
  */
 const checkout = async (req, res, next) => {
   try {
-    const { tagihan_id, siswa_id } = req.body;
+    let { tagihan_id, siswa_id } = req.body;
 
     const tagihan = await prisma.tagihan.findUnique({
       where: { id: tagihan_id },
     });
     if (!tagihan) return errorResponse(res, 'Tagihan tidak ditemukan.', 404);
 
+    let targetSiswaId = siswa_id;
+    if (siswa_id === 'dummy-siswa-id' && req.user.role === 'ORANG_TUA') {
+      const anakList = await prisma.siswa.findMany({
+        where: { orang_tua_id: req.user.id },
+        take: 1
+      });
+      if (anakList.length > 0) {
+        targetSiswaId = anakList[0].id;
+      }
+    }
+
     const siswa = await prisma.siswa.findUnique({
-      where: { id: siswa_id },
+      where: { id: targetSiswaId },
       select: { id: true, nama_siswa: true, orang_tua_id: true, orang_tua: true },
     });
     if (!siswa) return errorResponse(res, 'Siswa tidak ditemukan.', 404);
+
+    // Overwrite the siswa_id to the real one for the rest of the function
+    siswa_id = targetSiswaId;
 
     if (req.user.role === 'ORANG_TUA' && siswa.orang_tua_id !== req.user.id) {
       return errorResponse(res, 'Anda tidak dapat membayar tagihan untuk siswa ini.', 403);
