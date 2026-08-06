@@ -18,7 +18,7 @@ const router = express.Router();
 router.get(
   '/',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   siswaController.getAll
 );
 
@@ -29,7 +29,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   [
     body('nama_siswa')
       .trim()
@@ -65,7 +65,7 @@ router.post(
 router.post(
   '/bulk',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   [
     body('data')
       .isArray()
@@ -81,7 +81,7 @@ router.post(
 router.post(
   '/:id/reset-password',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   siswaController.resetPassword
 );
 
@@ -91,7 +91,7 @@ router.post(
 router.delete(
   '/:id',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   siswaController.remove
 );
 

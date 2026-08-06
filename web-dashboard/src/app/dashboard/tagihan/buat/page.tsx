@@ -23,7 +23,7 @@ export default function BuatTagihanPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   // RBAC Check
-  if (user?.role !== "ADMIN_KOMITE" && user?.role !== "SUPER_ADMIN") {
+  if (user?.role !== "ADMIN_KOMITE") {
     return (
       <DashboardLayout title="Akses Ditolak">
         <div className="bg-rose-50 border border-rose-200 p-6 rounded-2xl text-center">

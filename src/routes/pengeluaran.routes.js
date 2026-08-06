@@ -28,7 +28,7 @@ router.get(
  */
 router.post(
   '/',
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   pengeluaranController.createPengeluaran
 );
 
@@ -38,7 +38,7 @@ router.post(
  */
 router.put(
   '/:id',
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   pengeluaranController.updatePengeluaran
 );
 
@@ -48,7 +48,7 @@ router.put(
  */
 router.delete(
   '/:id',
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
+  authorize('ADMIN_KOMITE'),
   pengeluaranController.deletePengeluaran
 );
 

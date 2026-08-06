@@ -56,7 +56,7 @@ export default function SiswaPage() {
 
   useEffect(() => {
     // Only load if authorized
-    if (user?.role === "ADMIN_KOMITE" || user?.role === "SUPER_ADMIN") {
+    if (user?.role === "ADMIN_KOMITE") {
       loadSiswa();
     }
   }, [user, search, kelasFilter, page]);
@@ -173,8 +173,8 @@ export default function SiswaPage() {
     }
   };
 
-  // RBAC Check
-  if (user?.role !== "ADMIN_KOMITE" && user?.role !== "SUPER_ADMIN") {
+  // RBAC Check (Super Admin harus lewat Impersonate)
+  if (user?.role !== "ADMIN_KOMITE") {
     return (
       <DashboardLayout title="Akses Ditolak">
         <div className="bg-rose-50 border border-rose-200 p-6 rounded-2xl text-center">

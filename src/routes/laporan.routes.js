@@ -18,7 +18,7 @@ const router = express.Router();
 router.get(
   '/keuangan',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE', 'SEKOLAH'),
+  authorize('ADMIN_KOMITE', 'SEKOLAH'),
   laporanController.getKeuangan
 );
 
@@ -30,7 +30,7 @@ router.get(
 router.get(
   '/transparansi',
   authenticate,
-  authorize('SUPER_ADMIN', 'ADMIN_KOMITE', 'SEKOLAH', 'ORANG_TUA'),
+  authorize('ADMIN_KOMITE', 'SEKOLAH', 'ORANG_TUA'),
   laporanController.getTransparansi
 );
 
