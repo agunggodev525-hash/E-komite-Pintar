@@ -42,7 +42,7 @@ export default function VotingAdminPage() {
 
   const loadVotings = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("ekomite_token");
       const res = await fetch("/api/backend/voting/admin", {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -78,7 +78,7 @@ export default function VotingAdminPage() {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("ekomite_token");
       
       const res = await fetch("/api/backend/voting/admin", {
         method: "POST",
@@ -112,7 +112,7 @@ export default function VotingAdminPage() {
     if (!window.confirm(`Yakin ingin menghapus voting "${judul}"?\nSeluruh perolehan suara akan ikut terhapus permanen.`)) return;
     
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("ekomite_token");
       const res = await fetch(`/api/backend/voting/admin/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
