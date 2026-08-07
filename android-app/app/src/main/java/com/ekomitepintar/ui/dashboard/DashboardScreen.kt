@@ -61,6 +61,16 @@ fun DashboardScreen(
         }
     }
 
+    // Tampilkan error di Snackbar jika ada
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { msg ->
+            if (uiState.tagihanList.isNotEmpty()) {
+                snackbarHostState.showSnackbar(msg)
+                viewModel.clearError()
+            }
+        }
+    }
+
     // Animasi masuk & Load Data Awal
     var showContent by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {

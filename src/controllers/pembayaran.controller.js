@@ -54,9 +54,12 @@ const checkout = async (req, res, next) => {
     const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'MIDTRANS_SERVER_KEY' } });
     const serverKey = settingServerKey?.value || process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-DUMMY123';
 
+    // Tentukan mode Production otomatis jika kunci tidak berawalan 'SB-'
+    const isProductionKey = !serverKey.startsWith('SB-');
+
     // Inisialisasi Midtrans Snap
     const snap = new midtransClient.Snap({
-      isProduction: false,
+      isProduction: isProductionKey,
       serverKey: serverKey
     });
 
