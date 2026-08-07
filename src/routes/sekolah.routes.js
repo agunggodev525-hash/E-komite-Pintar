@@ -18,5 +18,6 @@ router.use(authorize('SUPER_ADMIN'));
 router.post('/', sekolahController.createSekolah);
 router.get('/', sekolahController.getAllSekolah);
 router.put('/:id', sekolahController.updateSekolah);
+router.delete('/:id', sekolahController.deleteSekolah);
 
 module.exports = router;

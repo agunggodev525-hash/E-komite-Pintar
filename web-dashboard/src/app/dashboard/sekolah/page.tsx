@@ -142,6 +142,29 @@ export default function SekolahPage() {
     }
   };
 
+  const handleDeleteSekolah = async (id: string, namaSekolah: string) => {
+    if (!window.confirm(`⚠️ PERINGATAN DESTRUKTIF\n\nApakah Anda yakin ingin menghapus permanen sekolah "${namaSekolah}"?\n\nSeluruh data (Siswa, Tagihan, Riwayat Pembayaran) akan ikut terhapus dan tidak bisa dikembalikan!`)) {
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      const res = await apiFetch(`/sekolah/${id}`, {
+        method: "DELETE"
+      });
+      if (res.success || !res.message?.toLowerCase().includes('gagal')) {
+        alert("Sekolah berhasil dihapus.");
+        loadData();
+      } else {
+        alert(res.message || "Gagal menghapus sekolah.");
+      }
+    } catch (err: any) {
+      alert(err.message || "Terjadi kesalahan sistem saat menghapus.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleUpdatePackage = async () => {
     if(!selectedSekolah) return;
     try {
@@ -308,6 +331,15 @@ export default function SekolahPage() {
                             >
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteSekolah(sk.id, sk.nama_sekolah)}
+                              title="Hapus Klien Sekolah"
+                              className="p-2 rounded-full text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
                             </button>
                           </div>

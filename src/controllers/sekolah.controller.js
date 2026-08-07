@@ -128,4 +128,28 @@ const updateSekolah = async (req, res, next) => {
   }
 };
 
-module.exports = { createSekolah, getAllSekolah, updateSekolah };
+/**
+ * Menghapus Klien Sekolah
+ * DELETE /api/v1/sekolah/:id
+ * Akses: Khusus SUPER_ADMIN
+ */
+const deleteSekolah = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Penghapusan ini akan otomatis menghapus (Cascade) data lain 
+    // seperti user, siswa, tagihan, pembayaran terkait.
+    await prisma.sekolah.delete({
+      where: { id },
+    });
+
+    return successResponse(res, 'Sekolah berhasil dihapus beserta seluruh data terkait.');
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return errorResponse(res, 'Sekolah tidak ditemukan.', 404);
+    }
+    next(error);
+  }
+};
+
+module.exports = { createSekolah, getAllSekolah, updateSekolah, deleteSekolah };
