@@ -157,16 +157,16 @@ const requestOtp = async (req, res, next) => {
       return errorResponse(res, 'Akun Anda telah dinonaktifkan. Hubungi admin.', 403);
     }
 
-    // Generate 6 digit OTP acak
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const waToken = process.env.WA_API_TOKEN;
+
+    // Generate 6 digit OTP acak, atau gunakan 123456 jika token WA belum diatur (Mode Testing)
+    const otp = waToken ? Math.floor(100000 + Math.random() * 900000).toString() : '123456';
     
     // Simpan ke memory Map (masa aktif 5 menit = 300.000 ms)
     otpStore.set(no_whatsapp, {
       otp,
       expiresAt: Date.now() + 5 * 60 * 1000,
     });
-
-    const waToken = process.env.WA_API_TOKEN;
     const pesan = `Kode OTP E-Komite Pintar Anda adalah *${otp}*.\n\nJangan berikan kode ini kepada siapapun. Berlaku 5 menit.`;
 
     if (waToken) {
