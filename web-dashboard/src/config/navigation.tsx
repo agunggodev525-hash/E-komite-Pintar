@@ -7,7 +7,8 @@ import {
   GraduationCap, 
   FileText, 
   PieChart,
-  Banknote
+  Banknote,
+  Vote
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -40,6 +41,7 @@ const navigationConfig: Record<string, NavItem[]> = {
     { label: "Kelola Siswa", href: "/dashboard/siswa", icon: <GraduationCap className="w-5 h-5" />, description: "Data siswa" },
     { label: "Tagihan & Pemasukan", href: "/dashboard/tagihan", icon: <FileText className="w-5 h-5" />, description: "Kelola tagihan" },
     { label: "Catat Pengeluaran", href: "/dashboard/pengeluaran", icon: <Banknote className="w-5 h-5" />, description: "Catat kas keluar" },
+    { label: "Kelola E-Voting", href: "/dashboard/voting", icon: <Vote className="w-5 h-5" />, description: "Pemilihan online" },
     { label: "Laporan Kas", href: "/dashboard/laporan", icon: <PieChart className="w-5 h-5" />, description: "Laporan keuangan" },
   ],
   SEKOLAH: [

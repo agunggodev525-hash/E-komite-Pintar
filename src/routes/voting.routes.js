@@ -30,4 +30,27 @@ router.post(
   votingController.submitVote
 );
 
+// ============================================
+// Fitur Admin (Khusus ADMIN_KOMITE)
+// ============================================
+const { authorize } = require('../middlewares/auth');
+
+router.get(
+  '/admin',
+  authorize(['ADMIN_KOMITE', 'SEKOLAH']),
+  votingController.getVotingAdmin
+);
+
+router.post(
+  '/admin',
+  authorize(['ADMIN_KOMITE']),
+  votingController.createVoting
+);
+
+router.delete(
+  '/admin/:id',
+  authorize(['ADMIN_KOMITE']),
+  votingController.deleteVoting
+);
+
 module.exports = router;

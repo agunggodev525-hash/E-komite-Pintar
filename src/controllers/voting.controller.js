@@ -126,8 +126,105 @@ const submitVote = async (req, res, next) => {
     next(error);
   }
 };
+// ============================================
+// Fitur Admin
+// ============================================
+
+/**
+ * Mengambil daftar voting untuk Dashboard Admin
+ * GET /api/v1/voting/admin
+ */
+const getVotingAdmin = async (req, res, next) => {
+  try {
+    const sekolah_id = req.user.sekolah_id;
+
+    const votingList = await prisma.voting.findMany({
+      where: { sekolah_id },
+      include: {
+        kandidat: {
+          include: {
+            _count: {
+              select: { suara: true }
+            }
+          }
+        },
+        _count: {
+          select: { suara: true }
+        }
+      },
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
+
+    return successResponse(res, 'Berhasil mengambil daftar E-Voting Admin', votingList);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Membuat voting baru (Oleh Admin)
+ * POST /api/v1/voting/admin
+ */
+const createVoting = async (req, res, next) => {
+  try {
+    const { judul, deskripsi, tanggal_berakhir, kandidat } = req.body;
+    const sekolah_id = req.user.sekolah_id;
+
+    if (!judul || !tanggal_berakhir || !kandidat || kandidat.length < 2) {
+      return errorResponse(res, 'Judul, Tanggal Berakhir, dan minimal 2 Kandidat wajib diisi.', 400);
+    }
+
+    const newVoting = await prisma.voting.create({
+      data: {
+        judul,
+        deskripsi,
+        tanggal_berakhir: new Date(tanggal_berakhir),
+        sekolah_id,
+        kandidat: {
+          create: kandidat.map(k => ({ nama_kandidat: k }))
+        }
+      }
+    });
+
+    return successResponse(res, 'Voting berhasil dibuat.', newVoting, 201);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Menghapus voting (Oleh Admin)
+ * DELETE /api/v1/voting/admin/:id
+ */
+const deleteVoting = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const sekolah_id = req.user.sekolah_id;
+
+    const voting = await prisma.voting.findFirst({
+      where: { id, sekolah_id }
+    });
+
+    if (!voting) {
+      return errorResponse(res, 'Voting tidak ditemukan.', 404);
+    }
+
+    await prisma.voting.delete({
+      where: { id }
+    });
+
+    return successResponse(res, 'Voting berhasil dihapus.');
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getActiveVoting,
-  submitVote
+  submitVote,
+  getVotingAdmin,
+  createVoting,
+  deleteVoting
 };
