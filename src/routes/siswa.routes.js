@@ -95,4 +95,15 @@ router.delete(
   siswaController.remove
 );
 
+/**
+ * PUT /api/v1/siswa/:id
+ * Update data siswa
+ */
+router.put(
+  '/:id',
+  authenticate,
+  authorize('ADMIN_KOMITE'),
+  siswaController.update
+);
+
 module.exports = router;

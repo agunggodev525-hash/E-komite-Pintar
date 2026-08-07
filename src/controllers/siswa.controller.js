@@ -339,10 +339,60 @@ const bulkCreate = async (req, res, next) => {
   }
 };
 
+/**
+ * PUT /api/v1/siswa/:id
+ * Update data siswa
+ */
+const update = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { nama_siswa, nisn, kelas, nama_orang_tua, email_orang_tua, whatsapp_orang_tua } = req.body;
+    const sekolah_id = req.user.sekolah_id;
+
+    // Cek keberadaan siswa & hak akses
+    const siswa = await prisma.siswa.findFirst({
+      where: { id, sekolah_id }
+    });
+
+    if (!siswa) {
+      return errorResponse(res, 'Siswa tidak ditemukan.', 404);
+    }
+
+    const updatedSiswa = await prisma.$transaction(async (tx) => {
+      // Update orang tua
+      if (nama_orang_tua || whatsapp_orang_tua) {
+        await tx.user.update({
+          where: { id: siswa.orang_tua_id },
+          data: {
+            ...(nama_orang_tua && { nama_lengkap: nama_orang_tua }),
+            ...(email_orang_tua !== undefined && { email: email_orang_tua }),
+            ...(whatsapp_orang_tua && { no_whatsapp: whatsapp_orang_tua })
+          }
+        });
+      }
+
+      // Update siswa
+      return await tx.siswa.update({
+        where: { id },
+        data: {
+          ...(nama_siswa && { nama_siswa }),
+          ...(nisn && { nisn: nisn.toString() }),
+          ...(kelas && { kelas: kelas.toString() })
+        }
+      });
+    });
+
+    return successResponse(res, 'Data siswa berhasil diperbarui.', updatedSiswa);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   create,
   getAll,
   resetPassword,
   remove,
-  bulkCreate
+  bulkCreate,
+  update
 };

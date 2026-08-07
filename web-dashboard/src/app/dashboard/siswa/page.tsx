@@ -19,6 +19,7 @@ export default function SiswaPage() {
   const [siswa, setSiswa] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSiswaId, setEditingSiswaId] = useState<string | null>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -74,13 +75,18 @@ export default function SiswaPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await apiFetch("/siswa", {
-        method: "POST",
+      const isEditing = !!editingSiswaId;
+      const url = isEditing ? `/siswa/${editingSiswaId}` : "/siswa";
+      const method = isEditing ? "PUT" : "POST";
+
+      const res = await apiFetch(url, {
+        method: method,
         body: JSON.stringify(formData),
       });
 
       if (res.success) {
         setIsModalOpen(false);
+        setEditingSiswaId(null);
         setFormData({
           nama_siswa: "",
           nisn: "",
@@ -90,14 +96,41 @@ export default function SiswaPage() {
           whatsapp_orang_tua: "",
         });
         loadSiswa();
+        alert(isEditing ? "Siswa berhasil diperbarui" : "Siswa berhasil ditambahkan");
       } else {
-        alert(res.message || "Gagal menambah siswa");
+        alert(res.message || "Gagal menyimpan data siswa");
       }
     } catch (err: any) {
       alert(err.message || "Terjadi kesalahan server");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const openEditModal = (s: any) => {
+    setEditingSiswaId(s.id);
+    setFormData({
+      nama_siswa: s.nama_siswa || "",
+      nisn: s.nisn || "",
+      kelas: s.kelas || "",
+      nama_orang_tua: s.orang_tua?.nama_lengkap || "",
+      email_orang_tua: s.orang_tua?.email || "",
+      whatsapp_orang_tua: s.orang_tua?.no_whatsapp || "",
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingSiswaId(null);
+    setFormData({
+      nama_siswa: "",
+      nisn: "",
+      kelas: "",
+      nama_orang_tua: "",
+      email_orang_tua: "",
+      whatsapp_orang_tua: "",
+    });
   };
 
   const handleDelete = async (id: string) => {
@@ -288,7 +321,9 @@ export default function SiswaPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                        <button 
+                          onClick={() => openEditModal(s)}
+                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button 
@@ -338,19 +373,19 @@ export default function SiswaPage() {
 
       </div>
 
-      {/* Modal Tambah Siswa */}
+      {/* Modal Tambah/Edit Siswa */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy-900/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)}></div>
+          <div className="absolute inset-0 bg-navy-900/60 backdrop-blur-sm" onClick={() => !isSubmitting && handleCloseModal()}></div>
           <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
             
             <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-gold-500" />
-                Tambah Siswa Baru
+                {editingSiswaId ? <Pencil className="w-5 h-5 text-blue-500" /> : <UserPlus className="w-5 h-5 text-gold-500" />}
+                {editingSiswaId ? "Edit Data Siswa" : "Tambah Siswa Baru"}
               </h3>
               <button 
-                onClick={() => setIsModalOpen(false)}
+                onClick={handleCloseModal}
                 disabled={isSubmitting}
                 className="text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors p-1.5 rounded-lg"
               >
@@ -412,7 +447,7 @@ export default function SiswaPage() {
             <div className="px-6 py-5 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl flex justify-end gap-3 shrink-0">
               <button 
                 type="button" 
-                onClick={() => setIsModalOpen(false)}
+                onClick={handleCloseModal}
                 disabled={isSubmitting}
                 className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-transparent border border-slate-300 hover:bg-slate-100 rounded-xl transition-colors"
               >
