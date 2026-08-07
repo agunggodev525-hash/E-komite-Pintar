@@ -236,6 +236,7 @@ export default function PengeluaranPage() {
               <div>
                 <label className="block text-sm font-semibold text-slate-300 mb-1.5">Bukti Nota / Kuitansi</label>
                 <div 
+                  onClick={() => document.getElementById('file-upload')?.click()}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
@@ -246,6 +247,18 @@ export default function PengeluaranPage() {
                   <button type="button" className="mt-4 px-4 py-2 bg-white/10 border border-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold text-white shadow-sm transition-colors">
                     Jelajahi File
                   </button>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setFormFile(e.target.files[0]);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  {formFile && <p className="mt-2 text-xs text-rose-400">Terpilih: {formFile.name}</p>}
                 </div>
               </div>
             </form>
