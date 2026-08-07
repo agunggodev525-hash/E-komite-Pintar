@@ -3,7 +3,8 @@
 // ============================================
 
 const express = require('express');
-const { authorize, authenticate } = require('../middlewares/auth');
+const { authenticate } = require('../middlewares/auth');
+const { authorize } = require('../middlewares/rbac');
 const dashboardController = require('../controllers/dashboard.controller');
 
 const router = express.Router();

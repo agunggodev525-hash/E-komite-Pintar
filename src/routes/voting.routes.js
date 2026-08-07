@@ -33,7 +33,7 @@ router.post(
 // ============================================
 // Fitur Admin (Khusus ADMIN_KOMITE)
 // ============================================
-const { authorize } = require('../middlewares/auth');
+const { authorize } = require('../middlewares/rbac');
 
 router.get(
   '/admin',
