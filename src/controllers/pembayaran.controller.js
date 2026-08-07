@@ -51,7 +51,7 @@ const checkout = async (req, res, next) => {
     if (existingPayment) return errorResponse(res, 'Tagihan ini sudah lunas.', 409);
 
     // Ambil Midtrans Key dari Setting DB atau ENV
-    const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'MIDTRANS_SERVER_KEY' } });
+    const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'midtrans_server_key' } });
     const serverKey = settingServerKey?.value || process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-DUMMY123';
 
     // Tentukan mode Production otomatis jika kunci tidak berawalan 'SB-'

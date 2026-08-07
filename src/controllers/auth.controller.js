@@ -160,8 +160,8 @@ const requestOtp = async (req, res, next) => {
 
     // Ambil Kredensial WA dari DB
     const [dbWaToken, dbWaUrl] = await Promise.all([
-      prisma.appSetting.findFirst({ where: { key: 'WA_API_TOKEN' } }),
-      prisma.appSetting.findFirst({ where: { key: 'WA_API_URL' } })
+      prisma.appSetting.findFirst({ where: { key: 'wa_api_token' } }),
+      prisma.appSetting.findFirst({ where: { key: 'wa_api_url' } })
     ]);
 
     const waToken = dbWaToken?.value || process.env.WA_API_TOKEN;

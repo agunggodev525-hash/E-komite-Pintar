@@ -20,7 +20,7 @@ const handleWebhook = async (req, res, next) => {
     }
 
     // Ambil ServerKey dari DB atau ENV
-    const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'MIDTRANS_SERVER_KEY' } });
+    const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'midtrans_server_key' } });
     const serverKey = settingServerKey?.value || process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-DUMMY123';
 
     // Verifikasi Signature Midtrans jika ada
