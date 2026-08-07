@@ -127,7 +127,8 @@ const login = async (req, res, next) => {
 
     return successResponse(res, 'Login berhasil.', { user: userData, token });
   } catch (error) {
-    next(error);
+    console.error("Login Error:", error);
+    return res.status(500).json({ success: false, message: error.message || error.toString() });
   }
 };
 
