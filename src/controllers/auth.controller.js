@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../config/database');
 const jwtConfig = require('../config/jwt');
 const { successResponse, errorResponse } = require('../utils/response');
+const axios = require('axios');
 
 // Penyimpanan sementara (In-Memory Map) untuk OTP
 // Format: Map<no_whatsapp, { otp: string, expiresAt: number }>
@@ -165,15 +166,35 @@ const requestOtp = async (req, res, next) => {
       expiresAt: Date.now() + 5 * 60 * 1000,
     });
 
-    // Dummy pengiriman ke WhatsApp Gateway
-    console.log(`\n======================================================`);
-    console.log(`📱 [DUMMY WHATSAPP GATEWAY]`);
-    console.log(`Kepada: ${no_whatsapp}`);
-    console.log(`Pesan: Kode OTP E-Komite Pintar Anda adalah *${otp}*.`);
-    console.log(`Jangan berikan kode ini kepada siapapun. Berlaku 5 menit.`);
-    console.log(`======================================================\n`);
+    const waToken = process.env.WA_API_TOKEN;
+    const pesan = `Kode OTP E-Komite Pintar Anda adalah *${otp}*.\n\nJangan berikan kode ini kepada siapapun. Berlaku 5 menit.`;
 
-    return successResponse(res, 'Kode OTP berhasil dikirim ke nomor WhatsApp Anda.');
+    if (waToken) {
+      try {
+        const waUrl = process.env.WA_API_URL || 'https://api.fonnte.com/send';
+        await axios.post(waUrl, {
+          target: no_whatsapp,
+          message: pesan
+        }, {
+          headers: {
+            Authorization: waToken
+          }
+        });
+        console.log(`✅ [WHATSAPP API] OTP berhasil dikirim ke ${no_whatsapp}`);
+      } catch (waError) {
+        console.error('❌ Gagal mengirim pesan WhatsApp via API:', waError.response ? waError.response.data : waError.message);
+        return errorResponse(res, 'Gagal mengirim pesan WhatsApp. Silakan coba lagi nanti.', 500);
+      }
+    } else {
+      // Dummy pengiriman jika token belum dipasang
+      console.log(`\n======================================================`);
+      console.log(`📱 [DUMMY WHATSAPP GATEWAY] (WA_API_TOKEN kosong)`);
+      console.log(`Kepada: ${no_whatsapp}`);
+      console.log(`Pesan: ${pesan}`);
+      console.log(`======================================================\n`);
+    }
+
+    return successResponse(res, 'Kode OTP berhasil diproses.');
   } catch (error) {
     next(error);
   }
