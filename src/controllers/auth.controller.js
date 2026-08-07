@@ -172,10 +172,16 @@ const requestOtp = async (req, res, next) => {
     if (waToken) {
       try {
         const waUrl = process.env.WA_API_URL || 'https://api.fonnte.com/send';
-        await axios.post(waUrl, {
-          target: no_whatsapp,
-          message: pesan
-        }, {
+        
+        // Sesuaikan payload berdasarkan penyedia layanan (Fonnte vs Wablas)
+        let payload = {};
+        if (waUrl.toLowerCase().includes('wablas')) {
+          payload = { phone: no_whatsapp, message: pesan };
+        } else {
+          payload = { target: no_whatsapp, message: pesan };
+        }
+
+        await axios.post(waUrl, payload, {
           headers: {
             Authorization: waToken
           }
