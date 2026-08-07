@@ -108,7 +108,7 @@ const createTenant = async (req, res, next) => {
 
     const password_hash = await bcrypt.hash(admin_password, 10);
 
-    // DB Transaction: Create Sekolah & User berbarengan
+    // DB Transaction: Create Sekolah & 2 User (Admin & Kepala Sekolah)
     const newTenant = await prisma.$transaction(async (tx) => {
       const sekolah = await tx.sekolah.create({
         data: {
@@ -118,6 +118,7 @@ const createTenant = async (req, res, next) => {
         }
       });
 
+      // Buat Admin Komite
       await tx.user.create({
         data: {
           nama_lengkap: admin_nama,
@@ -127,6 +128,24 @@ const createTenant = async (req, res, next) => {
           sekolah_id: sekolah.id
         }
       });
+
+      // Buat Kepala Sekolah Otomatis
+      const emailDomain = admin_email.split('@')[1];
+      const ksEmail = `kepalasekolah@${emailDomain}`;
+      const ksPassword = await bcrypt.hash('Password123!', 10);
+      
+      const existingKs = await tx.user.findUnique({ where: { email: ksEmail } });
+      if (!existingKs) {
+        await tx.user.create({
+          data: {
+            nama_lengkap: `Kepala Sekolah ${nama_sekolah}`,
+            email: ksEmail,
+            password_hash: ksPassword,
+            role: 'SEKOLAH',
+            sekolah_id: sekolah.id
+          }
+        });
+      }
 
       return sekolah;
     });
