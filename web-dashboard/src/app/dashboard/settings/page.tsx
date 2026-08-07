@@ -13,6 +13,7 @@ export default function SettingsPage() {
     midtrans_client_key: "",
     midtrans_server_key: "",
     wa_api_token: "",
+    wa_api_url: "",
   });
 
   const loadSettings = async () => {
@@ -24,6 +25,7 @@ export default function SettingsPage() {
           midtrans_client_key: res.data.midtrans_client_key || "",
           midtrans_server_key: res.data.midtrans_server_key || "",
           wa_api_token: res.data.wa_api_token || "",
+          wa_api_url: res.data.wa_api_url || "",
         });
       }
     } catch (err: any) {
@@ -142,9 +144,26 @@ export default function SettingsPage() {
                   name="wa_api_token"
                   value={formData.wa_api_token}
                   onChange={handleChange}
-                  className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors font-mono text-sm"
+                  className="w-full px-4 py-2.5 bg-navy-900 border border-white-10 rounded-xl text-white focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-colors"
                   placeholder="Masukkan token API WhatsApp"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white-80 mb-2">
+                  API URL / Endpoint (Khusus Wablas/Lainnya)
+                </label>
+                <input
+                  type="text"
+                  name="wa_api_url"
+                  value={formData.wa_api_url}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2.5 bg-navy-900 border border-white-10 rounded-xl text-white focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-colors"
+                  placeholder="Contoh: https://deu.wablas.com/api/send-message"
+                />
+                <p className="text-xs text-white-40 mt-1.5">
+                  Kosongkan jika menggunakan Fonnte. Jika pakai Wablas, wajib diisi lengkap dengan /api/send-message.
+                </p>
               </div>
             </div>
 

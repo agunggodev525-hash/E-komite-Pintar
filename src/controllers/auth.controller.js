@@ -157,7 +157,14 @@ const requestOtp = async (req, res, next) => {
       return errorResponse(res, 'Akun Anda telah dinonaktifkan. Hubungi admin.', 403);
     }
 
-    const waToken = process.env.WA_API_TOKEN;
+    // Ambil Kredensial WA dari DB
+    const [dbWaToken, dbWaUrl] = await Promise.all([
+      prisma.appSetting.findFirst({ where: { key: 'WA_API_TOKEN' } }),
+      prisma.appSetting.findFirst({ where: { key: 'WA_API_URL' } })
+    ]);
+
+    const waToken = dbWaToken?.value || process.env.WA_API_TOKEN;
+    const waUrlRaw = dbWaUrl?.value || process.env.WA_API_URL || 'https://api.fonnte.com/send';
 
     // Generate 6 digit OTP acak, atau gunakan 123456 jika token WA belum diatur (Mode Testing)
     const otp = waToken ? Math.floor(100000 + Math.random() * 900000).toString() : '123456';
@@ -171,7 +178,7 @@ const requestOtp = async (req, res, next) => {
 
     if (waToken) {
       try {
-        const waUrl = process.env.WA_API_URL || 'https://api.fonnte.com/send';
+        const waUrl = waUrlRaw;
         
         // Sesuaikan payload berdasarkan penyedia layanan (Fonnte vs Wablas)
         let payload = {};
