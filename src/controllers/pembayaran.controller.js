@@ -65,7 +65,8 @@ const checkout = async (req, res, next) => {
     });
 
     let pembayaranId = pendingPayment ? pendingPayment.id : crypto.randomUUID();
-    const order_id = `ORDER-${pembayaranId}-${Date.now()}`; // Pastikan order_id unik di Midtrans
+    // Midtrans order_id max 50 chars. We use a short slice of UUID to ensure it fits.
+    const order_id = `INV-${pembayaranId.substring(0, 8)}-${Date.now()}`; 
 
     if (pendingPayment) {
       await prisma.pembayaran.update({
@@ -112,7 +113,8 @@ const checkout = async (req, res, next) => {
     
   } catch (error) {
     console.error("Midtrans Error:", error);
-    next(error);
+    // Return explicit error for debugging
+    return res.status(500).json({ success: false, message: error.message || error.toString() });
   }
 };
 
