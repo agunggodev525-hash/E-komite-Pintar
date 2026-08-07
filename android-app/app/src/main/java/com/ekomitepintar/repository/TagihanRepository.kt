@@ -48,8 +48,18 @@ class TagihanRepository {
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.data!!)
             } else {
-                val errorMessage = response.body()?.message
-                    ?: "Gagal memproses pembayaran."
+                var errorMessage = "Gagal memproses pembayaran."
+                try {
+                    val errorString = response.errorBody()?.string()
+                    if (errorString != null) {
+                        val json = org.json.JSONObject(errorString)
+                        if (json.has("message")) {
+                            errorMessage = json.getString("message")
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Ignore parse error
+                }
                 Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {

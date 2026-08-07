@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch, formatRupiah } from "@/lib/api";
-import { Download, Filter, ArrowDownRight, Eye, Info } from "lucide-react";
+import { Download, Filter, ArrowDownRight, Eye, Info, PieChart } from "lucide-react";
 import * as XLSX from 'xlsx';
 
 export default function LaporanKasPage() {
@@ -15,6 +15,8 @@ export default function LaporanKasPage() {
   
   const [transaksiList, setTransaksiList] = useState<any[]>([]);
   const [totalMasuk, setTotalMasuk] = useState(0);
+  const [totalKeluar, setTotalKeluar] = useState(0);
+  const [sisaKas, setSisaKas] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchLaporan = async () => {
@@ -24,6 +26,8 @@ export default function LaporanKasPage() {
       if (res.success && res.data) {
         setTransaksiList(res.data.detail_transaksi || []);
         setTotalMasuk(res.data.total_pemasukan || 0);
+        setTotalKeluar(res.data.total_pengeluaran || 0);
+        setSisaKas(res.data.sisa_kas || 0);
       }
     } catch (error) {
       console.error(error);
@@ -281,24 +285,64 @@ export default function LaporanKasPage() {
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
-        <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
-          <div className="flex justify-between items-start">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/20 text-emerald-400 flex items-center justify-center shrink-0">
-              <ArrowDownRight className="w-6 h-6" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* KOTAK TOTAL PEMASUKAN */}
+          <div className="bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between group h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                <ArrowDownRight className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Total Pemasukan</span>
             </div>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Total Pemasukan</span>
+            <div className="relative z-10">
+              <h2 className="text-4xl font-extrabold text-emerald-400 tracking-tight mb-2">
+                {formatRupiah(totalMasuk)}
+              </h2>
+              <p className="text-sm font-medium text-slate-500">
+                Dari <span className="text-emerald-500 font-bold">{transaksiList.length}</span> transaksi lunas
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-3xl font-extrabold tracking-tight text-emerald-400 pb-1">{formatRupiah(totalMasuk)}</h3>
+
+          {/* KOTAK TOTAL PENGELUARAN */}
+          <div className="bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between group h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-bl-full blur-2xl group-hover:bg-rose-500/20 transition-all duration-500" />
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-400">
+                <ArrowDownRight className="w-6 h-6 rotate-180" />
+              </div>
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Total Pengeluaran</span>
+            </div>
+            <div className="relative z-10">
+              <h2 className="text-4xl font-extrabold text-rose-400 tracking-tight mb-2">
+                {formatRupiah(totalKeluar)}
+              </h2>
+              <p className="text-sm font-medium text-slate-500">
+                Bulan ini
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium text-slate-400">
-              Dari <span className="text-emerald-500 font-bold">{transaksiList.length}</span> transaksi lunas
-            </p>
+
+          {/* KOTAK SISA KAS */}
+          <div className="bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between group h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-bl-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500" />
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <PieChart className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Saldo / Sisa Kas</span>
+            </div>
+            <div className="relative z-10">
+              <h2 className="text-4xl font-extrabold text-blue-400 tracking-tight mb-2">
+                {formatRupiah(sisaKas)}
+              </h2>
+              <p className="text-sm font-medium text-slate-500">
+                Total kas tersedia
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Table Rekap */}
       <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">

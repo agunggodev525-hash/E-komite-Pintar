@@ -104,9 +104,26 @@ const getKeuangan = async (req, res, next) => {
       where: { tagihan: { sekolah_id: req.user.sekolah_id } }
     });
 
+    // 6. Hitung Total Pengeluaran pada periode yang sama
+    const wherePengeluaran = {
+      sekolah_id: req.user.sekolah_id
+    };
+    
+    if (tahun) {
+      wherePengeluaran.tanggal = whereClause.tanggal_bayar; // reuse the same date filter
+    }
+
+    const pengeluaranList = await prisma.pengeluaran.findMany({
+      where: wherePengeluaran
+    });
+
+    const totalPengeluaran = pengeluaranList.reduce((sum, p) => sum + Number(p.nominal), 0);
+    const sisaKas = totalPemasukan - totalPengeluaran;
 
     return successResponse(res, 'Laporan keuangan berhasil diambil.', {
       total_pemasukan: totalPemasukan,
+      total_pengeluaran: totalPengeluaran,
+      sisa_kas: sisaKas,
       total_pemasukan_formatted: `Rp ${totalPemasukan.toLocaleString('id-ID')}`,
       jumlah_transaksi_lunas: totalLunas,
       filter: {
