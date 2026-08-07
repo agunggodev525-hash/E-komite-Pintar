@@ -34,6 +34,7 @@ export default function PengeluaranPage() {
   const [formNominal, setFormNominal] = useState("");
   const [formTanggal, setFormTanggal] = useState("");
   const [formKategori, setFormKategori] = useState("");
+  const [formFile, setFormFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   // Helper functions
