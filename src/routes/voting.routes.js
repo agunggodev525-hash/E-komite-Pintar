@@ -37,19 +37,19 @@ const { authorize } = require('../middlewares/rbac');
 
 router.get(
   '/admin',
-  authorize(['ADMIN_KOMITE', 'SEKOLAH']),
+  authorize('ADMIN_KOMITE', 'SEKOLAH'),
   votingController.getVotingAdmin
 );
 
 router.post(
   '/admin',
-  authorize(['ADMIN_KOMITE']),
+  authorize('ADMIN_KOMITE'),
   votingController.createVoting
 );
 
 router.delete(
   '/admin/:id',
-  authorize(['ADMIN_KOMITE']),
+  authorize('ADMIN_KOMITE'),
   votingController.deleteVoting
 );
 

@@ -16,7 +16,7 @@ router.use(authenticate);
  */
 router.get(
   '/admin',
-  authorize(['ADMIN_KOMITE']),
+  authorize('ADMIN_KOMITE'),
   dashboardController.getAdminDashboard
 );
 
