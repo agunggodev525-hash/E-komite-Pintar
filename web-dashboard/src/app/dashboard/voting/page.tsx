@@ -43,7 +43,7 @@ export default function VotingAdminPage() {
   const loadVotings = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/backend/v1/voting/admin", {
+      const res = await fetch("/api/backend/voting/admin", {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -80,7 +80,7 @@ export default function VotingAdminPage() {
       setIsSubmitting(true);
       const token = localStorage.getItem("token");
       
-      const res = await fetch("/api/backend/v1/voting/admin", {
+      const res = await fetch("/api/backend/voting/admin", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export default function VotingAdminPage() {
     
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`/api/backend/v1/voting/admin/${id}`, {
+      const res = await fetch(`/api/backend/voting/admin/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
