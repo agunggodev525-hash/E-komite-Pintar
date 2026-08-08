@@ -22,7 +22,7 @@ data class DashboardUiState(
     val tagihanList: List<Tagihan> = emptyList(),
     val summary: TagihanSummary? = null,
     val errorMessage: String? = null,
-    val checkoutToken: String? = null,
+    val checkoutUrl: String? = null,
     val isLoggedOut: Boolean = false
 )
 
@@ -101,7 +101,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 onSuccess = { checkoutData ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        checkoutToken = checkoutData.snapToken
+                        checkoutUrl = checkoutData.redirectUrl ?: "https://app.sandbox.midtrans.com/snap/v2/vtweb/${checkoutData.snapToken}"
                     )
                     // Refresh tagihan list
                     loadTagihan(siswaId)
@@ -126,8 +126,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun clearCheckoutToken() {
-        _uiState.value = _uiState.value.copy(checkoutToken = null)
+    fun clearCheckoutUrl() {
+        _uiState.value = _uiState.value.copy(checkoutUrl = null)
     }
 
     fun clearError() {

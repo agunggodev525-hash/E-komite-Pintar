@@ -54,10 +54,11 @@ fun DashboardScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Navigate on checkout token
-    LaunchedEffect(uiState.checkoutToken) {
-        uiState.checkoutToken?.let { token ->
-            onNavigateToPayment(token)
-            viewModel.clearCheckoutToken()
+    LaunchedEffect(uiState.checkoutUrl) {
+        uiState.checkoutUrl?.let { url ->
+            val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
+            onNavigateToPayment(encodedUrl)
+            viewModel.clearCheckoutUrl()
         }
     }
 

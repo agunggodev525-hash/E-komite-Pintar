@@ -116,8 +116,8 @@ fun NavGraph() {
                 onNavigateToVoting = {
                     navController.navigate(Routes.VOTING_LIST)
                 },
-                onNavigateToPayment = { snapToken ->
-                    navController.navigate("${Routes.PAYMENT}/$snapToken")
+                onNavigateToPayment = { encodedUrl ->
+                    navController.navigate("${Routes.PAYMENT}/$encodedUrl")
                 },
                 onNavigateToTransparansi = {
                     navController.navigate(Routes.TRANSPARANSI)
@@ -157,11 +157,12 @@ fun NavGraph() {
         // Payment (Midtrans) Screen
         // ============================================
         composable(
-            route = "${Routes.PAYMENT}/{snapToken}"
+            route = "${Routes.PAYMENT}/{encodedUrl}"
         ) { backStackEntry ->
-            val snapToken = backStackEntry.arguments?.getString("snapToken") ?: ""
+            val encodedUrl = backStackEntry.arguments?.getString("encodedUrl") ?: ""
+            val decodedUrl = java.net.URLDecoder.decode(encodedUrl, "UTF-8")
             com.ekomitepintar.ui.dashboard.MidtransWebViewScreen(
-                snapToken = snapToken,
+                checkoutUrl = decodedUrl,
                 onNavigateBack = { navController.popBackStack() }
             )
         }

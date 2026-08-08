@@ -108,9 +108,11 @@ const checkout = async (req, res, next) => {
 
     const transaction = await snap.createTransaction(parameter);
     const snapToken = transaction.token;
+    const redirectUrl = transaction.redirect_url;
 
     return successResponse(res, 'Berhasil menginisiasi pembayaran Midtrans', {
       snap_token: snapToken,
+      redirect_url: redirectUrl,
       order_id: order_id
     }, 201);
     

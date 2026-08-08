@@ -81,7 +81,9 @@ data class CheckoutData(
     @SerializedName("snap_token")
     val snapToken: String,
     @SerializedName("order_id")
-    val orderId: String
+    val orderId: String,
+    @SerializedName("redirect_url")
+    val redirectUrl: String? = null
 )
 
 data class PembayaranDetail(

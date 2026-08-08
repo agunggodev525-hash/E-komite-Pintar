@@ -17,10 +17,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MidtransWebViewScreen(
-    snapToken: String,
+    checkoutUrl: String,
     onNavigateBack: () -> Unit
 ) {
-    val snapUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/$snapToken"
     var isLoading by remember { mutableStateOf(true) }
 
     Scaffold(
@@ -62,7 +61,7 @@ fun MidtransWebViewScreen(
                             }
                         }
                         webChromeClient = WebChromeClient()
-                        loadUrl(snapUrl)
+                        loadUrl(checkoutUrl)
                     }
                 },
                 modifier = Modifier.fillMaxSize()
