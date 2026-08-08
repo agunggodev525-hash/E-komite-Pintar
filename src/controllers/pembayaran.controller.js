@@ -88,15 +88,18 @@ const checkout = async (req, res, next) => {
       });
     }
 
+    const diskon = pendingPayment ? (pendingPayment.nominal_diskon || 0) : 0;
+    const finalNominal = Math.round(tagihan.nominal - diskon);
+
     // Buat parameter transaksi Midtrans
     const parameter = {
       transaction_details: {
         order_id: order_id,
-        gross_amount: Math.round(tagihan.nominal)
+        gross_amount: finalNominal
       },
       item_details: [{
         id: tagihan.id,
-        price: Math.round(tagihan.nominal),
+        price: finalNominal,
         quantity: 1,
         name: tagihan.judul
       }],
@@ -219,6 +222,10 @@ const setDispensasi = async (req, res, next) => {
     let status = payment.status;
     if (payment.nominal_dibayar >= tagihanAkhir) {
       status = 'LUNAS';
+    } else if (payment.nominal_dibayar > 0) {
+      status = 'DICICIL';
+    } else {
+      status = 'PENDING';
     }
 
     const updated = await prisma.pembayaran.update({

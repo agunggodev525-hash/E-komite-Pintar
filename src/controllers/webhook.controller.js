@@ -40,11 +40,14 @@ const handleWebhook = async (req, res, next) => {
       });
 
       if (pembayaran && pembayaran.status !== 'LUNAS') {
+        const tagihan = await prisma.tagihan.findUnique({ where: { id: pembayaran.tagihan_id } });
+        const finalAmount = tagihan.nominal - pembayaran.nominal_diskon;
         await prisma.pembayaran.update({
           where: { id: pembayaran.id },
           data: {
             status: 'LUNAS',
             tanggal_bayar: new Date(),
+            nominal_dibayar: finalAmount
           },
         });
         console.log(`✅ Webhook: Pembayaran ${identifier} berhasil diupdate menjadi LUNAS.`);

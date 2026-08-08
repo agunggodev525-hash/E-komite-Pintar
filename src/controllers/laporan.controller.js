@@ -14,9 +14,9 @@ const getKeuangan = async (req, res, next) => {
   try {
     const { bulan, tahun } = req.query;
 
-    // Base filter: hanya pembayaran LUNAS dari sekolah terkait
+    // Base filter: pembayaran LUNAS atau DICICIL dari sekolah terkait
     const whereClause = {
-      status: 'LUNAS',
+      status: { in: ['LUNAS', 'DICICIL'] },
       tagihan: { sekolah_id: req.user.sekolah_id }
     };
 
@@ -65,18 +65,22 @@ const getKeuangan = async (req, res, next) => {
       orderBy: { tanggal_bayar: 'desc' },
     });
 
-    const transaksiList = pembayaranLunas.map((p) => ({
-      id: p.id,
-      tanggal: p.tanggal_bayar,
-      siswa: p.siswa.nama_siswa,
-      kelas: p.siswa.kelas,
-      keterangan: p.tagihan.judul,
-      nominal: Number(p.tagihan.nominal),
-    }));
+    const transaksiList = pembayaranLunas.map((p) => {
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
+      return {
+        id: p.id,
+        tanggal: p.tanggal_bayar,
+        siswa: p.siswa.nama_siswa,
+        kelas: p.siswa.kelas,
+        keterangan: p.tagihan.judul + (p.status === 'DICICIL' ? ' (Cicilan)' : ''),
+        nominal: Number(actualPaid),
+      };
+    });
 
-    // 3. Hitung total pemasukan dari nominal tagihan
+    // 3. Hitung total pemasukan dari nominal yang benar-benar dibayar
     const totalPemasukan = pembayaranLunas.reduce((sum, p) => {
-      return sum + Number(p.tagihan.nominal);
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
+      return sum + Number(actualPaid);
     }, 0);
 
     // 4. Ringkasan per tagihan
@@ -92,8 +96,11 @@ const getKeuangan = async (req, res, next) => {
           subtotal: 0,
         };
       }
-      perTagihan[key].jumlah_lunas += 1;
-      perTagihan[key].subtotal += Number(p.tagihan.nominal);
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
+      if (p.status === 'LUNAS') {
+        perTagihan[key].jumlah_lunas += 1;
+      }
+      perTagihan[key].subtotal += Number(actualPaid);
     });
 
     // 5. Hitung total tagihan dan berapa persen sudah lunas
@@ -156,7 +163,7 @@ const getTransparansi = async (req, res, next) => {
     const sekolah_id = req.user.sekolah_id;
     const { bulan, tahun } = req.query;
 
-    const wherePembayaran = { status: 'LUNAS', tagihan: { sekolah_id } };
+    const wherePembayaran = { status: { in: ['LUNAS', 'DICICIL'] }, tagihan: { sekolah_id } };
     const wherePengeluaran = { sekolah_id };
 
     if (tahun) {
@@ -169,21 +176,28 @@ const getTransparansi = async (req, res, next) => {
       wherePengeluaran.tanggal = { gte: startDate, lte: endDate };
     }
 
-    // 1. Ambil semua pembayaran lunas (Pemasukan)
+    // 1. Ambil semua pembayaran lunas dan cicilan (Pemasukan)
     const pemasukan = await prisma.pembayaran.findMany({
       where: wherePembayaran,
       include: { tagihan: { select: { judul: true, nominal: true } } },
       orderBy: { tanggal_bayar: 'asc' },
     });
 
-    const totalPemasukan = pemasukan.reduce((sum, p) => sum + Number(p.tagihan.nominal), 0);
-    const detailPemasukan = pemasukan.map(p => ({
-      id: p.id,
-      jenis: 'PEMASUKAN',
-      tanggal: p.tanggal_bayar,
-      keterangan: `Pembayaran: ${p.tagihan.judul}`,
-      nominal: Number(p.tagihan.nominal)
-    }));
+    const totalPemasukan = pemasukan.reduce((sum, p) => {
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
+      return sum + Number(actualPaid);
+    }, 0);
+    
+    const detailPemasukan = pemasukan.map(p => {
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
+      return {
+        id: p.id,
+        jenis: 'PEMASUKAN',
+        tanggal: p.tanggal_bayar,
+        keterangan: `Pembayaran: ${p.tagihan.judul}` + (p.status === 'DICICIL' ? ' (Cicilan)' : ''),
+        nominal: Number(actualPaid)
+      };
+    });
 
     // 2. Ambil semua pengeluaran
     const pengeluaran = await prisma.pengeluaran.findMany({
