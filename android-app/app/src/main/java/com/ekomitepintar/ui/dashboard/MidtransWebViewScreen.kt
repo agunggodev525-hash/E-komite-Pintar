@@ -55,8 +55,21 @@ fun MidtransWebViewScreen(
                                 request: WebResourceRequest?
                             ): Boolean {
                                 val url = request?.url?.toString() ?: ""
-                                // If midtrans redirects to a success/finish page, we could capture it here
-                                // For now, let the webview handle everything
+                                
+                                // Tangani custom scheme untuk e-wallet (GoPay, ShopeePay, dll)
+                                if (url.startsWith("intent://") || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+                                    try {
+                                        val intent = android.content.Intent.parseUri(url, android.content.Intent.URI_INTENT_SCHEME)
+                                        if (intent != null) {
+                                            view?.context?.startActivity(intent)
+                                            return true
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                    return true // Cegah webview dari error ERR_UNKNOWN_URL_SCHEME
+                                }
+                                
                                 return false
                             }
                         }

@@ -43,9 +43,13 @@ router.post(
 );
 
 router.get('/', authenticate, authorize('ADMIN_KOMITE'), pembayaranController.getAllPembayaran);
+
+// PENTING: Route spesifik harus SEBELUM route dengan parameter (:id)
+// agar Express tidak salah mencocokkan 'peringatan-massal' sebagai `:id`
+router.post('/peringatan-massal', authenticate, authorize('ADMIN_KOMITE'), pembayaranController.kirimPeringatanMassal);
+
 router.post('/:id/lunas', authenticate, authorize('ADMIN_KOMITE'), pembayaranController.bayarManual); // Alias untuk backward compatibility
 router.post('/:id/bayar', authenticate, authorize('ADMIN_KOMITE'), pembayaranController.bayarManual);
 router.post('/:id/dispensasi', authenticate, authorize('ADMIN_KOMITE'), pembayaranController.setDispensasi);
-router.post('/peringatan-massal', authenticate, authorize('ADMIN_KOMITE'), pembayaranController.kirimPeringatanMassal);
 
 module.exports = router;

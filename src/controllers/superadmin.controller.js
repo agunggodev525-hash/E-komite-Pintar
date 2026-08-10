@@ -3,7 +3,9 @@
 // ============================================
 
 const prisma = require('../config/database');
-const { successResponse } = require('../utils/response');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { successResponse, errorResponse } = require('../utils/response');
 
 /**
  * Get SaaS Analytics
@@ -58,8 +60,6 @@ const getAnalytics = async (req, res, next) => {
     next(error);
   }
 };
-const bcrypt = require('bcryptjs');
-const { errorResponse } = require('../utils/response');
 
 /**
  * Get Semua Tenant (Sekolah)
@@ -182,7 +182,6 @@ const toggleTenantStatus = async (req, res, next) => {
   }
 };
 
-const jwt = require('jsonwebtoken');
 
 /**
  * Impersonate Tenant (Login as Admin Komite)

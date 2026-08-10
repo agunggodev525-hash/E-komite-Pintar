@@ -30,6 +30,9 @@ export default function DashboardPage() {
     // Hanya ambil data jika user adalah ADMIN_KOMITE
     if (user?.role === "ADMIN_KOMITE") {
       fetchDashboardData();
+    } else if (user) {
+      // Untuk role lain, tidak ada data yang perlu dimuat — reset loading
+      setLoading(false);
     }
   }, [user]);
 

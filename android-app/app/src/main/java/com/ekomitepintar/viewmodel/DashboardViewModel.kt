@@ -101,7 +101,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 onSuccess = { checkoutData ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        checkoutUrl = checkoutData.redirectUrl ?: "https://app.sandbox.midtrans.com/snap/v2/vtweb/${checkoutData.snapToken}"
+                        checkoutUrl = checkoutData.redirectUrl ?: "https://app.midtrans.com/snap/v2/vtweb/${checkoutData.snapToken}"
                     )
                     // Refresh tagihan list
                     loadTagihan(siswaId)

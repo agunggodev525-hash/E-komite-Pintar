@@ -20,7 +20,7 @@ const getAdminDashboard = async (req, res, next) => {
         status: 'LUNAS' 
       },
       _sum: {
-        nominal: true
+        nominal_dibayar: true
       }
     });
 
@@ -31,7 +31,7 @@ const getAdminDashboard = async (req, res, next) => {
       }
     });
 
-    const totalPemasukan = pemasukanAggregate._sum.nominal || 0;
+    const totalPemasukan = pemasukanAggregate._sum.nominal_dibayar || 0;
     const totalPengeluaran = pengeluaranAggregate._sum.nominal || 0;
     const saldoKas = totalPemasukan - totalPengeluaran;
 
@@ -56,10 +56,10 @@ const getAdminDashboard = async (req, res, next) => {
         payment_token: { not: null }
       },
       _sum: {
-        nominal: true
+        nominal_dibayar: true
       }
     });
-    const danaCair = midtransAggregate._sum.nominal || 0;
+    const danaCair = midtransAggregate._sum.nominal_dibayar || 0;
 
     // 4. 5 Transaksi Masuk Terakhir
     const recentTransactions = await prisma.pembayaran.findMany({
@@ -74,7 +74,7 @@ const getAdminDashboard = async (req, res, next) => {
       include: {
         siswa: {
           select: {
-            nama_lengkap: true,
+            nama_siswa: true,
             kelas: true
           }
         },
@@ -89,9 +89,9 @@ const getAdminDashboard = async (req, res, next) => {
     // Format recent transactions untuk frontend
     const formattedRecent = recentTransactions.map(trx => ({
       id: trx.id,
-      siswa: trx.siswa.nama_lengkap,
+      siswa: trx.siswa.nama_siswa,
       tagihan: trx.tagihan.judul,
-      nominal: trx.nominal,
+      nominal: trx.nominal_dibayar,
       tanggal: trx.updated_at,
       status: trx.status,
       metode: trx.payment_token ? "Midtrans" : "Tunai / Manual"

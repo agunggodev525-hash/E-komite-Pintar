@@ -1,8 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../config/database');
 const bcrypt = require('bcryptjs');
 const { successResponse, errorResponse } = require('../utils/response');
-
-const prisma = new PrismaClient();
 
 /**
  * Helper function to generate default password for Orang Tua

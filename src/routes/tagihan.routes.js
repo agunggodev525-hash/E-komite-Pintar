@@ -19,7 +19,7 @@ const router = express.Router();
 router.post(
   '/',
   authenticate,
-  authorize('ADMIN_KOMITE'),
+  authorize('SUPER_ADMIN', 'ADMIN_KOMITE'),
   [
     body('judul')
       .trim()
