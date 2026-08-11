@@ -13,10 +13,12 @@ export default function DashboardLayout({
   children,
   title,
   subtitle,
+  titleExtra,
 }: {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  titleExtra?: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, stopImpersonate } = useAuth();
@@ -79,9 +81,12 @@ export default function DashboardLayout({
         <div className="p-6">
           {/* Desktop Header Title */}
           <div className="hidden lg:block mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
+            <div className="flex items-center flex-wrap gap-y-2">
+              <h1 className="text-3xl font-bold text-white">{title}</h1>
+              {titleExtra}
+            </div>
             {subtitle && (
-              <p className="text-slate-400 font-medium">{subtitle}</p>
+              <p className="text-slate-400 font-medium mt-2">{subtitle}</p>
             )}
           </div>
           {children}

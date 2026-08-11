@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatusBadge from "@/components/StatusBadge";
 import { useAuth } from "@/context/AuthContext";
@@ -10,6 +11,16 @@ import { formatRupiah, formatDate } from "@/lib/api";
 import SuperAdminDashboard from "@/components/SuperAdminDashboard";
 import OrangTuaDashboard from "@/components/OrangTuaDashboard";
 import KepalaSekolahDashboard from "@/components/KepalaSekolahDashboard";
+
+// Chart harus di-load secara client-only (no SSR) karena recharts pakai DOM
+const CashFlowChart = dynamic(() => import("@/components/CashFlowChart"), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-xl p-6 h-[360px] flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-400"></div>
+    </div>
+  ),
+});
 
 // ============================================
 // Dashboard Home — Ringkasan Data
@@ -25,6 +36,22 @@ export default function DashboardPage() {
     recentTransactions: [] as any[]
   });
   const [loading, setLoading] = useState(true);
+
+  // Period filter
+  const now = new Date();
+  const [selectedPeriod, setSelectedPeriod] = useState(
+    `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+  );
+
+  const bulanNames = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  const formatPeriodLabel = (val: string) => {
+    const [y, m] = val.split("-");
+    return `${bulanNames[parseInt(m) - 1]} ${y}`;
+  };
 
   useEffect(() => {
     // Hanya ambil data jika user adalah ADMIN_KOMITE
@@ -93,6 +120,24 @@ export default function DashboardPage() {
     <DashboardLayout
       title="Dashboard Utama"
       subtitle={`Selamat datang kembali, ${user?.nama_lengkap || "Admin"}!`}
+      titleExtra={
+        <select
+          value={selectedPeriod}
+          onChange={(e) => setSelectedPeriod(e.target.value)}
+          className="ml-4 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 font-medium cursor-pointer hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400/50"
+          style={{ appearance: "auto" }}
+        >
+          {Array.from({ length: 6 }, (_, i) => {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            return (
+              <option key={val} value={val} className="bg-slate-900 text-slate-300">
+                Periode Bulan: {formatPeriodLabel(val)}
+              </option>
+            );
+          })}
+        </select>
+      }
     >
       {loading ? (
         <div className="flex justify-center items-center h-64">
@@ -110,9 +155,13 @@ export default function DashboardPage() {
             </div>
             <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Total Menunggak</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-rose-400 to-red-600 bg-clip-text text-transparent pb-1">{data.totalMenunggak} Siswa</h3>
+              <h3 className={`text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-400 to-teal-600' : 'from-rose-400 to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
               <p className="text-xs font-medium text-slate-400">
-                <span className="text-rose-500 font-bold">Aktif</span> belum lunas
+                {data.totalMenunggak === 0 ? (
+                  <><span className="text-emerald-500 font-bold">Semua lunas</span> — Tidak ada tunggakan</>
+                ) : (
+                  <><span className="text-rose-500 font-bold">Aktif</span> belum lunas</>
+                )}
               </p>
             </div>
             <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
@@ -122,6 +171,11 @@ export default function DashboardPage() {
                 <span className="text-blue-400 font-bold">Via Midtrans</span> sukses
               </p>
             </div>
+          </div>
+
+          {/* Tren Arus Kas Bulanan Chart */}
+          <div className="mb-8">
+            <CashFlowChart />
           </div>
 
           <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">
