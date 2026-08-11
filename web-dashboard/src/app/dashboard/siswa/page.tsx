@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch } from "@/lib/api";
-import { UserPlus, Pencil, Trash2, Search, X, Key, ChevronLeft, ChevronRight, Filter, FileSpreadsheet, UploadCloud, Download } from "lucide-react";
+import { UserPlus, Pencil, Trash2, Search, X, Key, ChevronLeft, ChevronRight, Filter, FileSpreadsheet, UploadCloud, Download, ArrowUpDown } from "lucide-react";
 import * as XLSX from 'xlsx';
 
 // Helper function untuk Title Case
@@ -28,6 +28,10 @@ export default function SiswaPage() {
   const [kelasFilter, setKelasFilter] = useState("");
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
+  
+  const [sortBy, setSortBy] = useState("created_at");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     nama_siswa: "",
@@ -41,7 +45,7 @@ export default function SiswaPage() {
   const loadSiswa = async () => {
     setIsLoading(true);
     try {
-      const res = await apiFetch<any>(`/siswa?search=${search}&kelas=${kelasFilter}&page=${page}&limit=10`);
+      const res = await apiFetch<any>(`/siswa?search=${search}&kelas=${kelasFilter}&page=${page}&limit=10&sortBy=${sortBy}&sortOrder=${sortOrder}`);
       if (res.success && res.data) {
         setSiswa(res.data.data || []);
         if (res.data.meta) {
@@ -56,16 +60,63 @@ export default function SiswaPage() {
   };
 
   useEffect(() => {
-    // Only load if authorized
     if (user?.role === "ADMIN_KOMITE") {
       loadSiswa();
     }
-  }, [user, search, kelasFilter, page]);
+  }, [user, search, kelasFilter, page, sortBy, sortOrder]);
 
-  // Reset page to 1 if search or kelas filter changes
+  // Reset page and selection if search, filter, or sorting changes
   useEffect(() => {
     setPage(1);
-  }, [search, kelasFilter]);
+    setSelectedIds([]);
+  }, [search, kelasFilter, sortBy, sortOrder]);
+
+  // Reset selection on page change
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [page]);
+
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
+  };
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedIds(siswa.map(s => s.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(itemId => itemId !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Yakin ingin menghapus ${selectedIds.length} data siswa terpilih? Akun orang tua akan tetap ada namun datanya tidak terkait lagi.`)) return;
+    
+    setIsLoading(true);
+    try {
+      // Menghapus sekaligus menggunakan Promise.all (berjalan di background paralel)
+      await Promise.all(selectedIds.map(id => apiFetch(`/siswa/${id}`, { method: "DELETE" })));
+      setSelectedIds([]);
+      loadSiswa();
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menghapus beberapa data siswa");
+      loadSiswa();
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -260,6 +311,15 @@ export default function SiswaPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {selectedIds.length > 0 && (
+              <button 
+                onClick={handleBulkDelete}
+                className="w-full sm:w-auto px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm animate-in fade-in zoom-in duration-200"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Hapus Terpilih ({selectedIds.length})</span>
+              </button>
+            )}
             <button 
               onClick={() => setIsImportModalOpen(true)}
               className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
@@ -282,9 +342,28 @@ export default function SiswaPage() {
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
               <tr>
+                <th scope="col" className="px-6 py-4 font-semibold w-12">
+                  <input 
+                    type="checkbox" 
+                    className="rounded border-slate-300 text-gold-500 focus:ring-gold-500 cursor-pointer w-4 h-4"
+                    checked={siswa.length > 0 && selectedIds.length === siswa.length}
+                    onChange={handleSelectAll}
+                    title="Pilih Semua"
+                  />
+                </th>
                 <th scope="col" className="px-6 py-4 font-semibold">NISN</th>
-                <th scope="col" className="px-6 py-4 font-semibold">Nama Siswa</th>
-                <th scope="col" className="px-6 py-4 font-semibold">Kelas</th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  <div className="flex items-center gap-1.5 cursor-pointer hover:text-gold-600 transition-colors" onClick={() => handleSort('nama_siswa')}>
+                    Nama Siswa
+                    <ArrowUpDown className={`w-3.5 h-3.5 ${sortBy === 'nama_siswa' ? 'text-gold-500' : 'text-slate-300'}`} />
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  <div className="flex items-center gap-1.5 cursor-pointer hover:text-gold-600 transition-colors" onClick={() => handleSort('kelas')}>
+                    Kelas
+                    <ArrowUpDown className={`w-3.5 h-3.5 ${sortBy === 'kelas' ? 'text-gold-500' : 'text-slate-300'}`} />
+                  </div>
+                </th>
                 <th scope="col" className="px-6 py-4 font-semibold">Orang Tua</th>
                 <th scope="col" className="px-6 py-4 font-semibold text-right">Aksi</th>
               </tr>
@@ -292,7 +371,7 @@ export default function SiswaPage() {
             <tbody className={`divide-y divide-slate-100 relative ${isLoading && siswa.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
               {isLoading && siswa.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                     <div className="flex justify-center mb-2">
                       <div className="w-6 h-6 border-2 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
@@ -301,13 +380,21 @@ export default function SiswaPage() {
                 </tr>
               ) : siswa.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                     Belum ada data siswa.
                   </td>
                 </tr>
               ) : (
                 siswa.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-50/50 transition-colors bg-white">
+                  <tr key={s.id} className={`hover:bg-slate-50/50 transition-colors ${selectedIds.includes(s.id) ? 'bg-blue-50/30' : 'bg-white'}`}>
+                    <td className="px-6 py-4">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-slate-300 text-gold-500 focus:ring-gold-500 cursor-pointer w-4 h-4"
+                        checked={selectedIds.includes(s.id)}
+                        onChange={() => handleSelectRow(s.id)}
+                      />
+                    </td>
                     <td className="px-6 py-4 text-slate-500 font-mono">{s.nisn}</td>
                     <td className="px-6 py-4 font-medium text-slate-800">{toTitleCase(s.nama_siswa)}</td>
                     <td className="px-6 py-4 text-slate-600">

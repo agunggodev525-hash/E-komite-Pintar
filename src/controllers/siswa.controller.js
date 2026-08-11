@@ -120,7 +120,7 @@ const create = async (req, res, next) => {
  */
 const getAll = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search = '', kelas = '' } = req.query;
+    const { page = 1, limit = 10, search = '', kelas = '', sortBy = 'created_at', sortOrder = 'desc' } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const sekolah_id = req.user.sekolah_id;
 
@@ -135,12 +135,16 @@ const getAll = async (req, res, next) => {
       }),
     };
 
+    const validSortFields = ['nama_siswa', 'kelas', 'created_at'];
+    const actualSortBy = validSortFields.includes(sortBy) ? sortBy : 'created_at';
+    const actualSortOrder = sortOrder === 'asc' ? 'asc' : 'desc';
+
     const [siswa, total] = await Promise.all([
       prisma.siswa.findMany({
         where: whereClause,
         skip,
         take: parseInt(limit),
-        orderBy: { created_at: 'desc' },
+        orderBy: { [actualSortBy]: actualSortOrder },
         include: {
           orang_tua: {
             select: {
