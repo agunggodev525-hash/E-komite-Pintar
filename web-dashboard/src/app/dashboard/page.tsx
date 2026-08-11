@@ -17,7 +17,7 @@ import KepalaSekolahDashboard from "@/components/KepalaSekolahDashboard";
 const CashFlowChart = dynamic(() => import("@/components/CashFlowChart"), {
   ssr: false,
   loading: () => (
-    <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-xl p-6 h-[360px] flex items-center justify-center">
+    <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-white/10 shadow-lg dark:shadow-xl p-6 h-[360px] flex items-center justify-center transition-colors">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-400"></div>
     </div>
   ),
@@ -116,7 +116,7 @@ export default function DashboardPage() {
 
   const renderMetodeBadge = (metode: string) => {
     return (
-      <span className="px-2.5 py-1 bg-slate-700/50 text-white rounded-full text-xs font-semibold tracking-wide border border-slate-600 shadow-sm">
+      <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-white rounded-full text-xs font-semibold tracking-wide border border-slate-200 dark:border-slate-600 shadow-sm transition-colors">
         {metode}
       </span>
     );
@@ -158,14 +158,14 @@ export default function DashboardPage() {
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 font-medium cursor-pointer hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400/50"
+            className="px-3 py-1.5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-700 dark:text-slate-300 font-medium cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400/50"
             style={{ appearance: "auto" }}
           >
             {Array.from({ length: 6 }, (_, i) => {
               const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
               const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
               return (
-                <option key={val} value={val} className="bg-slate-900 text-slate-300">
+                <option key={val} value={val} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-300">
                   Periode Bulan: {formatPeriodLabel(val)}
                 </option>
               );
@@ -196,17 +196,17 @@ export default function DashboardPage() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Saldo Kas Saat Ini</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.saldoKas)}</h3>
-              <p className="text-xs font-medium text-slate-400">
+              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-500 to-teal-700 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.saldoKas)}</h3>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 <span className="text-emerald-500 font-bold">Real-time</span> dari database
               </p>
             </div>
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Total Menunggak</p>
-              <h3 className={`text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-400 to-teal-600' : 'from-rose-400 to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
-              <p className="text-xs font-medium text-slate-400">
+              <h3 className={`text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-500 to-teal-700 dark:from-emerald-400 dark:to-teal-600' : 'from-rose-500 to-red-700 dark:from-rose-400 dark:to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 {data.totalMenunggak === 0 ? (
                   <><span className="text-emerald-500 font-bold">Semua lunas</span> — Tidak ada tunggakan</>
                 ) : (
@@ -214,9 +214,9 @@ export default function DashboardPage() {
                 )}
               </p>
             </div>
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Dana Cair / Settlement</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-400 to-indigo-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.danaCair)}</h3>
+              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-500 to-indigo-700 dark:from-blue-400 dark:to-indigo-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.danaCair)}</h3>
               <p className="text-xs font-medium text-slate-500">
                 Belum ada pencairan
               </p>
@@ -228,40 +228,40 @@ export default function DashboardPage() {
             <CashFlowChart chartData={chartData} loading={chartLoading} />
           </div>
 
-          <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">
-            <div className="p-6 border-b border-white/10 flex justify-between items-center bg-slate-900/50">
-              <h2 className="text-lg font-bold text-white tracking-tight">
+          <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-lg dark:shadow-xl transition-colors">
+            <div className="p-6 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight transition-colors">
                 5 Transaksi Masuk Terakhir
               </h2>
-              <Link href="/dashboard/pembayaran" className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+              <Link href="/dashboard/pembayaran" className="text-sm font-semibold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
                 Lihat Semua &gt;
               </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-400 uppercase bg-slate-900/30 border-b border-white/10">
+                <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-100 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10 transition-colors">
                   <tr>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-300">
+                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
                       Siswa
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-300">
+                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
                       Tagihan
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-300">
+                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
                       Nominal
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-300">
+                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
                       Metode
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-300">
+                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-300">
+                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
                       Tgl Update
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                   {data.recentTransactions.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
@@ -272,13 +272,13 @@ export default function DashboardPage() {
                     data.recentTransactions.map((item) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-white/5 transition-colors group"
+                        className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
                       >
-                        <td className="px-6 py-4 font-medium text-white whitespace-nowrap">
+                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
                           {item.siswa}
                         </td>
-                        <td className="px-6 py-4 text-slate-400">{item.tagihan}</td>
-                        <td className="px-6 py-4 font-semibold text-emerald-400 whitespace-nowrap">
+                        <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.tagihan}</td>
+                        <td className="px-6 py-4 font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                           {formatRupiah(item.nominal)}
                         </td>
                         <td className="px-6 py-4">
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                         <td className="px-6 py-4">
                           <StatusBadge status={item.status} />
                         </td>
-                        <td className="px-6 py-4 text-slate-400 whitespace-nowrap">
+                        <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
                           {item.tanggal ? formatDate(item.tanggal) : "-"}
                         </td>
                       </tr>

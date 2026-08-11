@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 /* ============================================
    E-Komite Pintar — Design System (Navy + Gold)
    ============================================ */
 
 :root {
-  --background: #101D3A;
-  --foreground: #FAFAFA;
+  --background: #FAFAFA;
+  --foreground: #0F172A; /* slate-900 */
 
-  /* Navy tones */
+  /* Navy tones (preserved for exact styling when needed) */
   --navy-950: #060D1F;
   --navy-900: #0A1128;
   --navy-800: #101D3A;
@@ -40,6 +42,12 @@
   --white-10: rgba(250, 250, 250, 0.1);
   --error: #CF6679;
 }
+
+.dark {
+  --background: #101D3A;
+  --foreground: #FAFAFA;
+}
+
 
 @theme inline {
   --color-background: var(--background);
