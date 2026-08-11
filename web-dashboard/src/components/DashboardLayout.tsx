@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Bell } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
+import { NotificationDropdown } from "./NotificationDropdown";
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -81,10 +81,7 @@ export default function DashboardLayout({
           <div className="ml-auto flex items-center gap-1">
             <ThemeToggle />
             {/* Notification Bell (Mobile) */}
-            <button className="relative p-2 text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors">
-              <Bell className="w-5 h-5" strokeWidth={1.5} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
-            </button>
+            <NotificationDropdown isMobile={true} />
           </div>
         </header>
 
@@ -105,10 +102,7 @@ export default function DashboardLayout({
             <div className="flex items-center gap-2">
               <ThemeToggle />
               {/* Notification Bell (Desktop) */}
-              <button className="relative p-2 text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 rounded-full transition-colors">
-                <Bell className="w-6 h-6" strokeWidth={1.5} />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
-              </button>
+              <NotificationDropdown />
             </div>
           </div>
           {children}
