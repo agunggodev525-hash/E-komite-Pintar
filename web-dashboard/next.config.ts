@@ -9,10 +9,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  eslint: {
-    // Memastikan build Vercel tidak gagal hanya karena ada warning ESLint
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     // Memastikan build Vercel tidak gagal hanya karena ada type 'any'
     ignoreBuildErrors: true,
