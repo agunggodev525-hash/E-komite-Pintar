@@ -22,7 +22,7 @@ interface CashFlowChartProps {
 }
 
 const DEFAULT_PEMASUKAN = [0, 40000, 80000, 80000, 120000, 120000, 120000];
-const DEFAULT_PENGELUARAN = [0, 0, 0, 0, 0, 0, 0];
+const DEFAULT_PENGELUARAN = [0, 10000, 15000, 30000, 35000, 50000, 55000];
 const DAYS = [1, 5, 10, 15, 20, 25, 30];
 
 function formatRupiahShort(value: number): string {
