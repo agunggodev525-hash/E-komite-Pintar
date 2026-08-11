@@ -29,6 +29,11 @@ export default function VotingAdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Delete Modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [votingToDelete, setVotingToDelete] = useState<{id: string, judul: string} | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   // View results
   const [selectedVoting, setSelectedVoting] = useState<Voting | null>(null);
   const [isResultOpen, setIsResultOpen] = useState(false);
@@ -108,23 +113,33 @@ export default function VotingAdminPage() {
     }
   };
 
-  const handleDelete = async (id: string, judul: string) => {
-    if (!window.confirm(`Yakin ingin menghapus voting "${judul}"?\nSeluruh perolehan suara akan ikut terhapus permanen.`)) return;
+  const handleDeleteClick = (id: string, judul: string) => {
+    setVotingToDelete({ id, judul });
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!votingToDelete) return;
     
     try {
+      setIsDeleting(true);
       const token = localStorage.getItem("ekomite_token");
-      const res = await fetch(`/api/backend/voting/admin/${id}`, {
+      const res = await fetch(`/api/backend/voting/admin/${votingToDelete.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
       if (data.success) {
+        setIsDeleteModalOpen(false);
+        setVotingToDelete(null);
         loadVotings();
       } else {
         alert(data.message);
       }
     } catch (e) {
       alert("Gagal menghapus voting");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -167,7 +182,12 @@ export default function VotingAdminPage() {
               <div>
                 <div className="flex justify-between items-start mb-4">
                   {getStatus(voting.tanggal_berakhir)}
-                  <button onClick={() => handleDelete(voting.id, voting.judul)} className="text-slate-500 hover:text-red-400 transition-colors">
+                  <button 
+                    type="button"
+                    onClick={() => handleDeleteClick(voting.id, voting.judul)} 
+                    className="p-2 -mr-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors cursor-pointer relative z-10"
+                    title="Hapus Voting"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -326,6 +346,42 @@ export default function VotingAdminPage() {
             >
               Tutup Hasil
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Konfirmasi Hapus */}
+      {isDeleteModalOpen && votingToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 w-full max-w-sm shadow-2xl relative text-center">
+            <div className="w-16 h-16 bg-red-500/10 flex items-center justify-center rounded-full mx-auto mb-4 border border-red-500/20">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Hapus Voting?</h2>
+            <p className="text-sm text-slate-400 mb-6">
+              Yakin ingin menghapus <span className="text-white font-semibold">"{votingToDelete.judul}"</span>? Seluruh perolehan suara akan ikut terhapus permanen dan tidak dapat dikembalikan.
+            </p>
+            <div className="flex space-x-3">
+              <button 
+                type="button" 
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setVotingToDelete(null);
+                }}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-sm transition-colors"
+              >
+                Batal
+              </button>
+              <button 
+                type="button" 
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center"
+              >
+                {isDeleting ? "Menghapus..." : "Hapus Permanen"}
+              </button>
+            </div>
           </div>
         </div>
       )}
