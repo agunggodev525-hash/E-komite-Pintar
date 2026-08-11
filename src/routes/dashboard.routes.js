@@ -20,4 +20,13 @@ router.get(
   dashboardController.getAdminDashboard
 );
 
+/**
+ * GET /api/v1/dashboard/admin/chart-trend?bulan=2026-08
+ */
+router.get(
+  '/admin/chart-trend',
+  authorize('ADMIN_KOMITE'),
+  dashboardController.getChartTrend
+);
+
 module.exports = router;

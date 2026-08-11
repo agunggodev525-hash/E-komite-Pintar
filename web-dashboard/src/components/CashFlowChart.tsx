@@ -16,14 +16,16 @@ import {
 // CashFlowChart — Tren Arus Kas Bulanan
 // ============================================
 
-interface CashFlowChartProps {
-  pemasukan?: number[];
-  pengeluaran?: number[];
+interface ChartDataPoint {
+  day: number;
+  pemasukan: number;
+  pengeluaran: number;
 }
 
-const DEFAULT_PEMASUKAN = [0, 40000, 80000, 80000, 120000, 120000, 120000];
-const DEFAULT_PENGELUARAN = [0, 10000, 15000, 30000, 35000, 50000, 55000];
-const DAYS = [1, 5, 10, 15, 20, 25, 30];
+interface CashFlowChartProps {
+  chartData?: ChartDataPoint[];
+  loading?: boolean;
+}
 
 function formatRupiahShort(value: number): string {
   if (value >= 1_000_000) return `Rp ${(value / 1_000_000).toFixed(1)}jt`;
@@ -77,18 +79,28 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export default function CashFlowChart({
-  pemasukan = DEFAULT_PEMASUKAN,
-  pengeluaran = DEFAULT_PENGELUARAN,
+  chartData,
+  loading = false,
 }: CashFlowChartProps) {
-  const chartData = useMemo(
-    () =>
-      DAYS.map((day, i) => ({
-        day: day.toString(),
-        Pemasukan: pemasukan[i] ?? 0,
-        Pengeluaran: pengeluaran[i] ?? 0,
-      })),
-    [pemasukan, pengeluaran]
-  );
+  const data = useMemo(() => {
+    if (chartData && chartData.length > 0) {
+      return chartData.map((item) => ({
+        day: item.day.toString(),
+        Pemasukan: item.pemasukan,
+        Pengeluaran: item.pengeluaran,
+      }));
+    }
+    // Fallback jika tidak ada data
+    return [
+      { day: "1", Pemasukan: 0, Pengeluaran: 0 },
+      { day: "5", Pemasukan: 0, Pengeluaran: 0 },
+      { day: "10", Pemasukan: 0, Pengeluaran: 0 },
+      { day: "15", Pemasukan: 0, Pengeluaran: 0 },
+      { day: "20", Pemasukan: 0, Pengeluaran: 0 },
+      { day: "25", Pemasukan: 0, Pengeluaran: 0 },
+      { day: "30", Pemasukan: 0, Pengeluaran: 0 },
+    ];
+  }, [chartData]);
 
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-xl overflow-hidden">
@@ -101,86 +113,84 @@ export default function CashFlowChart({
 
       {/* Chart Body */}
       <div className="p-6">
-        <div style={{ width: "100%", height: 280 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 8, right: 12, left: 8, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="greenFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#34d399" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="#34d399" stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
+        {loading ? (
+          <div className="flex items-center justify-center h-[280px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-400"></div>
+          </div>
+        ) : (
+          <div style={{ width: "100%", height: 280 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={data}
+                margin={{ top: 8, right: 12, left: 8, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(255,255,255,0.04)"
+                  vertical={false}
+                />
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="rgba(255,255,255,0.04)"
-                vertical={false}
-              />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
 
-              <XAxis
-                dataKey="day"
-                tick={{ fill: "#64748b", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
+                <YAxis
+                  tickFormatter={formatRupiahShort}
+                  tick={{ fill: "#64748b", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={80}
+                />
 
-              <YAxis
-                tickFormatter={formatRupiahShort}
-                tick={{ fill: "#64748b", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                width={80}
-              />
+                <Tooltip content={<CustomTooltip />} />
 
-              <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  align="right"
+                  verticalAlign="top"
+                  iconType="circle"
+                  iconSize={8}
+                  wrapperStyle={{
+                    paddingBottom: 16,
+                    fontSize: 12,
+                    color: "#94a3b8",
+                    fontWeight: 500,
+                  }}
+                />
 
-              <Legend
-                align="right"
-                verticalAlign="top"
-                iconType="circle"
-                iconSize={8}
-                wrapperStyle={{
-                  paddingBottom: 16,
-                  fontSize: 12,
-                  color: "#94a3b8",
-                  fontWeight: 500,
-                }}
-              />
+                <Line
+                  type="monotone"
+                  dataKey="Pemasukan"
+                  stroke="#34d399"
+                  strokeWidth={2.5}
+                  dot={{
+                    r: 5,
+                    fill: "#34d399",
+                    stroke: "#0f172a",
+                    strokeWidth: 2,
+                  }}
+                  activeDot={{ r: 7, stroke: "#34d399", strokeWidth: 2 }}
+                />
 
-              <Line
-                type="monotone"
-                dataKey="Pemasukan"
-                stroke="#34d399"
-                strokeWidth={2.5}
-                dot={{
-                  r: 5,
-                  fill: "#34d399",
-                  stroke: "#0f172a",
-                  strokeWidth: 2,
-                }}
-                activeDot={{ r: 7, stroke: "#34d399", strokeWidth: 2 }}
-              />
-
-              <Line
-                type="monotone"
-                dataKey="Pengeluaran"
-                stroke="rgba(251, 113, 133, 0.6)"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={{
-                  r: 4,
-                  fill: "rgba(251, 113, 133, 0.8)",
-                  stroke: "#0f172a",
-                  strokeWidth: 2,
-                }}
-                activeDot={{ r: 6, stroke: "#fb7185", strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+                <Line
+                  type="monotone"
+                  dataKey="Pengeluaran"
+                  stroke="#fb7185"
+                  strokeWidth={2.5}
+                  dot={{
+                    r: 5,
+                    fill: "#fb7185",
+                    stroke: "#0f172a",
+                    strokeWidth: 2,
+                  }}
+                  activeDot={{ r: 7, stroke: "#fb7185", strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </div>
   );

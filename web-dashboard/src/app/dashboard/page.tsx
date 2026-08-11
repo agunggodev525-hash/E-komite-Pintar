@@ -37,6 +37,10 @@ export default function DashboardPage() {
   });
   const [loading, setLoading] = useState(true);
 
+  // Chart trend data
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [chartLoading, setChartLoading] = useState(true);
+
   // Period filter
   const now = new Date();
   const [selectedPeriod, setSelectedPeriod] = useState(
@@ -63,6 +67,13 @@ export default function DashboardPage() {
     }
   }, [user]);
 
+  // Fetch chart data saat period berubah
+  useEffect(() => {
+    if (user?.role === "ADMIN_KOMITE") {
+      fetchChartTrend(selectedPeriod);
+    }
+  }, [user, selectedPeriod]);
+
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem("ekomite_token");
@@ -79,6 +90,26 @@ export default function DashboardPage() {
       console.error("Gagal mengambil data dashboard:", e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchChartTrend = async (bulan: string) => {
+    try {
+      setChartLoading(true);
+      const token = localStorage.getItem("ekomite_token");
+      const res = await fetch(`/api/backend/dashboard/admin/chart-trend?bulan=${bulan}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const json = await res.json();
+      if (json.success) {
+        setChartData(json.data.chartData);
+      }
+    } catch (e) {
+      console.error("Gagal mengambil data chart:", e);
+    } finally {
+      setChartLoading(false);
     }
   };
 
@@ -175,7 +206,7 @@ export default function DashboardPage() {
 
           {/* Tren Arus Kas Bulanan Chart */}
           <div className="mb-8">
-            <CashFlowChart />
+            <CashFlowChart chartData={chartData} loading={chartLoading} />
           </div>
 
           <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">
