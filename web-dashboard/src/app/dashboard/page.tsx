@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatusBadge from "@/components/StatusBadge";
 import { useAuth } from "@/context/AuthContext";
@@ -114,10 +115,11 @@ export default function DashboardPage() {
   };
 
   const renderMetodeBadge = (metode: string) => {
-    if (metode.includes('Tunai')) return <span className="px-2.5 py-1 bg-white/10 text-slate-300 rounded-md text-xs font-bold tracking-wide border border-white/10">Tunai</span>;
-    if (metode.includes('Midtrans')) return <span className="px-2.5 py-1 bg-blue-500/20 text-blue-300 rounded-md text-xs font-bold tracking-wide border border-blue-400/20">Midtrans</span>;
-    if (metode.includes('Transfer')) return <span className="px-2.5 py-1 bg-purple-500/20 text-purple-300 rounded-md text-xs font-bold tracking-wide border border-purple-400/20">Transfer</span>;
-    return <span className="text-slate-500 text-xs">{metode}</span>;
+    return (
+      <span className="px-2.5 py-1 bg-slate-700/50 text-white rounded-full text-xs font-semibold tracking-wide border border-slate-600 shadow-sm">
+        {metode}
+      </span>
+    );
   };
 
   if (user?.role === "SUPER_ADMIN") {
@@ -152,22 +154,39 @@ export default function DashboardPage() {
       title="Dashboard Utama"
       subtitle={`Selamat datang kembali, ${user?.nama_lengkap || "Admin"}!`}
       titleExtra={
-        <select
-          value={selectedPeriod}
-          onChange={(e) => setSelectedPeriod(e.target.value)}
-          className="ml-4 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 font-medium cursor-pointer hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400/50"
-          style={{ appearance: "auto" }}
-        >
-          {Array.from({ length: 6 }, (_, i) => {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-            return (
-              <option key={val} value={val} className="bg-slate-900 text-slate-300">
-                Periode Bulan: {formatPeriodLabel(val)}
-              </option>
-            );
-          })}
-        </select>
+        <div className="flex items-center gap-3 ml-0 lg:ml-4 flex-wrap">
+          <select
+            value={selectedPeriod}
+            onChange={(e) => setSelectedPeriod(e.target.value)}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 font-medium cursor-pointer hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400/50"
+            style={{ appearance: "auto" }}
+          >
+            {Array.from({ length: 6 }, (_, i) => {
+              const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+              const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+              return (
+                <option key={val} value={val} className="bg-slate-900 text-slate-300">
+                  Periode Bulan: {formatPeriodLabel(val)}
+                </option>
+              );
+            })}
+          </select>
+          
+          <div className="flex items-center gap-2">
+            <Link 
+              href="/dashboard/tagihan/buat" 
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap"
+            >
+              + Buat Tagihan
+            </Link>
+            <Link 
+              href="/dashboard/pengeluaran" 
+              className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap border border-slate-600"
+            >
+              + Catat Pengeluaran
+            </Link>
+          </div>
+        </div>
       }
     >
       {loading ? (
@@ -198,8 +217,8 @@ export default function DashboardPage() {
             <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-transform duration-300">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Dana Cair / Settlement</p>
               <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-400 to-indigo-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.danaCair)}</h3>
-              <p className="text-xs font-medium text-slate-400">
-                <span className="text-blue-400 font-bold">Via Midtrans</span> sukses
+              <p className="text-xs font-medium text-slate-500">
+                Belum ada pencairan
               </p>
             </div>
           </div>
@@ -214,6 +233,9 @@ export default function DashboardPage() {
               <h2 className="text-lg font-bold text-white tracking-tight">
                 5 Transaksi Masuk Terakhir
               </h2>
+              <Link href="/dashboard/pembayaran" className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+                Lihat Semua &gt;
+              </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">

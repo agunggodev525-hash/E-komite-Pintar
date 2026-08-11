@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Bell } from "lucide-react";
 import Sidebar from "./Sidebar";
 
 import { useAuth } from "@/context/AuthContext";
@@ -75,19 +76,31 @@ export default function DashboardLayout({
               )}
             </div>
           </div>
+          {/* Notification Bell (Mobile) */}
+          <button className="relative p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-colors ml-auto">
+            <Bell className="w-5 h-5" strokeWidth={1.5} />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 border-2 border-slate-900 rounded-full"></span>
+          </button>
         </header>
 
         {/* Content */}
         <div className="p-6">
           {/* Desktop Header Title */}
-          <div className="hidden lg:block mb-8">
-            <div className="flex items-center flex-wrap gap-y-2">
-              <h1 className="text-3xl font-bold text-white">{title}</h1>
-              {titleExtra}
+          <div className="hidden lg:flex justify-between items-start mb-8">
+            <div>
+              <div className="flex items-center flex-wrap gap-y-2">
+                <h1 className="text-3xl font-bold text-white">{title}</h1>
+                {titleExtra}
+              </div>
+              {subtitle && (
+                <p className="text-slate-400 font-medium mt-2">{subtitle}</p>
+              )}
             </div>
-            {subtitle && (
-              <p className="text-slate-400 font-medium mt-2">{subtitle}</p>
-            )}
+            {/* Notification Bell (Desktop) */}
+            <button className="relative p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+              <Bell className="w-6 h-6" strokeWidth={1.5} />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-slate-900 rounded-full"></span>
+            </button>
           </div>
           {children}
         </div>
