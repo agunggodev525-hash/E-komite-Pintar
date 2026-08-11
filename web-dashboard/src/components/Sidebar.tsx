@@ -81,7 +81,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group relative overflow-hidden ${
                   isActive
                     ? activeClasses
-                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
                 {/* Background glow on hover for inactive */}
@@ -130,7 +130,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
           <button
             onClick={logout}
-            className="mt-2 w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 dark:text-white/60 hover:bg-status-gagal-bg hover:text-status-gagal transition-all duration-200"
+            className="mt-2 w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-600 dark:text-white/60 hover:bg-status-gagal-bg hover:text-status-gagal transition-all duration-200"
           >
             <span>🚪</span>
             <span>Keluar</span>

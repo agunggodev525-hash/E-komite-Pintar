@@ -197,27 +197,27 @@ export default function DashboardPage() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Saldo Kas Saat Ini</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-500 to-teal-700 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.saldoKas)}</h3>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                <span className="text-emerald-500 font-bold">Real-time</span> dari database
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Saldo Kas Saat Ini</p>
+              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.saldoKas)}</h3>
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                <span className="text-emerald-600 dark:text-emerald-500 font-bold">Real-time</span> dari database
               </p>
             </div>
             <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Total Menunggak</p>
-              <h3 className={`text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-500 to-teal-700 dark:from-emerald-400 dark:to-teal-600' : 'from-rose-500 to-red-700 dark:from-rose-400 dark:to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Total Menunggak</p>
+              <h3 className={`text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600' : 'from-rose-600 to-red-800 dark:from-rose-400 dark:to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 {data.totalMenunggak === 0 ? (
-                  <><span className="text-emerald-500 font-bold">Semua lunas</span> — Tidak ada tunggakan</>
+                  <><span className="text-emerald-600 dark:text-emerald-500 font-bold">Semua lunas</span> — Tidak ada tunggakan</>
                 ) : (
-                  <><span className="text-rose-500 font-bold">Aktif</span> belum lunas</>
+                  <><span className="text-rose-600 dark:text-rose-500 font-bold">Aktif</span> belum lunas</>
                 )}
               </p>
             </div>
             <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Dana Cair / Settlement</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-500 to-indigo-700 dark:from-blue-400 dark:to-indigo-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.danaCair)}</h3>
-              <p className="text-xs font-medium text-slate-500">
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Dana Cair / Settlement</p>
+              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-600 to-indigo-800 dark:from-blue-400 dark:to-indigo-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.danaCair)}</h3>
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 Belum ada pencairan
               </p>
             </div>
