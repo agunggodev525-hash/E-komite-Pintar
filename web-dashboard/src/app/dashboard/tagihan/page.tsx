@@ -24,7 +24,7 @@ export default function DaftarTagihanPage() {
           kelas: p.siswa?.kelas || '-',
           keterangan: p.tagihan?.judul || '-',
           total_tagihan: p.tagihan?.nominal || 0,
-          sisa_tagihan: p.status === 'LUNAS' ? 0 : p.tagihan?.nominal || 0,
+          sisa_tagihan: p.status === 'LUNAS' ? 0 : Math.max(0, (p.tagihan?.nominal || 0) - (p.nominal_dibayar || 0) - (p.nominal_diskon || 0)),
           status: p.status
         }));
         setTagihan(mapped);
