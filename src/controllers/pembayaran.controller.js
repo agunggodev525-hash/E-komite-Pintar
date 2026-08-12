@@ -149,7 +149,11 @@ const getAllPembayaran = async (req, res, next) => {
         tagihan: true,
         siswa: true
       },
-      orderBy: { created_at: 'desc' }
+      orderBy: { 
+        siswa: {
+          nama_siswa: 'asc'
+        }
+      }
     });
     const total = await prisma.pembayaran.count({ where: whereClause });
     return successResponse(res, 'Daftar tagihan siswa berhasil diambil', {
