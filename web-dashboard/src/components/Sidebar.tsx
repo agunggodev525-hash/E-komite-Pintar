@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
               
-            const activeClasses = "bg-cyan-neon/10 dark:bg-cyan-neon/15 border-l-4 neon-border-cyan neon-text-cyan font-semibold";
+            const activeClasses = "bg-[#E6F2ED] dark:bg-cyan-neon/15 dark:border-l-4 dark:neon-border-cyan text-[#2C7A6B] dark:neon-text-cyan font-bold";
 
             return (
               <Link
@@ -116,25 +116,26 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* User Info & Logout */}
-        <div className="p-4 border-t border-slate-200 dark:border-white/10 transition-colors">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-9 h-9 rounded-full bg-cyan-neon/20 flex items-center justify-center text-sm font-bold neon-text-cyan border border-cyan-neon/30">
-              {user.nama_lengkap.charAt(0).toUpperCase()}
+        <div className="p-4 transition-colors">
+          <div className="border border-slate-200 dark:border-white/10 rounded-2xl p-2 bg-white dark:bg-transparent shadow-sm">
+            <div className="flex items-center gap-3 px-2 py-2">
+              <div className="w-10 h-10 rounded-full bg-[#A3C8B8] dark:bg-cyan-neon/20 flex items-center justify-center text-sm font-bold text-[#2C7A6B] dark:neon-text-cyan dark:border dark:border-cyan-neon/30">
+                {user.nama_lengkap.charAt(0).toUpperCase()}{user.nama_lengkap.charAt(1).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-slate-800 dark:text-white truncate transition-colors">
+                  {user.nama_lengkap}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-gold-400">{roleLabel}</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 dark:text-white truncate transition-colors">
-                {user.nama_lengkap}
-              </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">{roleLabel}</p>
-            </div>
+            <button
+              onClick={logout}
+              className="mt-1 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold bg-[#7A363D] text-white hover:bg-[#602930] dark:bg-transparent dark:text-white/60 dark:hover:bg-status-gagal-bg dark:hover:text-status-gagal transition-all duration-200"
+            >
+              <span>Keluar</span>
+            </button>
           </div>
-          <button
-            onClick={logout}
-            className="mt-2 w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-600 dark:text-white/60 hover:bg-status-gagal-bg hover:text-status-gagal transition-all duration-200"
-          >
-            <span>🚪</span>
-            <span>Keluar</span>
-          </button>
         </div>
       </aside>
     </>

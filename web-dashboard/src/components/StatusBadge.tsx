@@ -9,8 +9,8 @@ interface StatusBadgeProps {
 export default function StatusBadge({ status }: StatusBadgeProps) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
     LUNAS: {
-      bg: "bg-status-lunas-bg",
-      text: "text-status-lunas",
+      bg: "bg-gradient-to-r from-[#8DBA9C] to-[#C7BA72] dark:from-status-lunas-bg dark:to-status-lunas-bg",
+      text: "text-white dark:text-status-lunas",
       label: "Lunas",
     },
     PENDING: {
