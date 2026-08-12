@@ -104,11 +104,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* View-only indicator for SEKOLAH / KEPALA_SEKOLAH */}
           {user.role === "SEKOLAH" && (
-            <div className="mt-4 mx-3 p-3 bg-red-900/30 rounded-lg border border-red-500/20">
-              <p className="text-xs text-red-400 font-bold flex items-center gap-1.5">
+            <div className="mt-4 mx-3 p-3 bg-rose-50 dark:bg-rose-900/30 rounded-lg border border-rose-200 dark:border-rose-500/20 transition-colors">
+              <p className="text-xs text-rose-700 dark:text-rose-400 font-bold flex items-center gap-1.5">
                 <span>🛡️</span> Mode Pengawas (View-Only)
               </p>
-              <p className="text-[10px] text-white-40 mt-1 leading-relaxed">
+              <p className="text-[10px] text-rose-600/80 dark:text-white/60 mt-1 leading-relaxed">
                 Anda hanya dapat memantau laporan. Akses penambahan atau pengubahan data dibatasi.
               </p>
             </div>
