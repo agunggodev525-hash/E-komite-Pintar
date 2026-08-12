@@ -233,7 +233,7 @@ export default function DashboardPage() {
               <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight transition-colors">
                 5 Transaksi Masuk Terakhir
               </h2>
-              <Link href="/dashboard/pembayaran" className="text-sm font-semibold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
+              <Link href="/dashboard/laporan" className="text-sm font-semibold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
                 Lihat Semua &gt;
               </Link>
             </div>
