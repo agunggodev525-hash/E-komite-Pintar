@@ -9,28 +9,28 @@ interface StatusBadgeProps {
 export default function StatusBadge({ status }: StatusBadgeProps) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
     LUNAS: {
-      bg: "bg-gradient-to-r from-[#8DBA9C] to-[#C7BA72] dark:from-status-lunas-bg dark:to-status-lunas-bg",
-      text: "text-white dark:text-status-lunas",
+      bg: "bg-emerald-100 dark:bg-emerald-900/40",
+      text: "text-emerald-800 dark:text-emerald-400",
       label: "Lunas",
     },
     PENDING: {
-      bg: "bg-status-pending-bg",
-      text: "text-status-pending",
+      bg: "bg-amber-100 dark:bg-amber-900/40",
+      text: "text-amber-800 dark:text-amber-400",
       label: "Pending",
     },
     DICICIL: {
-      bg: "bg-status-pending-bg",
-      text: "text-status-pending",
+      bg: "bg-amber-100 dark:bg-amber-900/40",
+      text: "text-amber-800 dark:text-amber-400",
       label: "Dicicil",
     },
     GAGAL: {
-      bg: "bg-status-gagal-bg",
-      text: "text-status-gagal",
+      bg: "bg-rose-100 dark:bg-rose-900/40",
+      text: "text-rose-800 dark:text-rose-400",
       label: "Gagal",
     },
     BELUM_BAYAR: {
-      bg: "bg-status-gagal-bg",
-      text: "text-status-gagal",
+      bg: "bg-rose-100 dark:bg-rose-900/40",
+      text: "text-rose-800 dark:text-rose-400",
       label: "Belum Bayar",
     },
   };
@@ -39,10 +39,8 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest border border-white/10 dark:border-white/5 backdrop-blur-md shadow-[0_0_10px_rgba(0,0,0,0.1)] transition-all duration-300 hover:scale-105 ${bg} ${text}`}
-      style={{ textShadow: '0 0 8px currentColor' }}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider ${bg} ${text}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full mr-2 animate-pulse shadow-[0_0_5px_currentColor]" style={{ backgroundColor: 'currentColor' }}></span>
       {label}
     </span>
   );

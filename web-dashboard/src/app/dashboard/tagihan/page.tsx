@@ -171,7 +171,7 @@ export default function DaftarTagihanPage() {
               <select 
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Status</option>
                 <option value="LUNAS">Lunas</option>
@@ -184,7 +184,7 @@ export default function DaftarTagihanPage() {
               <select 
                 value={filterBulan}
                 onChange={(e) => setFilterBulan(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Bulan</option>
                 <option value="Juli 2026">Juli 2026</option>
@@ -225,7 +225,7 @@ export default function DaftarTagihanPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm dark:shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
@@ -270,9 +270,9 @@ export default function DaftarTagihanPage() {
                   </td>
                   <td className="px-6 py-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.nama}</td>
                   <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{item.kelas}</td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.keterangan}</td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
-                  <td className="px-6 py-4 font-semibold text-rose-600 dark:text-rose-400 whitespace-nowrap">{formatRupiah(item.sisa_tagihan)}</td>
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 capitalize">{item.keterangan.toLowerCase()}</td>
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
+                  <td className={`px-6 py-4 font-semibold whitespace-nowrap ${item.sisa_tagihan === 0 ? 'text-slate-500 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{formatRupiah(item.sisa_tagihan)}</td>
                   <td className="px-6 py-4"><StatusBadge status={item.status} /></td>
                   <td className="px-6 py-4 text-center">
                     {(item.status === "DICICIL" || item.status === "BELUM_BAYAR" || item.status === "PENDING") ? (
