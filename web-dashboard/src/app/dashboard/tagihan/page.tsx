@@ -154,14 +154,14 @@ export default function DaftarTagihanPage() {
       {/* Header Actions */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-8">
         <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-          <div className="flex bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2.5 items-center w-full sm:w-64 shadow-xl">
-            <Search className="w-5 h-5 text-slate-400 mr-3" />
+          <div className="flex bg-white dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 items-center w-full sm:w-64 shadow-sm dark:shadow-xl transition-colors">
+            <Search className="w-5 h-5 text-slate-500 dark:text-slate-400 mr-3" />
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari siswa atau tagihan..." 
-              className="w-full bg-transparent outline-none text-sm text-white placeholder:text-slate-400"
+              className="w-full bg-transparent outline-none text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
             />
           </div>
           
@@ -171,7 +171,7 @@ export default function DaftarTagihanPage() {
               <select 
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-xl text-sm text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Status</option>
                 <option value="LUNAS">Lunas</option>
@@ -184,7 +184,7 @@ export default function DaftarTagihanPage() {
               <select 
                 value={filterBulan}
                 onChange={(e) => setFilterBulan(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-xl text-sm text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Bulan</option>
                 <option value="Juli 2026">Juli 2026</option>
