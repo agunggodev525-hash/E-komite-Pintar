@@ -58,8 +58,8 @@ export default function SuperAdminDashboard() {
     <div className="space-y-8 pb-12">
       {/* Header Halaman */}
       <div>
-        <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">SaaS Analytics</h2>
-        <p className="text-slate-400 text-base">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">SaaS Analytics</h2>
+        <p className="text-slate-600 dark:text-slate-600 dark:text-slate-400 text-base">
           Pantau performa dan skala operasi platform E-Komite Pintar Anda secara real-time.
         </p>
       </div>
@@ -74,59 +74,59 @@ export default function SuperAdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Card 1: Sekolah */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-blue-400/5 rounded-full blur-3xl group-hover:bg-blue-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
                   <Building2 className="w-6 h-6" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   Sekolah
                 </span>
               </div>
               <div className="relative z-10">
-                <h3 className="text-3xl font-extrabold tracking-tight text-slate-800">
+                <h3 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                   {data.totalKlien}
                 </h3>
               </div>
               <div className="relative z-10">
-                <p className="text-xs font-medium text-slate-400">
+                <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                   <span className="text-emerald-500 font-bold">+3%</span> vs last month
                 </p>
               </div>
             </div>
 
             {/* Card 2: Akun */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-purple-400/5 rounded-full blur-3xl group-hover:bg-purple-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
                   <Users className="w-6 h-6" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   Akun
                 </span>
               </div>
               <div className="relative z-10">
-                <h3 className="text-3xl font-extrabold tracking-tight text-slate-800">
+                <h3 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                   {data.totalPengguna}
                 </h3>
               </div>
               <div className="relative z-10">
-                <p className="text-xs font-medium text-slate-400">
+                <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                   <span className="text-emerald-500 font-bold">+5%</span> vs last month
                 </p>
               </div>
             </div>
 
             {/* Card 3: Pemasukan (Gradient Text) */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-400/5 rounded-full blur-3xl group-hover:bg-emerald-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
                   <Wallet className="w-6 h-6" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   Pemasukan
                 </span>
               </div>
@@ -136,20 +136,20 @@ export default function SuperAdminDashboard() {
                 </h3>
               </div>
               <div className="relative z-10">
-                <p className="text-xs font-medium text-slate-400">
+                <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                   <span className="text-emerald-500 font-bold">+12%</span> vs last month
                 </p>
               </div>
             </div>
 
             {/* Card 4: Status Sistem (Gradient Text) */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-teal-400/5 rounded-full blur-3xl group-hover:bg-teal-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
                   <Activity className="w-6 h-6" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   Status Sistem
                 </span>
               </div>
@@ -159,7 +159,7 @@ export default function SuperAdminDashboard() {
                 </h3>
               </div>
               <div className="relative z-10">
-                <p className="text-xs font-medium text-slate-400">
+                <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                   <span className="text-emerald-500 font-bold">100%</span> uptime
                 </p>
               </div>
@@ -168,12 +168,12 @@ export default function SuperAdminDashboard() {
           </div>
 
           {/* Baris 2: Main Line Chart (Upgrade Area Grafik) */}
-          <div className="w-full bg-white/95 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-100 p-8">
+          <div className="w-full bg-white/95 dark:bg-white/5 backdrop-blur-xl rounded-3xl shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/10 p-8 transition-colors">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-              <h3 className="text-xl font-bold tracking-tight text-slate-800">
+              <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white dark:text-white">
                 Grafik Tren Pendapatan SaaS
               </h3>
-              <select className="bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-sm font-medium hover:bg-slate-100 transition-all outline-none focus:ring-2 focus:ring-blue-400/50 cursor-pointer text-slate-700">
+              <select className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-slate-100 dark:hover:bg-white/5 transition-all outline-none focus:ring-2 focus:ring-blue-400/50 cursor-pointer text-slate-700 dark:text-slate-300">
                 <option>Filter: 6 Bulan Terakhir</option>
                 <option>Filter: Tahun Ini</option>
                 <option>Filter: Tahun Lalu</option>

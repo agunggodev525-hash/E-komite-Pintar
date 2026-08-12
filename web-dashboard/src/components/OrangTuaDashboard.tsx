@@ -13,16 +13,16 @@ export default function OrangTuaDashboard() {
   const totalTagihan = 500000;
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-slate-50 relative shadow-2xl overflow-hidden pb-20">
+    <div className="max-w-md mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-hidden pb-20">
       
       {/* 1. Header Profil */}
-      <div className="p-4 flex justify-between items-center bg-white rounded-b-3xl shadow-sm z-10 relative">
+      <div className="p-4 flex justify-between items-center bg-white dark:bg-slate-900 rounded-b-3xl shadow-sm z-10 relative">
         <div>
-          <p className="text-sm text-slate-500">Selamat Pagi,</p>
-          <h1 className="text-xl font-bold text-slate-800">{user?.nama_lengkap || "Bapak/Ibu"}</h1>
-          <p className="text-xs text-slate-400 mt-0.5">Wali dari: {namaSiswa} (Kelas {kelasSiswa})</p>
+          <p className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">Selamat Pagi,</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">{user?.nama_lengkap || "Bapak/Ibu"}</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Wali dari: {namaSiswa} (Kelas {kelasSiswa})</p>
         </div>
-        <button className="relative p-2 rounded-full hover:bg-slate-100 transition-colors">
+        <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
           <Bell className="w-6 h-6 text-slate-600" />
           <span className="absolute top-1.5 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
         </button>
@@ -49,7 +49,7 @@ export default function OrangTuaDashboard() {
 
         {/* 3. Quick Menu (Grid 4) */}
         <div>
-          <h3 className="text-sm font-bold text-slate-800 mb-3 px-1">Akses Cepat</h3>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 px-1">Akses Cepat</h3>
           <div className="grid grid-cols-4 gap-3">
             {[
               { label: "Riwayat", icon: History, color: "text-emerald-500", bg: "bg-emerald-50" },
@@ -70,39 +70,39 @@ export default function OrangTuaDashboard() {
         {/* Tambahan Daftar Tagihan Mendatang untuk mengisi kekosongan visual */}
         <div className="pt-4">
           <div className="flex justify-between items-center mb-3 px-1">
-            <h3 className="text-sm font-bold text-slate-800">Tagihan Mendatang</h3>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Tagihan Mendatang</h3>
             <button className="text-xs font-semibold text-blue-600">Lihat Semua</button>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex justify-between items-center">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 p-4 border border-slate-200 dark:border-white/10 shadow-sm flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-800">SPP Agustus 2026</p>
-                <p className="text-xs text-slate-500">Jatuh tempo: 10 Ags 2026</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">SPP Agustus 2026</p>
+                <p className="text-xs text-slate-600 dark:text-slate-500 dark:text-slate-400">Jatuh tempo: 10 Ags 2026</p>
               </div>
             </div>
-            <p className="text-sm font-bold text-slate-800">{formatRupiah(750000)}</p>
+            <p className="text-sm font-bold text-slate-900 dark:text-white">{formatRupiah(750000)}</p>
           </div>
         </div>
       </div>
 
       {/* 4. Bottom Navigation Bar */}
-      <div className="absolute bottom-0 w-full bg-white border-t border-slate-100 px-6 py-3 flex justify-between items-center z-50">
+      <div className="absolute bottom-0 w-full bg-white border-t border-slate-200 dark:border-white/10 px-6 py-3 flex justify-between items-center z-50">
         <button className="flex flex-col items-center gap-1 text-blue-600">
           <Home className="w-6 h-6" />
           <span className="text-[10px] font-bold">Beranda</span>
         </button>
-        <button className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors">
+        <button className="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-600 transition-colors">
           <FileText className="w-6 h-6" />
           <span className="text-[10px] font-semibold">Tagihan</span>
         </button>
-        <button className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors">
+        <button className="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-600 transition-colors">
           <PieChart className="w-6 h-6" />
           <span className="text-[10px] font-semibold">Laporan</span>
         </button>
-        <button className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors">
+        <button className="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-600 transition-colors">
           <User className="w-6 h-6" />
           <span className="text-[10px] font-semibold">Profil</span>
         </button>
