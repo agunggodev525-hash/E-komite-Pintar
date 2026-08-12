@@ -44,7 +44,7 @@
 }
 
 .dark {
-  --background: #101D3A;
+  --background: #050B14; /* Deep cosmic black/blue for dark mode */
   --foreground: #FAFAFA;
 }
 
@@ -70,6 +70,10 @@
   --color-gold-200: var(--gold-200);
   --color-gold-100: var(--gold-100);
 
+  /* Neon Accents */
+  --color-cyan-neon: #00f3ff;
+  --color-magenta-neon: #ff00ff;
+
   /* Status */
   --color-status-lunas: var(--status-lunas);
   --color-status-lunas-bg: var(--status-lunas-bg);
@@ -94,6 +98,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 /* Scrollbar */
@@ -102,25 +107,86 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--navy-900);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--navy-500);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--navy-400);
+  background: rgba(0, 243, 255, 0.5);
 }
 
 /* Input focus ring */
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--gold-400);
+  outline: 2px solid var(--color-cyan-neon);
   outline-offset: 1px;
 }
 
 /* Smooth transitions */
 * {
-  transition-property: background-color, border-color, color, opacity, box-shadow;
-  transition-duration: 150ms;
+  transition-property: background-color, border-color, color, opacity, box-shadow, transform;
+  transition-duration: 300ms;
   transition-timing-function: ease-in-out;
+}
+
+/* ============================================
+   Futuristic Glass & Antigravity Utilities
+   ============================================ */
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/70 dark:bg-navy-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] dark:shadow-[0_8px_32px_0_rgba(0,243,255,0.05)];
+  }
+  
+  .glass-panel-heavy {
+    @apply bg-white/80 dark:bg-navy-950/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/15 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] dark:shadow-[0_8px_32px_0_rgba(0,243,255,0.07)];
+  }
+
+  .neon-text-cyan {
+    @apply text-cyan-neon dark:drop-shadow-[0_0_8px_rgba(0,243,255,0.8)];
+  }
+
+  .neon-text-magenta {
+    @apply text-magenta-neon dark:drop-shadow-[0_0_8px_rgba(255,0,255,0.8)];
+  }
+
+  .neon-border-cyan {
+    @apply border-cyan-neon dark:shadow-[0_0_10px_rgba(0,243,255,0.3)_inset,0_0_10px_rgba(0,243,255,0.3)];
+  }
+
+  .neon-border-magenta {
+    @apply border-magenta-neon dark:shadow-[0_0_10px_rgba(255,0,255,0.3)_inset,0_0_10px_rgba(255,0,255,0.3)];
+  }
+}
+
+/* Floating Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes float-subtle {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); }
+  100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
 }

@@ -103,9 +103,11 @@ export default function CashFlowChart({
   }, [chartData]);
 
   return (
-    <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-white/10 shadow-lg dark:shadow-xl overflow-hidden transition-colors">
+    <div className="glass-panel rounded-3xl overflow-hidden transition-colors relative group animate-float-subtle">
+      {/* Decorative glow behind chart */}
+      <div className="absolute top-10 left-20 w-32 h-32 bg-cyan-neon/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-cyan-neon/20 transition-colors duration-700"></div>
       {/* Header */}
-      <div className="p-5 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 transition-colors">
+      <div className="p-5 border-b border-slate-200/50 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-md transition-colors relative z-10">
         <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight transition-colors">
           Tren Arus Kas Bulanan
         </h2>
@@ -115,7 +117,7 @@ export default function CashFlowChart({
       <div className="p-6">
         {loading ? (
           <div className="flex items-center justify-center h-[280px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-400"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-neon"></div>
           </div>
         ) : (
           <div style={{ width: "100%", height: 280 }}>
@@ -163,29 +165,31 @@ export default function CashFlowChart({
                 <Line
                   type="monotone"
                   dataKey="Pemasukan"
-                  stroke="#34d399"
-                  strokeWidth={2.5}
+                  stroke="#00f3ff"
+                  strokeWidth={3}
                   dot={{
                     r: 5,
-                    fill: "#34d399",
-                    stroke: "#0f172a",
+                    fill: "#00f3ff",
+                    stroke: "#050B14",
                     strokeWidth: 2,
                   }}
-                  activeDot={{ r: 7, stroke: "#34d399", strokeWidth: 2 }}
+                  activeDot={{ r: 8, stroke: "#00f3ff", strokeWidth: 3 }}
+                  style={{ filter: "drop-shadow(0px 0px 8px rgba(0, 243, 255, 0.5))" }}
                 />
 
                 <Line
                   type="monotone"
                   dataKey="Pengeluaran"
-                  stroke="#fb7185"
-                  strokeWidth={2.5}
+                  stroke="#ff00ff"
+                  strokeWidth={3}
                   dot={{
                     r: 5,
-                    fill: "#fb7185",
-                    stroke: "#0f172a",
+                    fill: "#ff00ff",
+                    stroke: "#050B14",
                     strokeWidth: 2,
                   }}
-                  activeDot={{ r: 7, stroke: "#fb7185", strokeWidth: 2 }}
+                  activeDot={{ r: 8, stroke: "#ff00ff", strokeWidth: 3 }}
+                  style={{ filter: "drop-shadow(0px 0px 8px rgba(255, 0, 255, 0.5))" }}
                 />
               </LineChart>
             </ResponsiveContainer>

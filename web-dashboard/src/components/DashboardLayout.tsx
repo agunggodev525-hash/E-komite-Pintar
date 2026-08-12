@@ -28,10 +28,17 @@ export default function DashboardLayout({
   // Cek apakah ada original_token (artinya sedang impersonate)
   const isImpersonating = typeof window !== 'undefined' ? !!localStorage.getItem("original_token") : false;
 
-  const mainBgClass = "bg-slate-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-slate-900 dark:text-slate-200 min-h-screen transition-colors duration-300";
+  const mainBgClass = "bg-slate-50/50 dark:bg-transparent text-slate-900 dark:text-slate-200 min-h-screen transition-colors duration-300 relative z-10";
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#050B14] relative">
+      {/* Futuristic abstract glowing background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-neon/10 dark:bg-cyan-neon/20 rounded-full blur-[120px] animate-pulse-glow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-magenta-neon/10 dark:bg-magenta-neon/20 rounded-full blur-[150px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[40%] left-[30%] w-[30%] h-[30%] bg-blue-500/10 dark:bg-blue-500/10 rounded-full blur-[100px] animate-float-subtle" />
+      </div>
+
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -48,7 +55,7 @@ export default function DashboardLayout({
         )}
         
         {/* Top Bar (Mobile Only) */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 px-6 py-4 flex items-center transition-colors">
+        <header className="lg:hidden sticky top-0 z-30 bg-white/70 dark:bg-[#050B14]/60 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/10 px-6 py-4 flex items-center transition-colors">
           <div className="flex items-center gap-4">
             {/* Hamburger (mobile) */}
             <button

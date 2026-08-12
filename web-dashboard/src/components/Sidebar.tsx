@@ -42,7 +42,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-navy-900 border-r border-slate-200 dark:border-white/10 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-72 glass-panel border-r border-slate-200/50 dark:border-white/10 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
               
-            const activeClasses = "bg-blue-50 dark:bg-gradient-to-r dark:from-blue-500/15 dark:to-transparent border-l-4 border-blue-500 dark:border-blue-400 text-blue-700 dark:text-blue-300 font-semibold";
+            const activeClasses = "bg-cyan-neon/10 dark:bg-cyan-neon/15 border-l-4 neon-border-cyan neon-text-cyan font-semibold";
 
             return (
               <Link
@@ -96,7 +96,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <span className="relative z-10 tracking-wide">{item.label}</span>
                 
                 {isActive && (
-                  <span className="absolute right-4 w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse shadow-[0_0_10px_#FCD34D]" />
+                  <span className="absolute right-4 w-1.5 h-1.5 rounded-full bg-cyan-neon animate-pulse-glow" />
                 )}
               </Link>
             );
@@ -118,7 +118,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* User Info & Logout */}
         <div className="p-4 border-t border-slate-200 dark:border-white/10 transition-colors">
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-9 h-9 rounded-full bg-gold-400/20 flex items-center justify-center text-sm font-bold text-gold-600 dark:text-gold-400">
+            <div className="w-9 h-9 rounded-full bg-cyan-neon/20 flex items-center justify-center text-sm font-bold neon-text-cyan border border-cyan-neon/30">
               {user.nama_lengkap.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
