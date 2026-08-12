@@ -216,7 +216,7 @@ export default function DaftarTagihanPage() {
           </button>
           <Link 
             href="/dashboard/tagihan/buat"
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/20 border border-emerald-400/20 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-xl transition-all shadow-[0_4px_10px_rgba(16,185,129,0.2)] hover:-translate-y-0.5 text-sm"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#428C7A] hover:bg-[#347363] text-white font-bold rounded-xl transition-all shadow-[0_4px_10px_rgba(66,140,122,0.3)] hover:-translate-y-0.5 text-sm"
           >
             <Plus className="w-4 h-4" />
             Buat Tagihan Baru
