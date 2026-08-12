@@ -75,7 +75,7 @@ export default function DashboardPage() {
     }
   }, [user, selectedPeriod]);
 
-  const fetchDashboardData = async () => {
+  async function fetchDashboardData() {
     try {
       const token = localStorage.getItem("ekomite_token");
       const res = await fetch("/api/backend/dashboard/admin", {
@@ -94,7 +94,7 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchChartTrend = async (bulan: string) => {
+  async function fetchChartTrend(bulan: string) {
     try {
       setChartLoading(true);
       const token = localStorage.getItem("ekomite_token");

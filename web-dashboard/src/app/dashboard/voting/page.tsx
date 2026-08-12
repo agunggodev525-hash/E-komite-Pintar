@@ -359,7 +359,7 @@ export default function VotingAdminPage() {
             </div>
             <h2 className="text-xl font-bold text-white mb-2">Hapus Voting?</h2>
             <p className="text-sm text-slate-400 mb-6">
-              Yakin ingin menghapus <span className="text-white font-semibold">"{votingToDelete.judul}"</span>? Seluruh perolehan suara akan ikut terhapus permanen dan tidak dapat dikembalikan.
+              Yakin ingin menghapus <span className="text-white font-semibold">&quot;{votingToDelete.judul}&quot;</span>? Seluruh perolehan suara akan ikut terhapus permanen dan tidak dapat dikembalikan.
             </p>
             <div className="flex space-x-3">
               <button 
