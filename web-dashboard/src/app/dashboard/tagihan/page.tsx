@@ -228,29 +228,29 @@ export default function DaftarTagihanPage() {
       <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-400 uppercase bg-slate-900/30 border-b border-white/10">
+            <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
               <tr>
                 <th scope="col" className="px-6 py-4">
                   <input 
                     type="checkbox" 
                     checked={selectedRows.length === filteredTagihan.length && filteredTagihan.length > 0}
                     onChange={handleSelectAll}
-                    className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-emerald-500 focus:ring-emerald-500"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-emerald-500 focus:ring-emerald-500"
                   />
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300">Nama Siswa</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300">Kelas</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300">Keterangan Tagihan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300">Total Tagihan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300">Sisa Tagihan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300">Status</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-300 text-center">Aksi</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Nama Siswa</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Kelas</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Keterangan Tagihan</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Total Tagihan</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Sisa Tagihan</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
+                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 text-center">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 relative">
+            <tbody className="divide-y divide-slate-200 dark:divide-white/5 relative">
               {isLoading ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
+                    <td colSpan={8} className="px-6 py-12 text-center text-slate-600 dark:text-slate-400">
                       <div className="flex justify-center mb-2">
                         <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                       </div>
@@ -259,20 +259,20 @@ export default function DaftarTagihanPage() {
                   </tr>
                 ) : filteredTagihan.length > 0 ? (
                 filteredTagihan.map((item) => (
-                  <tr key={item.id} className={`hover:bg-white/5 transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-500/10' : ''}`}>
+                  <tr key={item.id} className={`hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-50 dark:bg-emerald-500/10' : ''}`}>
                   <td className="px-6 py-4">
                     <input 
                       type="checkbox" 
                       checked={selectedRows.includes(item.id)}
                       onChange={() => handleSelectRow(item.id)}
-                      className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-emerald-500 focus:ring-emerald-500"
+                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-emerald-500 focus:ring-emerald-500"
                     />
                   </td>
-                  <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{item.nama}</td>
-                  <td className="px-6 py-4 text-slate-400 whitespace-nowrap">{item.kelas}</td>
-                  <td className="px-6 py-4 text-slate-400">{item.keterangan}</td>
-                  <td className="px-6 py-4 text-slate-400 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
-                  <td className="px-6 py-4 font-semibold text-rose-400 whitespace-nowrap">{formatRupiah(item.sisa_tagihan)}</td>
+                  <td className="px-6 py-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.nama}</td>
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{item.kelas}</td>
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.keterangan}</td>
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
+                  <td className="px-6 py-4 font-semibold text-rose-600 dark:text-rose-400 whitespace-nowrap">{formatRupiah(item.sisa_tagihan)}</td>
                   <td className="px-6 py-4"><StatusBadge status={item.status} /></td>
                   <td className="px-6 py-4 text-center">
                     {(item.status === "DICICIL" || item.status === "BELUM_BAYAR" || item.status === "PENDING") ? (
@@ -289,7 +289,7 @@ export default function DaftarTagihanPage() {
                         </button>
                         <button 
                           onClick={() => setSelectedDispensasi(item)}
-                          className="inline-flex items-center justify-center w-8 h-8 bg-white/5 hover:bg-white/10 text-slate-400 border border-white/10 rounded-lg transition-colors shadow-sm"
+                          className="inline-flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10 rounded-lg transition-colors shadow-sm"
                           title="Opsi Dispensasi"
                         >
                           <Settings className="w-4 h-4" />
