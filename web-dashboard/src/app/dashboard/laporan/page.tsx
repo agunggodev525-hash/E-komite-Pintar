@@ -103,15 +103,15 @@ export default function LaporanKasPage() {
         </div>
 
         {/* Alert Box Auditor */}
-        <div className="bg-blue-500/10 border border-blue-400/20 text-blue-300 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-          <Info className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" />
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 text-blue-800 dark:text-blue-300 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm transition-colors">
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
           <p className="text-sm leading-relaxed font-medium">
             Data pada halaman ini tersinkronisasi otomatis secara real-time dari aktivitas Bendahara Komite. Anda bertindak sebagai auditor independen.
           </p>
         </div>
 
         {/* Filter Card */}
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-xl mb-6 flex flex-col md:flex-row items-end gap-4">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl mb-6 flex flex-col md:flex-row items-end gap-4 transition-colors">
           <div className="w-full md:w-auto">
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Bulan</label>
             <select 
@@ -146,7 +146,7 @@ export default function LaporanKasPage() {
             </select>
           </div>
           <div className="w-full md:w-auto mt-4 md:mt-0">
-            <button className="w-full md:w-auto px-6 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 font-semibold rounded-lg text-sm transition-colors shadow-sm">
+            <button className="w-full md:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 border border-transparent text-white font-semibold rounded-lg text-sm transition-colors shadow-sm">
               Terapkan Filter
             </button>
           </div>
