@@ -9,6 +9,20 @@ const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 const siswaController = require('../controllers/siswa.controller');
 
+// Setup multer untuk foto profil
+const multer = require('multer');
+const path = require('path');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../../public/uploads'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } }); // limit 5MB
+
 const router = express.Router();
 
 /**
@@ -30,6 +44,7 @@ router.post(
   '/',
   authenticate,
   authorize('ADMIN_KOMITE'),
+  upload.single('foto_orang_tua'),
   [
     body('nama_siswa')
       .trim()
@@ -103,6 +118,7 @@ router.put(
   '/:id',
   authenticate,
   authorize('ADMIN_KOMITE'),
+  upload.single('foto_orang_tua'),
   siswaController.update
 );
 

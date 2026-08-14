@@ -87,4 +87,7 @@ dependencies {
 
     // Google Fonts
     implementation(libs.androidx.ui.text.google.fonts)
+
+    // Image Loading (Coil)
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

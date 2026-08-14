@@ -29,6 +29,7 @@ class AuthRepository(private val context: Context) {
         private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         private val USER_ROLE_KEY = stringPreferencesKey("user_role")
         private val USER_ID_KEY = stringPreferencesKey("user_id")
+        private val USER_FOTO_KEY = stringPreferencesKey("user_foto")
     }
 
     private val apiService = RetrofitClient.getApiService()
@@ -122,6 +123,18 @@ class AuthRepository(private val context: Context) {
             prefs[USER_NAME_KEY] = user.namaLengkap
             prefs[USER_EMAIL_KEY] = user.email
             prefs[USER_ROLE_KEY] = user.role
+            if (user.fotoProfil != null) {
+                prefs[USER_FOTO_KEY] = user.fotoProfil
+            }
+        }
+    }
+
+    /**
+     * Update foto profil di DataStore
+     */
+    suspend fun updateFotoProfil(fotoUrl: String) {
+        context.dataStore.edit { prefs ->
+            prefs[USER_FOTO_KEY] = fotoUrl
         }
     }
 
@@ -161,6 +174,15 @@ class AuthRepository(private val context: Context) {
     fun observeUserName(): Flow<String?> {
         return context.dataStore.data.map { prefs ->
             prefs[USER_NAME_KEY]
+        }
+    }
+
+    /**
+     * Observe foto profil sebagai Flow.
+     */
+    fun observeFotoProfil(): Flow<String?> {
+        return context.dataStore.data.map { prefs ->
+            prefs[USER_FOTO_KEY]
         }
     }
 

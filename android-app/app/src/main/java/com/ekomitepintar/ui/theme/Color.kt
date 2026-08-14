@@ -14,18 +14,26 @@ val Navy600 = Color(0xFF243557)   // Elevated surface
 val Navy500 = Color(0xFF2C3E6B)   // Secondary container
 val Navy400 = Color(0xFF3D5280)   // Outline / border
 
-// Gold tones — aksen & CTA
-val Gold500 = Color(0xFFD4A012)   // Primary dark
-val Gold400 = Color(0xFFF4C753)   // Primary — tombol CTA, aksen utama
-val Gold300 = Color(0xFFF7D36E)   // Primary variant
-val Gold200 = Color(0xFFFBE89A)   // Highlight / badge
-val Gold100 = Color(0xFFFFF3CC)   // Surface tint
+// Gold tones — aksen & CTA (Champagne Gold / Metallic Premium)
+val Gold500 = Color(0xFFB8860B)   // Primary dark (Deep Metallic Gold)
+val Gold400 = Color(0xFFD4AF37)   // Primary — tombol CTA (Metallic Gold)
+val Gold300 = Color(0xFFE2C275)   // Primary variant (Soft Gold)
+val Gold200 = Color(0xFFF3E5AB)   // Highlight / badge (Champagne)
+val Gold100 = Color(0xFFFAF5E1)   // Surface tint (Very Soft Gold)
+
+// Gradient Helpers & Glow
+val PurpleGlow = Color(0xFF3F2B96)
+val BlueGlow = Color(0xFF1E3C72)
+val CyanGlow = Color(0xFF2A5298)
 
 // Neutrals
 val White = Color(0xFFFAFAFA)
 val White80 = Color(0xCCFAFAFA)   // 80% opacity
 val White60 = Color(0x99FAFAFA)   // 60% opacity
 val White40 = Color(0x66FAFAFA)   // 40% opacity
+val White20 = Color(0x33FAFAFA)   // 20% opacity
+val White10 = Color(0x1AFAFAFA)   // 10% opacity
+val White5 = Color(0x0DFAFAFA)    // 5% opacity
 val IceBlue = Color(0xFFE3F2FD)   // Light surface
 
 // Status colors

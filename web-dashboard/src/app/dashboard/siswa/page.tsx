@@ -41,6 +41,7 @@ export default function SiswaPage() {
     email_orang_tua: "",
     whatsapp_orang_tua: "",
   });
+  const [fotoOrangTua, setFotoOrangTua] = useState<File | null>(null);
 
   const loadSiswa = async () => {
     setIsLoading(true);
@@ -130,9 +131,20 @@ export default function SiswaPage() {
       const url = isEditing ? `/siswa/${editingSiswaId}` : "/siswa";
       const method = isEditing ? "PUT" : "POST";
 
+      let payload: any = JSON.stringify(formData);
+      
+      if (fotoOrangTua) {
+        const formDataObj = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          formDataObj.append(key, value);
+        });
+        formDataObj.append('foto_orang_tua', fotoOrangTua);
+        payload = formDataObj;
+      }
+
       const res = await apiFetch(url, {
         method: method,
-        body: JSON.stringify(formData),
+        body: payload,
       });
 
       if (res.success) {
@@ -146,6 +158,7 @@ export default function SiswaPage() {
           email_orang_tua: "",
           whatsapp_orang_tua: "",
         });
+        setFotoOrangTua(null);
         loadSiswa();
         alert(isEditing ? "Siswa berhasil diperbarui" : "Siswa berhasil ditambahkan");
       } else {
@@ -168,6 +181,7 @@ export default function SiswaPage() {
       email_orang_tua: s.orang_tua?.email || "",
       whatsapp_orang_tua: s.orang_tua?.no_whatsapp || "",
     });
+    setFotoOrangTua(null);
     setIsModalOpen(true);
   };
 
@@ -182,6 +196,7 @@ export default function SiswaPage() {
       email_orang_tua: "",
       whatsapp_orang_tua: "",
     });
+    setFotoOrangTua(null);
   };
 
   const handleDelete = async (id: string) => {
@@ -515,6 +530,10 @@ export default function SiswaPage() {
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Orang Tua</label>
                       <input required type="text" name="nama_orang_tua" value={formData.nama_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="Misal: Bpk. Budi Santoso" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1.5">Foto Profil <span className="text-slate-400 font-normal">(Opsional)</span></label>
+                      <input type="file" accept="image/*" onChange={(e) => setFotoOrangTua(e.target.files?.[0] || null)} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>

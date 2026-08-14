@@ -19,6 +19,12 @@ const create = async (req, res, next) => {
     const { nama_siswa, nisn, kelas, nama_orang_tua, email_orang_tua, no_wa_orang_tua } = req.body;
     const sekolah_id = req.user.sekolah_id;
 
+    // Cek apakah ada file foto yang diunggah
+    let fotoUrl = null;
+    if (req.file) {
+      fotoUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    }
+
     // Cek limitasi paket
     const sekolah = await prisma.sekolah.findUnique({
       where: { id: sekolah_id },
@@ -79,6 +85,7 @@ const create = async (req, res, next) => {
             password_hash: hashedPassword,
             role: 'ORANG_TUA',
             sekolah_id: sekolah_id,
+            ...(fotoUrl && { foto_profil: fotoUrl }),
           },
         });
       }
@@ -351,6 +358,12 @@ const update = async (req, res, next) => {
     const { nama_siswa, nisn, kelas, nama_orang_tua, email_orang_tua, whatsapp_orang_tua } = req.body;
     const sekolah_id = req.user.sekolah_id;
 
+    // Cek apakah ada file foto yang diunggah
+    let fotoUrl = null;
+    if (req.file) {
+      fotoUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    }
+
     // Cek keberadaan siswa & hak akses
     const siswa = await prisma.siswa.findFirst({
       where: { id, sekolah_id }
@@ -362,13 +375,14 @@ const update = async (req, res, next) => {
 
     const updatedSiswa = await prisma.$transaction(async (tx) => {
       // Update orang tua
-      if (nama_orang_tua || whatsapp_orang_tua) {
+      if (nama_orang_tua || whatsapp_orang_tua || fotoUrl || email_orang_tua !== undefined) {
         await tx.user.update({
           where: { id: siswa.orang_tua_id },
           data: {
             ...(nama_orang_tua && { nama_lengkap: nama_orang_tua }),
             ...(email_orang_tua !== undefined && { email: email_orang_tua }),
-            ...(whatsapp_orang_tua && { no_whatsapp: whatsapp_orang_tua })
+            ...(whatsapp_orang_tua && { no_whatsapp: whatsapp_orang_tua }),
+            ...(fotoUrl && { foto_profil: fotoUrl })
           }
         });
       }

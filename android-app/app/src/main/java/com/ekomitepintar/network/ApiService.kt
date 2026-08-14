@@ -33,6 +33,12 @@ interface ApiService {
         @Body request: Map<String, String>
     ): Response<ApiResponse<Any>>
 
+    @Multipart
+    @POST("auth/foto-profil")
+    suspend fun updateFotoProfil(
+        @Part foto: okhttp3.MultipartBody.Part
+    ): Response<ApiResponse<Map<String, String>>>
+
     // ============================================
     // Tagihan
     // ============================================

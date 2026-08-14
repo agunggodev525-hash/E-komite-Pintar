@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError(null);
 
     if (!email.trim() || !password) {
-      setError("Email dan password wajib diisi.");
+      setError("Email dan kata sandi wajib diisi.");
       return;
     }
 
@@ -25,52 +25,58 @@ export default function LoginPage() {
     try {
       await login(email.trim(), password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kredensial tidak valid");
+      setError(err instanceof Error ? err.message : "Kredensial tidak valid. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50 relative overflow-hidden font-sans">
       
-      {/* Background Ornaments */}
+      {/* Dynamic Background Ornaments */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-100/40 blur-3xl"></div>
-        <div className="absolute top-[60%] -right-[10%] w-[40%] h-[40%] rounded-full bg-gold-100/40 blur-3xl"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-400/20 blur-[100px] mix-blend-multiply"></div>
+        <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] rounded-full bg-indigo-400/20 blur-[120px] mix-blend-multiply"></div>
+        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-purple-400/20 blur-[100px] mix-blend-multiply"></div>
       </div>
 
-      <div className="w-full max-w-[440px] px-6 relative z-10">
+      <div className="w-full max-w-[420px] px-6 relative z-10">
         
         {/* Logo Section */}
-        <div className="text-center mb-8 flex flex-col items-center">
-          <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 p-2 mb-6 flex items-center justify-center overflow-hidden">
-            <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover rounded-xl" onError={(e) => { e.currentTarget.src = 'https://ui-avatars.com/api/?name=EK&background=0F172A&color=fff' }} />
+        <div className="text-center mb-10 flex flex-col items-center">
+          <div className="w-20 h-20 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white p-2 mb-6 flex items-center justify-center overflow-hidden ring-4 ring-white/50">
+            <img 
+              src="/logo.jpg" 
+              alt="E-Komite Pintar Logo" 
+              className="w-full h-full object-cover rounded-xl" 
+              onError={(e) => { e.currentTarget.src = 'https://ui-avatars.com/api/?name=EK&background=0F172A&color=fff&size=128&font-size=0.4' }} 
+            />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Selamat Datang Kembali
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+            Selamat Datang 👋
           </h1>
-          <p className="text-slate-500 text-sm mt-2">
-            Masuk ke portal E-Komite Pintar
+          <p className="text-slate-500 text-sm leading-relaxed px-4">
+            Kelola administrasi dan keuangan komite sekolah dengan lebih mudah dan transparan.
           </p>
         </div>
 
         {/* Login Form Card */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+        <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_40px_rgb(0,0,0,0.08)] border border-white">
           
           {error && (
-            <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-xl flex gap-3 text-rose-600 text-sm animate-in fade-in slide-in-from-top-2">
+            <div className="mb-6 p-4 bg-red-50/80 backdrop-blur-sm border border-red-100 rounded-2xl flex gap-3 text-red-600 text-sm">
               <span className="shrink-0 mt-0.5">⚠️</span>
               <p className="font-medium">{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Email Akun</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-slate-400" />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700 ml-1">Alamat Email</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600">
+                  <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                 </div>
                 <input
                   type="email"
@@ -78,19 +84,19 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading || authLoading}
                   placeholder="admin@sekolah.com"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-gold-400 focus:border-transparent outline-none transition-all disabled:opacity-50"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-slate-200 rounded-2xl text-slate-900 text-sm placeholder:text-slate-400 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all disabled:opacity-50 shadow-sm"
                 />
               </div>
             </div>
 
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-semibold text-slate-700">Password</label>
-                <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">Lupa sandi?</a>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center ml-1">
+                <label className="block text-sm font-bold text-slate-700">Kata Sandi</label>
+                <a href="#" className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Lupa sandi?</a>
               </div>
-              <div className="relative">
+              <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-slate-400" />
+                  <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -98,7 +104,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading || authLoading}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-gold-400 focus:border-transparent outline-none transition-all disabled:opacity-50"
+                  className="w-full pl-11 pr-12 py-3.5 bg-white/50 border border-slate-200 rounded-2xl text-slate-900 text-sm placeholder:text-slate-400 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all disabled:opacity-50 shadow-sm"
                 />
                 <button
                   type="button"
@@ -114,18 +120,18 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={isLoading || authLoading}
-                className="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-[0_8px_20px_rgba(15,23,42,0.15)] hover:shadow-[0_8px_25px_rgba(15,23,42,0.25)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none flex items-center justify-center gap-2 group"
+                className="w-full py-4 px-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-2xl transition-all shadow-[0_8px_20px_rgba(79,70,229,0.25)] hover:shadow-[0_8px_25px_rgba(79,70,229,0.35)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none flex items-center justify-center gap-2 group"
               >
                 {isLoading || authLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>
-                    Masuk ke Dashboard
-                    <ArrowRight className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    Masuk Sekarang
+                    <ArrowRight className="w-5 h-5 opacity-80 group-hover:opacity-100 group-hover:translate-x-1.5 transition-all" />
                   </>
                 )}
               </button>
@@ -134,15 +140,17 @@ export default function LoginPage() {
         </div>
 
         {/* Footer / Demo Notes */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-slate-500 font-medium">Informasi Kredensial Demo:</p>
-          <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
-            <span className="px-3 py-1.5 bg-slate-200/50 text-slate-600 rounded-lg border border-slate-200">
-              <strong className="text-slate-700">Super Admin:</strong> superadmin@ekomite.com
-            </span>
-            <span className="px-3 py-1.5 bg-slate-200/50 text-slate-600 rounded-lg border border-slate-200">
-              <strong className="text-slate-700">Sandi:</strong> admin123
-            </span>
+        <div className="mt-10 text-center">
+          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Informasi Kredensial Demo</p>
+          <div className="flex flex-wrap justify-center gap-3 text-sm">
+            <div className="px-4 py-2 bg-white/60 backdrop-blur-md text-slate-600 rounded-xl border border-slate-200/60 shadow-sm flex items-center gap-2">
+              <Mail className="w-4 h-4 text-slate-400" />
+              <strong className="text-slate-800 font-bold">superadmin@ekomite.com</strong>
+            </div>
+            <div className="px-4 py-2 bg-white/60 backdrop-blur-md text-slate-600 rounded-xl border border-slate-200/60 shadow-sm flex items-center gap-2">
+              <Lock className="w-4 h-4 text-slate-400" />
+              <strong className="text-slate-800 font-bold">admin123</strong>
+            </div>
           </div>
         </div>
 

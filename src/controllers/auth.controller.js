@@ -122,6 +122,7 @@ const login = async (req, res, next) => {
       no_whatsapp: user.no_whatsapp,
       role: user.role,
       status: user.status,
+      foto_profil: user.foto_profil,
       paket: user.sekolah?.paket_berlangganan || 'BASIC',
     };
 
@@ -275,6 +276,7 @@ const verifyOtp = async (req, res, next) => {
       no_whatsapp: user.no_whatsapp,
       role: user.role,
       status: user.status,
+      foto_profil: user.foto_profil,
       paket: user.sekolah?.paket_berlangganan || 'BASIC',
     };
 
@@ -306,4 +308,30 @@ const updateFcmToken = async (req, res) => {
   }
 };
 
-module.exports = { register, login, requestOtp, verifyOtp, updateFcmToken };
+/**
+ * Update Foto Profil for current user
+ * POST /api/v1/auth/foto-profil
+ */
+const updateFotoProfil = async (req, res) => {
+  try {
+    if (!req.file) {
+      return errorResponse(res, 'File foto tidak ditemukan.', 400);
+    }
+    
+    // Construct the public URL for the uploaded file
+    const protocol = req.protocol;
+    const host = req.get('host');
+    const fotoUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { foto_profil: fotoUrl },
+    });
+
+    return successResponse(res, 'Foto profil berhasil diperbarui', { foto_profil: fotoUrl });
+  } catch (error) {
+    return errorResponse(res, 'Gagal memperbarui foto profil', 500, error.message);
+  }
+};
+
+module.exports = { register, login, requestOtp, verifyOtp, updateFcmToken, updateFotoProfil };

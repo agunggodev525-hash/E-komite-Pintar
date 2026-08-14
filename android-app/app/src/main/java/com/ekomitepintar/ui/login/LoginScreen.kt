@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -65,12 +66,39 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Navy900, Navy800, Navy700)
-                )
-            )
+            .background(Navy900)
     ) {
+        // Glowing Orbs Background
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(PurpleGlow.copy(alpha = 0.4f), Color.Transparent),
+                    center = androidx.compose.ui.geometry.Offset(size.width * 0.8f, size.height * 0.2f),
+                    radius = size.width * 0.7f
+                ),
+                radius = size.width * 0.7f,
+                center = androidx.compose.ui.geometry.Offset(size.width * 0.8f, size.height * 0.2f)
+            )
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(CyanGlow.copy(alpha = 0.3f), Color.Transparent),
+                    center = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.8f),
+                    radius = size.width * 0.6f
+                ),
+                radius = size.width * 0.6f,
+                center = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.8f)
+            )
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(BlueGlow.copy(alpha = 0.3f), Color.Transparent),
+                    center = androidx.compose.ui.geometry.Offset(size.width * 0.1f, size.height * 0.1f),
+                    radius = size.width * 0.5f
+                ),
+                radius = size.width * 0.5f,
+                center = androidx.compose.ui.geometry.Offset(size.width * 0.1f, size.height * 0.1f)
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,18 +166,18 @@ fun LoginScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = Navy700.copy(alpha = 0.6f),
-                    border = ButtonDefaults.outlinedButtonBorder(enabled = false).copy(
+                    color = Navy800.copy(alpha = 0.6f),
+                    border = androidx.compose.foundation.BorderStroke(
                         width = 1.dp,
                         brush = Brush.linearGradient(
                             colors = listOf(
-                                White.copy(alpha = 0.1f),
-                                White.copy(alpha = 0.05f)
+                                White20,
+                                White5
                             )
                         )
                     ),
                     tonalElevation = 0.dp,
-                    shadowElevation = 24.dp
+                    shadowElevation = 0.dp
                 ) {
                     Column(
                         modifier = Modifier.padding(28.dp),
@@ -276,7 +304,7 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(28.dp))
 
-                        // Login Button — Gold gradient
+                        // Login Button — Premium Gold gradient
                         Button(
                             onClick = {
                                 focusManager.clearFocus()
@@ -284,18 +312,25 @@ fun LoginScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(54.dp),
+                                .height(54.dp)
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(Gold300, Gold500)
+                                    ),
+                                    shape = MaterialTheme.shapes.medium
+                                ),
                             enabled = !uiState.isLoading,
                             shape = MaterialTheme.shapes.medium,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Gold400,
+                                containerColor = Color.Transparent,
                                 contentColor = Navy900,
-                                disabledContainerColor = Gold400.copy(alpha = 0.5f),
+                                disabledContainerColor = Color.Transparent,
                                 disabledContentColor = Navy900.copy(alpha = 0.5f)
                             ),
+                            contentPadding = PaddingValues(),
                             elevation = ButtonDefaults.buttonElevation(
-                                defaultElevation = 8.dp,
-                                pressedElevation = 2.dp
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp
                             )
                         ) {
                             if (uiState.isLoading) {

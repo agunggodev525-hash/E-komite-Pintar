@@ -3,6 +3,8 @@ package com.ekomitepintar.ui.navigation
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,6 +17,15 @@ import com.ekomitepintar.viewmodel.LoginViewModel
 import com.ekomitepintar.viewmodel.VotingViewModel
 import com.ekomitepintar.ui.voting.VotingListScreen
 import com.ekomitepintar.ui.voting.VotingDetailScreen
+import com.ekomitepintar.ui.history.RiwayatScreen
+import com.ekomitepintar.ui.komite.KomiteScreen
+import com.ekomitepintar.ui.komite.PengurusScreen
+import com.ekomitepintar.ui.komite.ProgramKerjaScreen
+import com.ekomitepintar.ui.profile.ProfilScreen
+import com.ekomitepintar.ui.profile.PengaturanAkunScreen
+import com.ekomitepintar.ui.profile.KeamananScreen
+import com.ekomitepintar.ui.profile.NotifikasiScreen
+import com.ekomitepintar.ui.profile.BantuanScreen
 
 /**
  * Definisi route navigasi.
@@ -27,6 +38,15 @@ object Routes {
     const val VOTING_DETAIL = "voting_detail"
     const val PAYMENT = "payment"
     const val TRANSPARANSI = "transparansi"
+    const val RIWAYAT = "riwayat"
+    const val KOMITE = "komite"
+    const val PENGURUS = "pengurus"
+    const val PROGRAM_KERJA = "program_kerja"
+    const val PROFIL = "profil"
+    const val PENGATURAN_AKUN = "pengaturan_akun"
+    const val KEAMANAN = "keamanan"
+    const val NOTIFIKASI = "notifikasi"
+    const val BANTUAN = "bantuan"
 }
 
 /**
@@ -44,22 +64,34 @@ fun NavGraph() {
         navController = navController,
         startDestination = Routes.LOGIN,
         enterTransition = {
-            fadeIn(animationSpec = tween(300)) + slideInHorizontally(
-                initialOffsetX = { it / 3 },
-                animationSpec = tween(300)
-            )
+            val isBottomNav = initialState.destination.route in listOf(Routes.DASHBOARD, Routes.RIWAYAT, Routes.KOMITE, Routes.PROFIL) &&
+                              targetState.destination.route in listOf(Routes.DASHBOARD, Routes.RIWAYAT, Routes.KOMITE, Routes.PROFIL)
+            if (isBottomNav) {
+                fadeIn(animationSpec = tween(200))
+            } else {
+                fadeIn(animationSpec = tween(300)) + slideInHorizontally(
+                    initialOffsetX = { it / 3 },
+                    animationSpec = tween(300)
+                )
+            }
         },
         exitTransition = {
-            fadeOut(animationSpec = tween(300))
+            fadeOut(animationSpec = tween(200))
         },
         popEnterTransition = {
             fadeIn(animationSpec = tween(300))
         },
         popExitTransition = {
-            fadeOut(animationSpec = tween(300)) + slideOutHorizontally(
-                targetOffsetX = { it / 3 },
-                animationSpec = tween(300)
-            )
+            val isBottomNav = initialState.destination.route in listOf(Routes.DASHBOARD, Routes.RIWAYAT, Routes.KOMITE, Routes.PROFIL) &&
+                              targetState.destination.route in listOf(Routes.DASHBOARD, Routes.RIWAYAT, Routes.KOMITE, Routes.PROFIL)
+            if (isBottomNav) {
+                fadeOut(animationSpec = tween(200))
+            } else {
+                fadeOut(animationSpec = tween(300)) + slideOutHorizontally(
+                    targetOffsetX = { it / 3 },
+                    animationSpec = tween(300)
+                )
+            }
         }
     ) {
         // ============================================
@@ -121,8 +153,86 @@ fun NavGraph() {
                 },
                 onNavigateToTransparansi = {
                     navController.navigate(Routes.TRANSPARANSI)
+                },
+                onNavigateBottomTab = { route ->
+                    navController.navigate(route) {
+                        popUpTo(Routes.DASHBOARD) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             )
+        }
+
+        // ============================================
+        // Bottom Navigation Screens
+        // ============================================
+        composable(Routes.RIWAYAT) {
+            val riwayatViewModel: com.ekomitepintar.viewmodel.RiwayatViewModel = viewModel()
+            RiwayatScreen(
+                viewModel = riwayatViewModel,
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        popUpTo(Routes.DASHBOARD) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+
+        composable(Routes.KOMITE) {
+            KomiteScreen(
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+        
+        composable(Routes.PENGURUS) {
+            PengurusScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.PROGRAM_KERJA) {
+            ProgramKerjaScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.PROFIL) {
+            val profilViewModel: com.ekomitepintar.viewmodel.ProfilViewModel = viewModel()
+            ProfilScreen(
+                viewModel = profilViewModel,
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onLogout = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(Routes.PENGATURAN_AKUN) {
+            PengaturanAkunScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.KEAMANAN) {
+            KeamananScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.NOTIFIKASI) {
+            NotifikasiScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.BANTUAN) {
+            BantuanScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // ============================================
@@ -142,7 +252,8 @@ fun NavGraph() {
             route = "${Routes.VOTING_DETAIL}/{votingId}"
         ) { backStackEntry ->
             val votingId = backStackEntry.arguments?.getString("votingId")
-            val voting = votingViewModel.uiState.value.votingList.find { it.id == votingId }
+            val uiState by votingViewModel.uiState.collectAsStateWithLifecycle()
+            val voting = uiState.votingList.find { it.id == votingId }
             
             if (voting != null) {
                 VotingDetailScreen(

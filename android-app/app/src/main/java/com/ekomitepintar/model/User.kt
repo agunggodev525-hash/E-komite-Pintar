@@ -13,5 +13,7 @@ data class User(
     @SerializedName("no_whatsapp")
     val noWhatsapp: String? = null,
     val role: String,
-    val status: Boolean = true
+    val status: Boolean = true,
+    @SerializedName("foto_profil")
+    val fotoProfil: String? = null
 )

@@ -34,3 +34,8 @@ android-app/build/
 *.class
 *.dex
 *.jar
+
+# Root JS Scripts
+/test-*.js
+/create-*.js
+/find-*.js

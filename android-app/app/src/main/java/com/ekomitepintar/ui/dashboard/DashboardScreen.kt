@@ -2,10 +2,12 @@ package com.ekomitepintar.ui.dashboard
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
@@ -20,6 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,6 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ekomitepintar.model.Tagihan
 import com.ekomitepintar.model.TagihanSummary
+import com.ekomitepintar.ui.components.BottomNavBar
+import com.ekomitepintar.ui.navigation.Routes
 import com.ekomitepintar.ui.theme.*
 import com.ekomitepintar.viewmodel.DashboardViewModel
 import kotlinx.coroutines.delay
@@ -41,7 +48,8 @@ fun DashboardScreen(
     onLogout: () -> Unit,
     onNavigateToVoting: () -> Unit,
     onNavigateToPayment: (String) -> Unit,
-    onNavigateToTransparansi: () -> Unit
+    onNavigateToTransparansi: () -> Unit,
+    onNavigateBottomTab: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -86,7 +94,7 @@ fun DashboardScreen(
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = Navy600,
+                    containerColor = Navy800.copy(alpha = 0.9f),
                     contentColor = White,
                     actionColor = Gold400,
                     shape = MaterialTheme.shapes.medium
@@ -94,20 +102,47 @@ fun DashboardScreen(
             }
         },
         topBar = {
-            TopAppBar(
-                title = {},
-                actions = {
-                    IconButton(onClick = viewModel::onLogout) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Bell Icon with Dot
+                Box(contentAlignment = Alignment.TopEnd) {
+                    IconButton(onClick = { onNavigateBottomTab(Routes.NOTIFIKASI) }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = "Logout",
-                            tint = White60
+                            Icons.Filled.Notifications,
+                            contentDescription = "Notifications",
+                            tint = White,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, Gold400, CircleShape)
+                        .background(Navy700)
+                        .clickable { onNavigateBottomTab(Routes.PROFIL) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.Person,
+                        contentDescription = "Profile",
+                        tint = White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        },
+        bottomBar = {
+            BottomNavBar(
+                currentRoute = Routes.DASHBOARD,
+                onNavigate = onNavigateBottomTab
             )
         }
     ) { paddingValues ->
@@ -122,6 +157,26 @@ fun DashboardScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // Background Glowing Orbs
+            Box(modifier = Modifier.fillMaxSize()) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(BlueGlow.copy(alpha = 0.35f), Color.Transparent),
+                            center = androidx.compose.ui.geometry.Offset(size.width * -0.1f, size.height * -0.1f),
+                            radius = size.width * 0.8f
+                        )
+                    )
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(PurpleGlow.copy(alpha = 0.3f), Color.Transparent),
+                            center = androidx.compose.ui.geometry.Offset(size.width * 1.1f, size.height * 0.6f),
+                            radius = size.width * 0.7f
+                        )
+                    )
+                }
+            }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
@@ -148,7 +203,7 @@ fun DashboardScreen(
                         enter = fadeIn() + slideInVertically(initialOffsetY = { 40 })
                     ) {
                         uiState.summary?.let { summary ->
-                            SummarySection(summary = summary)
+                            SummarySection(summary = summary, tagihanList = uiState.tagihanList)
                         } ?: SummaryPlaceholder()
                     }
                 }
@@ -164,32 +219,42 @@ fun DashboardScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.medium,
-                                colors = CardDefaults.cardColors(containerColor = Gold400),
+                                shape = MaterialTheme.shapes.large,
+                                colors = CardDefaults.cardColors(containerColor = Navy800.copy(alpha = 0.5f)),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, White10),
                                 onClick = onNavigateToVoting
                             ) {
                                 Row(
                                     modifier = Modifier.padding(16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        Icons.Filled.HowToVote,
-                                        contentDescription = "E-Voting",
-                                        tint = Navy900,
-                                        modifier = Modifier.size(32.dp)
-                                    )
+                                    // Gradient Icon Box
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .clip(CircleShape)
+                                            .background(Brush.linearGradient(listOf(Gold300, Gold500))),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.HowToVote,
+                                            contentDescription = "E-Voting",
+                                            tint = Navy900,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column {
                                         Text(
                                             text = "E-Voting Komite",
                                             style = MaterialTheme.typography.titleMedium,
-                                            color = Navy900,
+                                            color = White,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
                                             text = "Beri suara untuk keputusan sekolah",
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = Navy900.copy(alpha = 0.8f)
+                                            color = White60
                                         )
                                     }
                                 }
@@ -197,32 +262,41 @@ fun DashboardScreen(
                             
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.medium,
-                                colors = CardDefaults.cardColors(containerColor = White),
+                                shape = MaterialTheme.shapes.large,
+                                colors = CardDefaults.cardColors(containerColor = Navy800.copy(alpha = 0.5f)),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, White10),
                                 onClick = onNavigateToTransparansi
                             ) {
                                 Row(
                                     modifier = Modifier.padding(16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        Icons.Filled.AccountBalanceWallet,
-                                        contentDescription = "Transparansi",
-                                        tint = Navy900,
-                                        modifier = Modifier.size(32.dp)
-                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .clip(CircleShape)
+                                            .background(Brush.linearGradient(listOf(Color(0xFF64B5F6), Color(0xFF1E88E5)))),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.AccountBalanceWallet,
+                                            contentDescription = "Transparansi",
+                                            tint = Navy900,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column {
                                         Text(
                                             text = "Transparansi Keuangan",
                                             style = MaterialTheme.typography.titleMedium,
-                                            color = Navy900,
+                                            color = White,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
                                             text = "Lihat laporan kas & pengeluaran komite",
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = Navy900.copy(alpha = 0.8f)
+                                            color = White60
                                         )
                                     }
                                 }
@@ -251,9 +325,43 @@ fun DashboardScreen(
                             text = "Tagihan Aktif",
                             style = MaterialTheme.typography.titleLarge,
                             color = White,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.weight(1f)
                         )
+                        var expandedFilter by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { expandedFilter = true }) {
+                                Icon(
+                                    Icons.Filled.FilterList,
+                                    contentDescription = "Filter",
+                                    tint = if (uiState.currentFilter == "Semua") White60 else Gold400
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expandedFilter,
+                                onDismissRequest = { expandedFilter = false },
+                                modifier = Modifier.background(Navy700)
+                            ) {
+                                listOf("Semua", "Belum Bayar", "Lunas").forEach { filterOption ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = filterOption,
+                                                color = if (uiState.currentFilter == filterOption) Gold400 else White,
+                                                fontWeight = if (uiState.currentFilter == filterOption) FontWeight.Bold else FontWeight.Normal
+                                            )
+                                        },
+                                        onClick = {
+                                            viewModel.setFilter(filterOption)
+                                            expandedFilter = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
+                    
+
                 }
 
                 // ============================================
@@ -350,7 +458,11 @@ private fun GreetingSection(userName: String) {
 // Summary Section — 3 mini cards
 // ============================================
 @Composable
-private fun SummarySection(summary: TagihanSummary) {
+private fun SummarySection(summary: TagihanSummary, tagihanList: List<Tagihan>) {
+    val totalItems = tagihanList.size
+    val lunasItems = tagihanList.count { it.statusBayar == "LUNAS" }
+    val belumItems = tagihanList.count { it.statusBayar != "LUNAS" }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -358,24 +470,33 @@ private fun SummarySection(summary: TagihanSummary) {
         SummaryMiniCard(
             modifier = Modifier.weight(1f),
             icon = Icons.Filled.Description,
-            value = summary.totalTagihan.toString(),
+            value = formatRupiah(summary.totalTagihan.toDouble()),
+            subtitle = "$totalItems Item",
             label = "Total",
+            badgeCount = totalItems.toString(),
+            badgeColor = Gold400,
             accentColor = Gold400,
             containerColor = Gold400.copy(alpha = 0.12f)
         )
         SummaryMiniCard(
             modifier = Modifier.weight(1f),
             icon = Icons.Filled.CheckCircle,
-            value = summary.lunas.toString(),
+            value = formatRupiah(summary.lunas.toDouble()),
+            subtitle = "$lunasItems Item",
             label = "Lunas",
+            badgeCount = lunasItems.toString(),
+            badgeColor = StatusLunas,
             accentColor = StatusLunas,
             containerColor = StatusLunas.copy(alpha = 0.12f)
         )
         SummaryMiniCard(
             modifier = Modifier.weight(1f),
             icon = Icons.Filled.Warning,
-            value = (summary.pending + summary.belumBayar).toString(),
+            value = formatRupiah((summary.pending + summary.belumBayar).toDouble()),
+            subtitle = "$belumItems Item",
             label = "Belum",
+            badgeCount = belumItems.toString(),
+            badgeColor = StatusBelumBayar,
             accentColor = StatusBelumBayar,
             containerColor = StatusBelumBayar.copy(alpha = 0.12f)
         )
@@ -387,46 +508,95 @@ private fun SummaryMiniCard(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     value: String,
+    subtitle: String,
     label: String,
+    badgeCount: String,
+    badgeColor: Color,
     accentColor: Color,
     containerColor: Color
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.wrapContentHeight(),
         shape = MaterialTheme.shapes.medium,
-        color = Navy700,
-        tonalElevation = 2.dp,
-        shadowElevation = 4.dp
+        color = Navy800.copy(alpha = 0.5f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, White5),
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Surface(
-                shape = MaterialTheme.shapes.small,
-                color = containerColor,
-                modifier = Modifier.size(40.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        icon,
-                        contentDescription = null,
-                        tint = accentColor,
-                        modifier = Modifier.size(22.dp)
+            // Icon with Badge
+            Box(contentAlignment = Alignment.TopEnd) {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = containerColor,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            icon,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+                // Badge
+                Box(
+                    modifier = Modifier
+                        .offset(x = 6.dp, y = (-6).dp)
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(badgeColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = badgeCount,
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                        color = Navy900,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Label Row (Total >)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = White,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    Icons.Filled.ChevronRight,
+                    contentDescription = null,
+                    tint = White60,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(2.dp))
+            
+            // Subtitle (5 Item)
             Text(
-                text = value,
-                style = MaterialTheme.typography.headlineMedium,
-                color = White,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = label,
+                text = subtitle,
                 style = MaterialTheme.typography.labelMedium,
                 color = White60
+            )
+            
+            Spacer(modifier = Modifier.height(4.dp))
+            
+            // Value (Rp 200.000)
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleSmall,
+                color = White,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -459,19 +629,22 @@ private fun TagihanCard(
     onBayarClicked: () -> Unit
 ) {
     val isLunas = tagihan.statusBayar == "LUNAS"
-    val statusColor = when (tagihan.statusBayar) {
-        "LUNAS" -> StatusLunas
-        "PENDING" -> StatusPending
+    val isTerlambat = tagihan.statusBayar == "TERLAMBAT"
+    
+    val statusColor = when {
+        isLunas -> StatusLunas
+        tagihan.statusBayar == "PENDING" -> StatusPending
         else -> StatusBelumBayar
     }
-    val statusContainerColor = when (tagihan.statusBayar) {
-        "LUNAS" -> StatusLunasContainer
-        "PENDING" -> StatusPendingContainer
+    val statusContainerColor = when {
+        isLunas -> StatusLunasContainer
+        tagihan.statusBayar == "PENDING" -> StatusPendingContainer
         else -> StatusBelumBayarContainer
     }
-    val statusText = when (tagihan.statusBayar) {
-        "LUNAS" -> "LUNAS"
-        "PENDING" -> "PENDING"
+    val statusText = when {
+        isLunas -> "LUNAS"
+        tagihan.statusBayar == "PENDING" -> "PENDING"
+        isTerlambat -> "TERLAMBAT"
         else -> "BELUM BAYAR"
     }
 
@@ -479,108 +652,115 @@ private fun TagihanCard(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = Navy700
+            containerColor = Navy800.copy(alpha = 0.6f)
         ),
+        border = androidx.compose.foundation.BorderStroke(1.dp, White10),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 4.dp
+            defaultElevation = 0.dp
         )
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 20.dp),
+            verticalAlignment = Alignment.Top
         ) {
-            // Row 1: Judul + Status Badge
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = tagihan.judul,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = White,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Surface(
-                    shape = MaterialTheme.shapes.small,
-                    color = statusContainerColor
+                // Row 1: Judul + Status Badge
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = statusText,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = statusColor,
-                        fontWeight = FontWeight.Bold
+                        text = tagihan.judul,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = White,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Surface(
+                        shape = MaterialTheme.shapes.small,
+                        color = statusContainerColor
+                    ) {
+                        Text(
+                            text = statusText,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = statusColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+    
+                Spacer(modifier = Modifier.height(12.dp))
+    
+                // Row 2: Nominal (besar, emas)
+                Text(
+                    text = formatRupiah(tagihan.nominal),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Gold400,
+                    fontWeight = FontWeight.Bold
+                )
+    
+                Spacer(modifier = Modifier.height(12.dp))
+    
+                // Row 3: Tenggat waktu
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Filled.CalendarToday,
+                        contentDescription = null,
+                        tint = White40,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Tenggat: ${formatDate(tagihan.tenggatWaktu)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = White60
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Row 2: Nominal (besar, emas)
-            Text(
-                text = formatRupiah(tagihan.nominal),
-                style = MaterialTheme.typography.headlineMedium,
-                color = Gold400,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Row 3: Tenggat waktu
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Filled.CalendarToday,
-                    contentDescription = null,
-                    tint = White40,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "Tenggat: ${formatDate(tagihan.tenggatWaktu)}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = White60
-                )
-            }
-
-            // Tombol Bayar — hanya tampil jika BELUM LUNAS
-            if (!isLunas) {
-                Spacer(modifier = Modifier.height(20.dp))
-
-                HorizontalDivider(color = DividerColor)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = onBayarClicked,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold400,
-                        contentColor = Navy900
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 6.dp,
-                        pressedElevation = 2.dp
-                    )
-                ) {
-                    Icon(
-                        Icons.Rounded.Payments,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Bayar Sekarang",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+    
+                // Tombol Bayar — hanya tampil jika BELUM LUNAS
+                if (!isLunas) {
+                    Spacer(modifier = Modifier.height(20.dp))
+    
+                    Button(
+                        onClick = onBayarClicked,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .background(
+                                brush = Brush.linearGradient(listOf(Gold300, Gold500)),
+                                shape = CircleShape
+                            ),
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Navy900
+                        ),
+                        contentPadding = PaddingValues(),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 0.dp,
+                            pressedElevation = 0.dp
+                        )
+                    ) {
+                        Icon(
+                            Icons.Rounded.Payments,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Bayar Sekarang",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }

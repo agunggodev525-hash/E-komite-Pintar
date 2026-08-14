@@ -19,7 +19,9 @@ data class DashboardUiState(
     val userName: String = "",
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val tagihanList: List<Tagihan> = emptyList(),
+    val tagihanList: List<Tagihan> = emptyList(), // This will be the filtered list
+    val allTagihanList: List<Tagihan> = emptyList(), // Original unmodified list
+    val currentFilter: String = "Semua", // "Semua", "Lunas", "Belum Bayar"
     val summary: TagihanSummary? = null,
     val errorMessage: String? = null,
     val checkoutUrl: String? = null,
@@ -62,10 +64,12 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
             result.fold(
                 onSuccess = { data ->
+                    val filtered = applyFilter(data.tagihan, _uiState.value.currentFilter)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        tagihanList = data.tagihan,
+                        allTagihanList = data.tagihan,
+                        tagihanList = filtered,
                         summary = data.summary
                     )
                 },
@@ -132,5 +136,25 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    /**
+     * Ubah filter tagihan
+     */
+    fun setFilter(filterType: String) {
+        val currentAll = _uiState.value.allTagihanList
+        val filtered = applyFilter(currentAll, filterType)
+        _uiState.value = _uiState.value.copy(
+            currentFilter = filterType,
+            tagihanList = filtered
+        )
+    }
+
+    private fun applyFilter(list: List<Tagihan>, filter: String): List<Tagihan> {
+        return when (filter) {
+            "Lunas" -> list.filter { it.statusBayar == "LUNAS" }
+            "Belum Bayar" -> list.filter { it.statusBayar != "LUNAS" }
+            else -> list
+        }
     }
 }

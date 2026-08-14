@@ -49,6 +49,7 @@ model User {
   status        Boolean  @default(true)
   sekolah_id    String?  // Nullable karena SUPER_ADMIN tidak terikat sekolah
   fcm_token     String?
+  foto_profil   String?
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 

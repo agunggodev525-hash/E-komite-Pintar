@@ -17,8 +17,10 @@ export async function apiFetch<T>(
       ? localStorage.getItem("ekomite_token")
       : null;
 
+  const isFormData = options.body instanceof FormData;
+  
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...((options.headers as Record<string, string>) || {}),
   };
