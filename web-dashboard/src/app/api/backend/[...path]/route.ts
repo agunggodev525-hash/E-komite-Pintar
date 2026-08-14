@@ -1,4 +1,4 @@
-﻿// ============================================
+// ============================================
 // Next.js API Route - API Backend Proxy
 // ============================================
 // Meneruskan semua request /api/v1/* ke backend URL
@@ -41,17 +41,23 @@ async function handler(
       }
     });
 
-    let body: string | undefined;
+    let body: any = undefined;
     if (req.method !== "GET" && req.method !== "HEAD") {
-      body = await req.text();
+      body = req.body; // Forward the exact stream
     }
 
-    const response = await fetch(fullUrl, {
+    const fetchOptions: RequestInit & { duplex?: string } = {
       method: req.method,
       headers,
       body,
       cache: "no-store",
-    });
+    };
+
+    if (body) {
+      fetchOptions.duplex = 'half'; // Required by Node fetch when body is a stream
+    }
+
+    const response = await fetch(fullUrl, fetchOptions);
 
     const data = await response.text();
 
