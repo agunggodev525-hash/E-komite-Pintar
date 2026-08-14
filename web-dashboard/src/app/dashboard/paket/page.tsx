@@ -14,6 +14,29 @@ export default function ManajemenPaketPage() {
   const [packages, setPackages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [isTenantsLoading, setIsTenantsLoading] = useState(false);
+
+  const fetchTenants = async () => {
+    setIsTenantsLoading(true);
+    try {
+      const res = await apiFetch("/superadmin/tenants");
+      if (res?.success) {
+        setTenants(res.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data sekolah", error);
+    } finally {
+      setIsTenantsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "sekolah" && tenants.length === 0) {
+      fetchTenants();
+    }
+  }, [activeTab]);
+
   const fetchPackages = async () => {
     setIsLoading(true);
     try {
@@ -238,10 +261,71 @@ export default function ManajemenPaketPage() {
         </div>
       )}
 
+      {/* Tab Content: Sekolah Berlangganan */}
+      {activeTab === "sekolah" && (
+        <div className="bg-[#1A1F2C] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-black/20 border-b border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-400">
+                <tr>
+                  <th className="px-6 py-5">Nama Sekolah / Klien</th>
+                  <th className="px-6 py-5">Paket Aktif</th>
+                  <th className="px-6 py-5 text-center">Penggunaan (Siswa)</th>
+                  <th className="px-6 py-5">Admin Utama</th>
+                  <th className="px-6 py-5 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {isTenantsLoading ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat data pelanggan...</td>
+                  </tr>
+                ) : tenants.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada sekolah yang berlangganan.</td>
+                  </tr>
+                ) : (
+                  tenants.map((tenant) => (
+                    <tr key={tenant.id} className="hover:bg-white/5 transition-colors group">
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-white text-base">{tenant.nama_sekolah}</p>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{tenant.alamat || "Alamat tidak tersedia"}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                          <Package className="w-3.5 h-3.5" />
+                          {tenant.paket?.nama_paket || tenant.paket_berlangganan || "Tidak Diketahui"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <p className="font-bold text-slate-200">{tenant._count?.siswa || 0} <span className="text-slate-500 font-normal">/ {tenant.paket?.batas_siswa === 999999 ? "∞" : tenant.paket?.batas_siswa || "∞"}</span></p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-slate-300">{tenant.users?.[0]?.nama_lengkap || "-"}</p>
+                        <p className="text-xs text-slate-500">{tenant.users?.[0]?.email || "-"}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
+                          tenant.status === "AKTIF" 
+                            ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
+                            : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                        }`}>
+                          {tenant.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Other Tabs Placeholder */}
-      {activeTab !== "paket" && (
+      {activeTab === "tagihan" && (
         <div className="py-20 text-center border border-white/5 border-dashed rounded-2xl bg-[#1A1F2C]">
-          <p className="text-slate-400">Fitur <span className="font-bold text-white">{activeTab === "sekolah" ? "Sekolah Berlangganan" : "Tagihan & Transaksi"}</span> sedang dalam pengembangan.</p>
+          <p className="text-slate-400">Fitur <span className="font-bold text-white">Tagihan & Transaksi</span> sedang dalam pengembangan.</p>
         </div>
       )}
 

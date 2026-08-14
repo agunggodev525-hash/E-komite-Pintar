@@ -77,6 +77,9 @@ const getTenants = async (req, res, next) => {
           where: { role: 'ADMIN_KOMITE' },
           select: { id: true, nama_lengkap: true, email: true },
           take: 1
+        },
+        paket: {
+          select: { nama_paket: true, batas_siswa: true }
         }
       }
     });
