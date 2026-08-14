@@ -1,6 +1,24 @@
 const prisma = require('../config/database');
 const bcrypt = require('bcryptjs');
 const { successResponse, errorResponse } = require('../utils/response');
+const cloudinary = require('../config/cloudinary');
+
+/**
+ * Helper: Upload buffer (dari multer memoryStorage) ke Cloudinary
+ * @returns {Promise<string>} Secure URL dari Cloudinary
+ */
+const uploadToCloudinary = (buffer, mimetype) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'ekomite/profil', resource_type: 'image' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+};
 
 /**
  * Helper function to generate default password for Orang Tua
@@ -16,13 +34,18 @@ const generateDefaultPassword = (phoneOrEmail) => {
  */
 const create = async (req, res, next) => {
   try {
-    const { nama_siswa, nisn, kelas, nama_orang_tua, email_orang_tua, no_wa_orang_tua } = req.body;
+    const { nama_siswa, nisn, kelas, nama_orang_tua, email_orang_tua, whatsapp_orang_tua } = req.body;
     const sekolah_id = req.user.sekolah_id;
 
-    // Cek apakah ada file foto yang diunggah
+    // Upload foto ke Cloudinary jika ada (buffer dari memoryStorage)
     let fotoUrl = null;
-    if (req.file) {
-      fotoUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    if (req.file && req.file.buffer) {
+      try {
+        fotoUrl = await uploadToCloudinary(req.file.buffer, req.file.mimetype);
+      } catch (uploadErr) {
+        console.error('Cloudinary upload error:', uploadErr);
+        // Tidak gagalkan seluruh request hanya karena foto gagal upload
+      }
     }
 
     // Cek limitasi paket
@@ -86,6 +109,7 @@ const create = async (req, res, next) => {
             role: 'ORANG_TUA',
             sekolah_id: sekolah_id,
             ...(fotoUrl && { foto_profil: fotoUrl }),
+            ...(whatsapp_orang_tua && { no_whatsapp: whatsapp_orang_tua }),
           },
         });
       }
@@ -358,10 +382,15 @@ const update = async (req, res, next) => {
     const { nama_siswa, nisn, kelas, nama_orang_tua, email_orang_tua, whatsapp_orang_tua } = req.body;
     const sekolah_id = req.user.sekolah_id;
 
-    // Cek apakah ada file foto yang diunggah
+    // Upload foto ke Cloudinary jika ada (buffer dari memoryStorage)
     let fotoUrl = null;
-    if (req.file) {
-      fotoUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    if (req.file && req.file.buffer) {
+      try {
+        fotoUrl = await uploadToCloudinary(req.file.buffer, req.file.mimetype);
+      } catch (uploadErr) {
+        console.error('Cloudinary upload error:', uploadErr);
+        // Tidak gagalkan seluruh request hanya karena foto gagal upload
+      }
     }
 
     // Cek keberadaan siswa & hak akses
@@ -375,12 +404,15 @@ const update = async (req, res, next) => {
 
     const updatedSiswa = await prisma.$transaction(async (tx) => {
       // Update orang tua
-      if (nama_orang_tua || whatsapp_orang_tua || fotoUrl || email_orang_tua !== undefined) {
+      // PENTING: email hanya diupdate jika nilainya tidak kosong, untuk menghindari unique constraint error
+      const emailUpdate = email_orang_tua && email_orang_tua.trim() !== '' ? { email: email_orang_tua.trim() } : {};
+
+      if (nama_orang_tua || whatsapp_orang_tua || fotoUrl || Object.keys(emailUpdate).length > 0) {
         await tx.user.update({
           where: { id: siswa.orang_tua_id },
           data: {
             ...(nama_orang_tua && { nama_lengkap: nama_orang_tua }),
-            ...(email_orang_tua !== undefined && { email: email_orang_tua }),
+            ...emailUpdate,
             ...(whatsapp_orang_tua && { no_whatsapp: whatsapp_orang_tua }),
             ...(fotoUrl && { foto_profil: fotoUrl })
           }

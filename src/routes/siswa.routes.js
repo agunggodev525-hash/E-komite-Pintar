@@ -9,19 +9,19 @@ const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 const siswaController = require('../controllers/siswa.controller');
 
-// Setup multer untuk foto profil
+// Setup multer untuk foto profil — pakai memoryStorage agar kompatibel dengan Vercel (serverless)
 const multer = require('multer');
-const path = require('path');
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../public/uploads'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // limit 5MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Hanya file gambar yang diperbolehkan.'));
+    }
   }
 });
-const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } }); // limit 5MB
 
 const router = express.Router();
 
