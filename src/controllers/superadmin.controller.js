@@ -117,7 +117,8 @@ const createTenant = async (req, res, next) => {
         data: {
           nama_sekolah,
           alamat,
-          paket_berlangganan: paket_berlangganan || 'BASIC',
+          paket_id: paket_berlangganan || null,
+          paket_berlangganan: 'DYNAMIC',
         }
       });
 
@@ -348,7 +349,10 @@ const updateTenant = async (req, res, next) => {
     }
 
     const updateData = {};
-    if (paket_berlangganan) updateData.paket_berlangganan = paket_berlangganan;
+    if (paket_berlangganan) {
+      updateData.paket_id = paket_berlangganan;
+      updateData.paket_berlangganan = 'DYNAMIC';
+    }
     if (nama_sekolah) updateData.nama_sekolah = nama_sekolah;
     if (alamat !== undefined) updateData.alamat = alamat;
 

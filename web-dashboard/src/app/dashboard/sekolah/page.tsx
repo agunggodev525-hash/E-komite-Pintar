@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function SekolahPage() {
   const { impersonate } = useAuth();
   const [sekolahList, setSekolahList] = useState<any[]>([]);
+  const [paketList, setPaketList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   
@@ -25,7 +26,7 @@ export default function SekolahPage() {
   const [formData, setFormData] = useState({
     nama_sekolah: "",
     alamat: "",
-    paket_berlangganan: "BASIC",
+    paket_berlangganan: "",
     admin_nama: "",
     admin_email: "",
     admin_password: "",
@@ -35,10 +36,19 @@ export default function SekolahPage() {
     try {
       setIsLoading(true);
       const res = await apiFetch<any>("/superadmin/tenants");
+      const resPaket = await apiFetch<any>("/superadmin/paket");
+      
       if (res.success && res.data) {
         setSekolahList(res.data);
       } else {
         setError(res.message);
+      }
+
+      if (resPaket.success && resPaket.data) {
+        setPaketList(resPaket.data);
+        if (resPaket.data.length > 0) {
+          setFormData(prev => ({ ...prev, paket_berlangganan: prev.paket_berlangganan || resPaket.data[0].id }));
+        }
       }
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan sistem.");
@@ -72,7 +82,7 @@ export default function SekolahPage() {
         setFormData({
           nama_sekolah: "",
           alamat: "",
-          paket_berlangganan: "BASIC",
+          paket_berlangganan: paketList.length > 0 ? paketList[0].id : "",
           admin_nama: "",
           admin_email: "",
           admin_password: "",
@@ -272,17 +282,13 @@ export default function SekolahPage() {
                         <p className="text-xs text-white-40 mt-0.5">{admin.email || '-'}</p>
                       </td>
                       <td className="px-6 py-4">
-                        {sk.paket_berlangganan === 'PREMIUM' ? (
-                          <span className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(245,158,11,0.15)]">
-                            👑 Premium
-                          </span>
-                        ) : sk.paket_berlangganan === 'ENTERPRISE' ? (
-                          <span className="inline-flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(168,85,247,0.15)]">
-                            🚀 Enterprise
+                        {sk.paket ? (
+                          <span className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(59,130,246,0.15)]">
+                            📦 {sk.paket.nama_paket}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(59,130,246,0.15)]">
-                            ⭐ Basic
+                          <span className="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(100,116,139,0.15)]">
+                            {sk.paket_berlangganan || 'Tidak Diketahui'}
                           </span>
                         )}
                       </td>
@@ -314,7 +320,7 @@ export default function SekolahPage() {
                             <button 
                               onClick={() => {
                                 setSelectedSekolah(sk);
-                                setNewPackage(sk.paket_berlangganan);
+                                setNewPackage(sk.paket_id || sk.paket_berlangganan);
                                 setIsEditPackageModalOpen(true);
                               }}
                               title="Ubah Paket"
@@ -409,9 +415,12 @@ export default function SekolahPage() {
                         onChange={handleInputChange}
                         className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors appearance-none font-medium"
                       >
-                        <option value="BASIC">⭐ Basic</option>
-                        <option value="PREMIUM">👑 Premium</option>
-                        <option value="ENTERPRISE">🚀 Enterprise</option>
+                        {paketList.length === 0 && <option value="">Memuat paket...</option>}
+                        {paketList.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            📦 {p.nama_paket} - Rp {p.harga.toLocaleString('id-ID')}
+                          </option>
+                        ))}
                       </select>
                       <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
                         <svg className="w-4 h-4 text-white-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -435,27 +444,14 @@ export default function SekolahPage() {
 
                 {/* Dynamic UI: Info Paket */}
                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                  {formData.paket_berlangganan === 'BASIC' && (
-                    <div className="p-4 bg-blue-50/50 rounded-xl shadow-inner border border-blue-200/20">
-                      <p className="text-sm text-blue-100 font-medium leading-relaxed">
-                        ⭐ Paket Basic: Maksimal 100 Siswa. Pembayaran Manual & Ekspor Laporan. (Tanpa WhatsApp Gateway).
+                  {paketList.filter(p => p.id === formData.paket_berlangganan).map(p => (
+                    <div key={p.id} className="p-4 bg-blue-500/10 rounded-xl shadow-inner border border-blue-500/20">
+                      <p className="text-sm text-blue-300 font-medium leading-relaxed">
+                        Maksimal Siswa: {p.batas_siswa === 999999 ? 'Tanpa Batas' : p.batas_siswa} Siswa. <br/>
+                        Durasi Berlangganan: {p.durasi}.
                       </p>
                     </div>
-                  )}
-                  {formData.paket_berlangganan === 'PREMIUM' && (
-                    <div className="p-4 border-yellow-400 border bg-yellow-50/30 rounded-xl shadow-inner">
-                      <p className="text-sm text-yellow-100 font-medium leading-relaxed">
-                        👑 Paket Premium: Maksimal 250 Siswa. Akses penuh Payment Gateway, Cicilan, dan WhatsApp Broadcast.
-                      </p>
-                    </div>
-                  )}
-                  {formData.paket_berlangganan === 'ENTERPRISE' && (
-                    <div className="p-4 bg-slate-800 text-white rounded-xl shadow-inner border border-slate-700">
-                      <p className="text-sm font-medium leading-relaxed">
-                        🚀 Paket Enterprise: Tanpa Batas Siswa. Multi-Branch, White-labeling App, & Prioritas Support 24/7.
-                      </p>
-                    </div>
-                  )}
+                  ))}
                 </div>
               </div>
 
@@ -576,9 +572,11 @@ export default function SekolahPage() {
                     onChange={(e) => setNewPackage(e.target.value)}
                     className="w-full bg-navy-950 border border-white-10 rounded-xl px-4 py-3.5 text-white focus:ring-2 focus:ring-gold-400 focus:border-transparent outline-none appearance-none transition-all cursor-pointer"
                   >
-                    <option value="BASIC">⭐ Paket Basic (Maks. 100 Siswa)</option>
-                    <option value="PREMIUM">👑 Paket Premium (Maks. 250 Siswa)</option>
-                    <option value="ENTERPRISE">🚀 Paket Enterprise (Tanpa Batas Siswa)</option>
+                    {paketList.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        📦 {p.nama_paket} (Maks. {p.batas_siswa === 999999 ? 'Tanpa Batas' : p.batas_siswa} Siswa)
+                      </option>
+                    ))}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-white-40">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
