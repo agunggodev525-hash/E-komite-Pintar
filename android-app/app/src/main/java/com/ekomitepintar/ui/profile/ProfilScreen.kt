@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -168,7 +169,7 @@ fun ProfilScreen(
                     ProfilMenuItem(icon = Icons.Filled.Person, title = "Pengaturan Akun", onClick = { onNavigate(Routes.PENGATURAN_AKUN) })
                     ProfilMenuItem(icon = Icons.Filled.Lock, title = "Keamanan", onClick = { onNavigate(Routes.KEAMANAN) })
                     ProfilMenuItem(icon = Icons.Filled.Notifications, title = "Notifikasi", onClick = { onNavigate(Routes.NOTIFIKASI) })
-                    ProfilMenuItem(icon = Icons.Filled.Help, title = "Bantuan & Dukungan", onClick = { onNavigate(Routes.BANTUAN) })
+                    ProfilMenuItem(icon = Icons.AutoMirrored.Filled.Help, title = "Bantuan & Dukungan", onClick = { onNavigate(Routes.BANTUAN) })
                 }
             }
             
