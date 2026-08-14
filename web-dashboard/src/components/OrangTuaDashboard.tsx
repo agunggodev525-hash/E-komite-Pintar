@@ -1,30 +1,132 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { formatRupiah } from "@/lib/api";
-import { Bell, Clock, History, HelpCircle, Book, Home, FileText, PieChart, User } from "lucide-react";
+import { apiFetch, formatRupiah } from "@/lib/api";
+import { Bell, Clock, History, HelpCircle, Book, Home, FileText, PieChart, User, Vote, CheckCircle2 } from "lucide-react";
+import StatusBadge from "./StatusBadge";
 
 export default function OrangTuaDashboard() {
   const { user } = useAuth();
   
-  // Dummy data
-  const namaSiswa = "Budi Santoso";
-  const kelasSiswa = "X-A";
-  const totalTagihan = 500000;
+  const [siswaInfo, setSiswaInfo] = useState<any>(null);
+  const [summary, setSummary] = useState<any>({ total_tagihan: 0, lunas: 0, pending: 0, belum_bayar: 0 });
+  const [tagihan, setTagihan] = useState<any[]>([]);
+  const [votingAktif, setVotingAktif] = useState<any[]>([]);
+  
+  const [loading, setLoading] = useState(true);
+  const [isPaying, setIsPaying] = useState(false);
+  const [isVoting, setIsVoting] = useState(false);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      
+      // 1. Ambil data tagihan anak
+      const tagihanRes = await apiFetch<any>("/tagihan/siswa/dummy-siswa-id");
+      if (tagihanRes.success) {
+        setSiswaInfo(tagihanRes.data.siswa);
+        setSummary(tagihanRes.data.summary);
+        setTagihan(tagihanRes.data.tagihan);
+      }
+
+      // 2. Ambil data E-Voting aktif
+      const votingRes = await apiFetch<any[]>("/voting");
+      if (votingRes.success) {
+        setVotingAktif(votingRes.data);
+      }
+      
+    } catch (error) {
+      console.error("Gagal memuat data orang tua:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // Hitung total sisa tagihan dari tagihan yang belum lunas
+  const totalTagihanBelumDibayar = tagihan
+    .filter(t => t.status_bayar !== 'LUNAS')
+    .reduce((acc, t) => {
+      const diskon = t.pembayaran?.nominal_diskon || 0;
+      const dibayar = t.pembayaran?.nominal_dibayar || 0;
+      return acc + Math.max(0, t.nominal - diskon - dibayar);
+    }, 0);
+
+  const handleBayarSekarang = async (tagihanItem: any) => {
+    try {
+      setIsPaying(true);
+      const res = await apiFetch<any>("/pembayaran/checkout", {
+        method: "POST",
+        body: JSON.stringify({
+          tagihan_id: tagihanItem.id,
+          siswa_id: siswaInfo?.id
+        })
+      });
+
+      if (res.success && res.data.redirect_url) {
+        // Arahkan ke halaman Midtrans
+        window.location.href = res.data.redirect_url;
+      } else {
+        alert(res.message || "Gagal menginisiasi pembayaran.");
+      }
+    } catch (error: any) {
+      alert("Terjadi kesalahan: " + error.message);
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
+  const handleVote = async (voting_id: string, kandidat_id: string) => {
+    try {
+      setIsVoting(true);
+      const res = await apiFetch<any>("/voting/vote", {
+        method: "POST",
+        body: JSON.stringify({ voting_id, kandidat_id })
+      });
+      
+      if (res.success) {
+        alert("Suara Anda berhasil dicatat!");
+        loadData(); // Refresh data voting
+      } else {
+        alert(res.message || "Gagal memberikan suara.");
+      }
+    } catch (error: any) {
+      alert(error.message || "Terjadi kesalahan sistem.");
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center items-center">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-sm font-medium text-slate-500">Memuat portal orang tua...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-hidden pb-24">
+    <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-x-hidden overflow-y-auto pb-24">
       
       {/* 1. Header Profil */}
       <div className="p-4 flex justify-between items-center bg-white dark:bg-slate-900 rounded-b-3xl shadow-sm z-10 relative">
         <div>
-          <p className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">Selamat Pagi,</p>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white">{user?.nama_lengkap || "Bapak/Ibu"}</h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Wali dari: {namaSiswa} (Kelas {kelasSiswa})</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Selamat Datang,</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">{user?.nama_lengkap || "Bapak/Ibu Wali"}</h1>
+          {siswaInfo && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Wali dari: {siswaInfo.nama_siswa} (Kelas {siswaInfo.kelas})</p>
+          )}
         </div>
         <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
           <Bell className="w-6 h-6 text-slate-600" />
-          <span className="absolute top-1.5 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+          {summary.belum_bayar > 0 && (
+            <span className="absolute top-1.5 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+          )}
         </button>
       </div>
 
@@ -32,18 +134,24 @@ export default function OrangTuaDashboard() {
       <div className="p-4 space-y-6">
         
         {/* 2. Card Tagihan Utama (Hero Section) */}
-        <div className="bg-gradient-to-br from-navy-800 to-blue-500 rounded-2xl p-6 shadow-[0_10px_30px_rgba(30,58,138,0.3)] relative overflow-hidden">
+        <div className="bg-gradient-to-br from-navy-800 to-blue-600 rounded-2xl p-6 shadow-[0_10px_30px_rgba(30,58,138,0.3)] relative overflow-hidden">
           {/* Ornamen / Pattern abstrak */}
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
           <div className="absolute -left-6 -bottom-6 w-32 h-32 bg-blue-300 opacity-20 rounded-full blur-2xl"></div>
           
-          <div className="relative z-10">
-            <p className="text-white/80 text-sm font-medium mb-1 tracking-wide">Total Tagihan Belum Dibayar</p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{formatRupiah(totalTagihan)}</h2>
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div>
+              <p className="text-white/80 text-sm font-medium mb-1 tracking-wide">Total Sisa Tagihan</p>
+              <h2 className="text-3xl font-extrabold text-white tracking-tight">
+                {totalTagihanBelumDibayar === 0 ? "Lunas 🎉" : formatRupiah(totalTagihanBelumDibayar)}
+              </h2>
+            </div>
             
-            <button className="w-full mt-6 bg-white hover:bg-slate-50 text-blue-900 font-bold rounded-full py-3 px-6 transition-all shadow-md active:scale-[0.98]">
-              Bayar Sekarang
-            </button>
+            <div className="mt-6 flex items-center justify-between">
+              <div className="text-white/80 text-xs">
+                <span className="font-bold text-white">{summary.belum_bayar + summary.pending}</span> Tagihan Menunggu
+              </div>
+            </div>
           </div>
         </div>
 
@@ -54,42 +162,125 @@ export default function OrangTuaDashboard() {
             {[
               { label: "Riwayat", icon: History, color: "text-emerald-500", bg: "bg-emerald-50" },
               { label: "Cicilan", icon: Clock, color: "text-orange-500", bg: "bg-orange-50" },
-              { label: "Buku Kas", icon: Book, color: "text-blue-500", bg: "bg-blue-50" },
+              { label: "Transparansi", icon: Book, color: "text-blue-500", bg: "bg-blue-50" },
               { label: "Bantuan", icon: HelpCircle, color: "text-purple-500", bg: "bg-purple-50" },
             ].map((menu, i) => (
               <button key={i} className="flex flex-col items-center gap-2 group">
                 <div className={`w-14 h-14 rounded-2xl ${menu.bg} flex items-center justify-center transition-transform group-hover:-translate-y-1 group-active:scale-95 shadow-sm`}>
                   <menu.icon className={`w-6 h-6 ${menu.color}`} />
                 </div>
-                <span className="text-xs font-semibold text-slate-600">{menu.label}</span>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">{menu.label}</span>
               </button>
             ))}
           </div>
         </div>
-        
-        {/* Tambahan Daftar Tagihan Mendatang untuk mengisi kekosongan visual */}
-        <div className="pt-4">
-          <div className="flex justify-between items-center mb-3 px-1">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Tagihan Mendatang</h3>
-            <button className="text-xs font-semibold text-blue-600">Lihat Semua</button>
-          </div>
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 p-4 border border-slate-200 dark:border-white/10 shadow-sm flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                <FileText className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">SPP Agustus 2026</p>
-                <p className="text-xs text-slate-600 dark:text-slate-500 dark:text-slate-400">Jatuh tempo: 10 Ags 2026</p>
-              </div>
+
+        {/* 4. Widget E-Voting */}
+        {votingAktif.length > 0 && (
+          <div className="pt-2">
+            <div className="flex justify-between items-center mb-3 px-1">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Vote className="w-4 h-4 text-emerald-500" />
+                E-Voting Komite Aktif
+              </h3>
             </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white">{formatRupiah(750000)}</p>
+            
+            <div className="space-y-4">
+              {votingAktif.map(voting => (
+                <div key={voting.id} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 p-5 shadow-sm">
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-1">{voting.judul}</h4>
+                  <p className="text-xs text-slate-500 mb-4">{voting.deskripsi}</p>
+                  
+                  {voting.hasVoted ? (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      <p className="text-sm text-emerald-800 font-medium">Terima kasih! Anda sudah menyumbangkan suara.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-slate-600 mb-2">Pilih salah satu kandidat:</p>
+                      {voting.kandidat.map((kand: any) => (
+                        <button
+                          key={kand.id}
+                          onClick={() => {
+                            if (window.confirm(`Yakin ingin memberikan suara untuk ${kand.nama_kandidat}?`)) {
+                              handleVote(voting.id, kand.id);
+                            }
+                          }}
+                          disabled={isVoting}
+                          className="w-full text-left p-3 border border-slate-200 dark:border-white/10 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all font-medium text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50"
+                        >
+                          {kand.nama_kandidat}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* 5. Daftar Tagihan Anak */}
+        <div className="pt-2">
+          <div className="flex justify-between items-center mb-3 px-1">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Rincian Tagihan</h3>
+            <span className="text-xs font-semibold bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-md">{tagihan.length} Data</span>
+          </div>
+          
+          <div className="space-y-3">
+            {tagihan.length === 0 ? (
+              <div className="text-center py-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10">
+                <p className="text-sm text-slate-500">Tidak ada tagihan untuk saat ini.</p>
+              </div>
+            ) : (
+              tagihan.map(item => {
+                const diskon = item.pembayaran?.nominal_diskon || 0;
+                const dibayar = item.pembayaran?.nominal_dibayar || 0;
+                const sisa = Math.max(0, item.nominal - diskon - dibayar);
+
+                return (
+                  <div key={item.id} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 p-4 shadow-sm">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">{item.judul}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">Batas: {new Date(item.tenggat_waktu).toLocaleDateString('id-ID')}</p>
+                      </div>
+                      <StatusBadge status={item.status_bayar} />
+                    </div>
+                    
+                    <div className="flex justify-between items-end mt-4">
+                      <div>
+                        {diskon > 0 && (
+                          <p className="text-xs text-emerald-600 font-medium mb-0.5">Ada Diskon: -{formatRupiah(diskon)}</p>
+                        )}
+                        {item.status_bayar === 'LUNAS' ? (
+                          <p className="text-sm font-bold text-slate-500 line-through">{formatRupiah(item.nominal)}</p>
+                        ) : (
+                          <p className="text-sm font-bold text-rose-600 dark:text-rose-400">Sisa: {formatRupiah(sisa)}</p>
+                        )}
+                      </div>
+                      
+                      {item.status_bayar !== 'LUNAS' && (
+                        <button 
+                          onClick={() => handleBayarSekarang(item)}
+                          disabled={isPaying}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors disabled:opacity-70"
+                        >
+                          Bayar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
 
-      {/* 4. Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md sm:max-w-lg bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 px-6 py-3 pb-safe flex justify-between items-center z-50">
+      {/* 6. Bottom Navigation Bar */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md sm:max-w-lg bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 px-6 py-3 flex justify-between items-center z-50">
         <button className="flex flex-col items-center gap-1 text-blue-600">
           <Home className="w-6 h-6" />
           <span className="text-[10px] font-bold">Beranda</span>
