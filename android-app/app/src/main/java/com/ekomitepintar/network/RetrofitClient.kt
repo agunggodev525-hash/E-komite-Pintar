@@ -1,24 +1,32 @@
 package com.ekomitepintar.network
 
+import android.app.Application
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
  * Singleton Retrofit Client.
- *
- * Base URL menggunakan 10.0.2.2 yang merupakan alias localhost
- * dari Android Emulator. Ganti dengan IP server untuk device fisik.
  */
 object RetrofitClient {
 
-    // URL Vercel Backend Production (Telah diperbarui ke server yang aktif)
     private const val BASE_URL = "https://e-komite-pintar-dfxmr3gki-agung-developer-s-projects.vercel.app/api/v1/"
 
     private var token: String? = null
     private var apiService: ApiService? = null
+    private var application: Application? = null
+
+    /**
+     * Inisialisasi dengan Application context (untuk HTTP cache).
+     * Panggil dari Application class atau sebelum getApiService() pertama kali.
+     */
+    fun init(app: Application) {
+        application = app
+    }
 
     /**
      * Set JWT token yang akan disertakan di setiap request.
@@ -41,28 +49,44 @@ object RetrofitClient {
     }
 
     private fun createApiService(): ApiService {
-        // Logging interceptor — hanya aktif di debug
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        val clientBuilder = OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor { token })
+            .connectTimeout(15, TimeUnit.SECONDS)  // Dikurangi dari 30s → 15s
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
+
+        // HTTP Cache 10MB di disk — mengurangi request berulang untuk data yang sama
+        application?.let { app ->
+            val cacheDir = File(app.cacheDir, "http_cache")
+            val cache = Cache(cacheDir, 10L * 1024L * 1024L) // 10 MB
+            clientBuilder.cache(cache)
         }
 
-        // Auth interceptor — inject Bearer token
-        val authInterceptor = AuthInterceptor { token }
-
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+        // Logging HANYA aktif di debug build — hemat CPU & memory di production
+        if (isDebugBuild()) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            clientBuilder.addInterceptor(loggingInterceptor)
+        }
 
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(okHttpClient)
+            .client(clientBuilder.build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         return retrofit.create(ApiService::class.java)
+    }
+
+    private fun isDebugBuild(): Boolean {
+        return try {
+            application?.let {
+                val appInfo = it.packageManager.getApplicationInfo(it.packageName, 0)
+                (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+            } ?: true
+        } catch (e: Exception) {
+            true
+        }
     }
 }

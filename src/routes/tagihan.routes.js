@@ -8,6 +8,7 @@ const { validate } = require('../middlewares/validate');
 const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 const tagihanController = require('../controllers/tagihan.controller');
+const { cacheMiddleware } = require('../utils/cache');
 
 const router = express.Router();
 
@@ -62,6 +63,7 @@ router.post(
 router.get(
   '/',
   authenticate,
+  cacheMiddleware(300), // Cache 5 menit
   tagihanController.getAll
 );
 
@@ -73,6 +75,7 @@ router.get(
 router.get(
   '/siswa/:siswaId',
   authenticate,
+  cacheMiddleware(120), // Cache 2 menit — tagihan siswa lebih sering berubah
   tagihanController.getBySiswaId
 );
 
@@ -84,6 +87,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
+  cacheMiddleware(300),
   tagihanController.getById
 );
 

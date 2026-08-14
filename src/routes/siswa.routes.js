@@ -8,6 +8,7 @@ const { validate } = require('../middlewares/validate');
 const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 const siswaController = require('../controllers/siswa.controller');
+const { cacheMiddleware } = require('../utils/cache');
 
 // Setup multer untuk foto profil — pakai memoryStorage agar kompatibel dengan Vercel (serverless)
 const multer = require('multer');
@@ -33,6 +34,7 @@ router.get(
   '/',
   authenticate,
   authorize('ADMIN_KOMITE'),
+  cacheMiddleware(120), // Cache 2 menit
   siswaController.getAll
 );
 
