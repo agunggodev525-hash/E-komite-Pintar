@@ -317,11 +317,19 @@ const updateFotoProfil = async (req, res) => {
     if (!req.file) {
       return errorResponse(res, 'File foto tidak ditemukan.', 400);
     }
-    
-    // Construct the public URL for the uploaded file
-    const protocol = req.protocol;
-    const host = req.get('host');
-    const fotoUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+
+    // Upload ke Cloudinary menggunakan buffer dari memoryStorage
+    const cloudinary = require('../config/cloudinary');
+    const fotoUrl = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'ekomite/profil', resource_type: 'image' },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result.secure_url);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
 
     await prisma.user.update({
       where: { id: req.user.id },

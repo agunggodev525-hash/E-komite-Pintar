@@ -33,6 +33,9 @@ interface ApiService {
         @Body request: Map<String, String>
     ): Response<ApiResponse<Any>>
 
+    @GET("auth/me")
+    suspend fun getMe(): Response<ApiResponse<User>>
+
     @Multipart
     @POST("auth/foto-profil")
     suspend fun updateFotoProfil(

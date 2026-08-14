@@ -116,19 +116,43 @@ router.post(
   updateFcmToken
 );
 
-// Setup multer untuk foto profil
+// GET /api/v1/auth/me
+router.get(
+  '/me',
+  authenticate,
+  async (req, res) => {
+    try {
+      const prisma = require('../config/database');
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+          id: true,
+          nama_lengkap: true,
+          email: true,
+          no_whatsapp: true,
+          role: true,
+          status: true,
+          foto_profil: true,
+        }
+      });
+      if (!user) return require('../utils/response').errorResponse(res, 'User tidak ditemukan.', 404);
+      return require('../utils/response').successResponse(res, 'Berhasil.', user);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+// Setup multer untuk foto profil dari app — pakai memoryStorage (Vercel compatible)
 const multer = require('multer');
-const path = require('path');
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../public/uploads'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Hanya file gambar yang diperbolehkan.'));
   }
 });
-const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } }); // limit 5MB
 
 // POST /api/v1/auth/foto-profil
 const { updateFotoProfil } = require('../controllers/auth.controller');

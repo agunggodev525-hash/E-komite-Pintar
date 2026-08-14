@@ -24,19 +24,46 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
 
     init {
         loadUserData()
-        
-        // Listen for changes in DataStore
+
+        // Listen for changes in DataStore (reactive)
         viewModelScope.launch {
             authRepository.observeFotoProfil().collect { url ->
                 _fotoProfil.value = url
             }
         }
+
+        // Sync foto & nama terbaru dari server setiap kali halaman dibuka
+        syncProfilFromServer()
     }
 
     private fun loadUserData() {
         viewModelScope.launch {
             val name = authRepository.getUserName() ?: "Orang Tua"
             _userName.value = name
+        }
+    }
+
+    /**
+     * Fetch data profil terbaru dari server (GET /auth/me).
+     * Memperbarui DataStore lokal sehingga foto yang diubah admin langsung tampil
+     * tanpa harus logout-login.
+     */
+    fun syncProfilFromServer() {
+        viewModelScope.launch {
+            try {
+                val response = com.ekomitepintar.network.RetrofitClient.getApiService().getMe()
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val user = response.body()?.data ?: return@launch
+                    // Update nama di ViewModel langsung
+                    _userName.value = user.namaLengkap
+                    // Update foto di DataStore (akan otomatis ter-observe oleh flow di atas)
+                    if (user.fotoProfil != null) {
+                        authRepository.updateFotoProfil(user.fotoProfil)
+                    }
+                }
+            } catch (e: Exception) {
+                // Gagal sync tidak perlu ditampilkan ke user — data lokal tetap dipakai
+            }
         }
     }
 
@@ -49,7 +76,7 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
                     val mediaType = (context.contentResolver.getType(uri) ?: "image/jpeg").toMediaTypeOrNull()
                     val requestBody = okhttp3.RequestBody.create(mediaType, bytes)
                     val multipartBody = okhttp3.MultipartBody.Part.createFormData("foto", "profile.jpg", requestBody)
-                    
+
                     val response = com.ekomitepintar.network.RetrofitClient.getApiService().updateFotoProfil(multipartBody)
                     if (response.isSuccessful && response.body()?.success == true) {
                         val fotoUrl = response.body()?.data?.get("foto_profil")
