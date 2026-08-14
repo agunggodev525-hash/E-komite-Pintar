@@ -51,18 +51,19 @@ const create = async (req, res, next) => {
     // Cek limitasi paket
     const sekolah = await prisma.sekolah.findUnique({
       where: { id: sekolah_id },
-      include: { _count: { select: { siswa: true } } }
+      include: { 
+        _count: { select: { siswa: true } },
+        paket: true
+      }
     });
     
-    if (sekolah) {
-      const paket = sekolah.paket_berlangganan;
+    if (sekolah && sekolah.paket) {
+      const paketName = sekolah.paket.nama_paket;
       const currentCount = sekolah._count.siswa;
-      let limit = -1;
-      if (paket === 'BASIC') limit = 300;
-      else if (paket === 'PREMIUM') limit = 1500;
+      const limit = sekolah.paket.batas_siswa;
 
-      if (limit !== -1 && currentCount >= limit) {
-        return errorResponse(res, `Batas maksimal siswa untuk paket ${paket} telah tercapai (${limit} siswa). Silakan upgrade paket Anda.`, 403);
+      if (limit !== 999999 && currentCount >= limit) {
+        return errorResponse(res, `Batas maksimal siswa untuk paket ${paketName} telah tercapai (${limit} siswa). Silakan upgrade paket Anda.`, 403);
       }
     }
 
@@ -283,18 +284,19 @@ const bulkCreate = async (req, res, next) => {
     // Cek limitasi paket
     const sekolah = await prisma.sekolah.findUnique({
       where: { id: sekolah_id },
-      include: { _count: { select: { siswa: true } } }
+      include: { 
+        _count: { select: { siswa: true } },
+        paket: true
+      }
     });
     
-    if (sekolah) {
-      const paket = sekolah.paket_berlangganan;
+    if (sekolah && sekolah.paket) {
+      const paketName = sekolah.paket.nama_paket;
       const currentCount = sekolah._count.siswa;
-      let limit = -1;
-      if (paket === 'BASIC') limit = 300;
-      else if (paket === 'PREMIUM') limit = 1500;
+      const limit = sekolah.paket.batas_siswa;
 
-      if (limit !== -1 && (currentCount + data.length) > limit) {
-        return errorResponse(res, `Gagal import: Batas maksimal siswa untuk paket ${paket} adalah ${limit} siswa. (Saat ini: ${currentCount}, Anda mencoba menambah: ${data.length}). Silakan upgrade paket.`, 403);
+      if (limit !== 999999 && (currentCount + data.length) > limit) {
+        return errorResponse(res, `Gagal import: Batas maksimal siswa untuk paket ${paketName} adalah ${limit} siswa. (Saat ini: ${currentCount}, Anda mencoba menambah: ${data.length}). Silakan upgrade paket.`, 403);
       }
     }
 
