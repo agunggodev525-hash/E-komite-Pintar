@@ -17,6 +17,9 @@ export default function ManajemenPaketPage() {
   const [tenants, setTenants] = useState<any[]>([]);
   const [isTenantsLoading, setIsTenantsLoading] = useState(false);
 
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [isTransactionsLoading, setIsTransactionsLoading] = useState(false);
+
   const fetchTenants = async () => {
     setIsTenantsLoading(true);
     try {
@@ -31,9 +34,26 @@ export default function ManajemenPaketPage() {
     }
   };
 
+  const fetchTransactions = async () => {
+    setIsTransactionsLoading(true);
+    try {
+      const res = await apiFetch("/superadmin/transactions");
+      if (res?.success) {
+        setTransactions(res.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data transaksi", error);
+    } finally {
+      setIsTransactionsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === "sekolah" && tenants.length === 0) {
       fetchTenants();
+    }
+    if (activeTab === "tagihan" && transactions.length === 0) {
+      fetchTransactions();
     }
   }, [activeTab]);
 
@@ -322,10 +342,60 @@ export default function ManajemenPaketPage() {
         </div>
       )}
 
-      {/* Other Tabs Placeholder */}
+      {/* Tab Content: Tagihan & Transaksi */}
       {activeTab === "tagihan" && (
-        <div className="py-20 text-center border border-white/5 border-dashed rounded-2xl bg-[#1A1F2C]">
-          <p className="text-slate-400">Fitur <span className="font-bold text-white">Tagihan & Transaksi</span> sedang dalam pengembangan.</p>
+        <div className="bg-[#1A1F2C] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-black/20 border-b border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-400">
+                <tr>
+                  <th className="px-6 py-5">Tanggal Transaksi</th>
+                  <th className="px-6 py-5">Nama Sekolah</th>
+                  <th className="px-6 py-5">Paket SaaS</th>
+                  <th className="px-6 py-5">Nominal Tagihan</th>
+                  <th className="px-6 py-5 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {isTransactionsLoading ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat riwayat transaksi...</td>
+                  </tr>
+                ) : transactions.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada transaksi tercatat.</td>
+                  </tr>
+                ) : (
+                  transactions.map((trx) => (
+                    <tr key={trx.id} className="hover:bg-white/5 transition-colors group">
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-slate-300">
+                          {new Date(trx.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">
+                          {new Date(trx.tanggal).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 font-bold text-white">{trx.sekolah?.nama_sekolah || "-"}</td>
+                      <td className="px-6 py-4 text-slate-300">{trx.paket?.nama_paket || "-"}</td>
+                      <td className="px-6 py-4 font-extrabold text-[#10B981]">{formatRupiah(trx.nominal)}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
+                          trx.status === "LUNAS" 
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
+                            : trx.status === "GAGAL"
+                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        }`}>
+                          {trx.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

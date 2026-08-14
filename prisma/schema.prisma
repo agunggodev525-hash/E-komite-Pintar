@@ -33,6 +33,7 @@ model Sekolah {
   voting     Voting[]
   system_logs SystemLog[]
   pengeluaran Pengeluaran[]
+  saas_transactions SaaSTransaction[]
 
   @@map("sekolah")
 }
@@ -197,6 +198,7 @@ model PaketSaaS {
   updated_at  DateTime @updatedAt
 
   sekolah     Sekolah[]
+  transaksi   SaaSTransaction[]
 
   @@map("paket_saas")
 }
@@ -225,4 +227,18 @@ model Pengeluaran {
   admin       User     @relation(fields: [admin_id], references: [id], onDelete: Cascade)
 
   @@map("pengeluaran")
+}
+
+model SaaSTransaction {
+  id          String   @id @default(uuid())
+  sekolah_id  String
+  paket_id    String
+  nominal     Float
+  status      String   @default("PENDING") // PENDING, LUNAS, GAGAL
+  tanggal     DateTime @default(now())
+
+  sekolah     Sekolah  @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  paket       PaketSaaS @relation(fields: [paket_id], references: [id], onDelete: Cascade)
+
+  @@map("saas_transaction")
 }

@@ -445,6 +445,21 @@ const togglePaketStatus = async (req, res, next) => {
   }
 };
 
+const getSaaSTransactions = async (req, res, next) => {
+  try {
+    const transactions = await prisma.saaSTransaction.findMany({
+      orderBy: { tanggal: 'desc' },
+      include: {
+        sekolah: { select: { nama_sekolah: true } },
+        paket: { select: { nama_paket: true } }
+      }
+    });
+    return successResponse(res, 'Berhasil mengambil daftar transaksi SaaS', transactions);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAnalytics,
   getTenants,
@@ -461,5 +476,6 @@ module.exports = {
   createPaket,
   updatePaket,
   deletePaket,
-  togglePaketStatus
+  togglePaketStatus,
+  getSaaSTransactions
 };
