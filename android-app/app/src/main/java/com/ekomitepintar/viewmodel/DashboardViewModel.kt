@@ -17,11 +17,12 @@ import kotlinx.coroutines.launch
  */
 data class DashboardUiState(
     val userName: String = "",
+    val fotoProfil: String? = null,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val tagihanList: List<Tagihan> = emptyList(), // This will be the filtered list
-    val allTagihanList: List<Tagihan> = emptyList(), // Original unmodified list
-    val currentFilter: String = "Semua", // "Semua", "Lunas", "Belum Bayar"
+    val tagihanList: List<Tagihan> = emptyList(),
+    val allTagihanList: List<Tagihan> = emptyList(),
+    val currentFilter: String = "Semua",
     val summary: TagihanSummary? = null,
     val errorMessage: String? = null,
     val checkoutUrl: String? = null,
@@ -44,12 +45,18 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     /**
-     * Load nama user dari DataStore.
+     * Load nama & foto user dari DataStore, lalu sync dari server.
      */
     private fun loadUserData() {
         viewModelScope.launch {
             val userName = authRepository.getUserName() ?: "Orang Tua"
+            val fotoUrl = authRepository.observeFotoProfil()
             _uiState.value = _uiState.value.copy(userName = userName)
+
+            // Observe foto profil secara reaktif dari DataStore
+            fotoUrl.collect { url ->
+                _uiState.value = _uiState.value.copy(fotoProfil = url)
+            }
         }
     }
 

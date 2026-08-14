@@ -25,11 +25,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.border
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ekomitepintar.model.Tagihan
 import com.ekomitepintar.model.TagihanSummary
 import com.ekomitepintar.ui.components.BottomNavBar
@@ -130,12 +134,24 @@ fun DashboardScreen(
                         .clickable { onNavigateBottomTab(Routes.PROFIL) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        Icons.Filled.Person,
-                        contentDescription = "Profile",
-                        tint = White,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    if (uiState.fotoProfil != null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(uiState.fotoProfil)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Foto Profil",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            Icons.Filled.Person,
+                            contentDescription = "Profile",
+                            tint = White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         },
