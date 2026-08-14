@@ -360,6 +360,88 @@ const updateTenant = async (req, res, next) => {
   }
 };
 
+/**
+ * ==========================================
+ * Manajemen Paket SaaS
+ * ==========================================
+ */
+
+const getPaketList = async (req, res, next) => {
+  try {
+    const paket = await prisma.paketSaaS.findMany({
+      orderBy: { harga: 'asc' }
+    });
+    return successResponse(res, 'Berhasil mengambil daftar paket', paket);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createPaket = async (req, res, next) => {
+  try {
+    const { nama_paket, harga, durasi, batas_siswa } = req.body;
+    const newPaket = await prisma.paketSaaS.create({
+      data: {
+        nama_paket,
+        harga: Number(harga),
+        durasi,
+        batas_siswa: Number(batas_siswa) || 999999
+      }
+    });
+    return successResponse(res, 'Berhasil membuat paket baru', newPaket, 201);
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return errorResponse(res, 'Nama paket sudah ada', 400);
+    }
+    next(error);
+  }
+};
+
+const updatePaket = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { nama_paket, harga, durasi, batas_siswa } = req.body;
+    const updated = await prisma.paketSaaS.update({
+      where: { id },
+      data: {
+        nama_paket,
+        harga: Number(harga),
+        durasi,
+        batas_siswa: Number(batas_siswa) || 999999
+      }
+    });
+    return successResponse(res, 'Berhasil memperbarui paket', updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deletePaket = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await prisma.paketSaaS.delete({ where: { id } });
+    return successResponse(res, 'Berhasil menghapus paket', null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const togglePaketStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const paket = await prisma.paketSaaS.findUnique({ where: { id } });
+    if (!paket) return errorResponse(res, 'Paket tidak ditemukan', 404);
+    
+    const updated = await prisma.paketSaaS.update({
+      where: { id },
+      data: { status: paket.status === 'AKTIF' ? 'NONAKTIF' : 'AKTIF' }
+    });
+    return successResponse(res, 'Berhasil mengubah status paket', updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAnalytics,
   getTenants,
@@ -368,7 +450,13 @@ module.exports = {
   impersonateTenant,
   resetPasswordTenant,
   updateTenant,
+  updateTenant,
   getSystemLogs,
   getSettings,
-  updateSettings
+  updateSettings,
+  getPaketList,
+  createPaket,
+  updatePaket,
+  deletePaket,
+  togglePaketStatus
 };

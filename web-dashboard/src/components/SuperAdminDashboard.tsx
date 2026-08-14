@@ -71,10 +71,10 @@ export default function SuperAdminDashboard() {
       ) : (
         <>
           {/* Baris 1: 4 Card Metrik (Glass & Glow Effect) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
             {/* Card 1: Sekolah */}
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-blue-400/5 rounded-full blur-3xl group-hover:bg-blue-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
@@ -85,7 +85,7 @@ export default function SuperAdminDashboard() {
                 </span>
               </div>
               <div className="relative z-10">
-                <h3 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                   {data.totalKlien}
                 </h3>
               </div>
@@ -97,7 +97,7 @@ export default function SuperAdminDashboard() {
             </div>
 
             {/* Card 2: Akun */}
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-purple-400/5 rounded-full blur-3xl group-hover:bg-purple-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
@@ -108,7 +108,7 @@ export default function SuperAdminDashboard() {
                 </span>
               </div>
               <div className="relative z-10">
-                <h3 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                   {data.totalPengguna}
                 </h3>
               </div>
@@ -120,7 +120,7 @@ export default function SuperAdminDashboard() {
             </div>
 
             {/* Card 3: Pemasukan (Gradient Text) */}
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-400/5 rounded-full blur-3xl group-hover:bg-emerald-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
@@ -131,7 +131,7 @@ export default function SuperAdminDashboard() {
                 </span>
               </div>
               <div className="relative z-10">
-                <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words">
                   {formatRupiah(data.estimasiTransaksi)}
                 </h3>
               </div>
@@ -143,7 +143,7 @@ export default function SuperAdminDashboard() {
             </div>
 
             {/* Card 4: Status Sistem (Gradient Text) */}
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 transition-colors shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between h-full space-y-2">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-teal-400/5 rounded-full blur-3xl group-hover:bg-teal-400/10 transition-colors duration-500"></div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-900/5 shadow-sm">
@@ -154,7 +154,7 @@ export default function SuperAdminDashboard() {
                 </span>
               </div>
               <div className="relative z-10">
-                <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words">
                   {data.statusSistem}
                 </h3>
               </div>
@@ -168,7 +168,7 @@ export default function SuperAdminDashboard() {
           </div>
 
           {/* Baris 2: Main Line Chart (Upgrade Area Grafik) */}
-          <div className="w-full bg-white/95 dark:bg-white/5 backdrop-blur-xl rounded-3xl shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/10 p-8 transition-colors">
+          <div className="w-full bg-white/95 dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/10 p-4 sm:p-6 lg:p-8 transition-colors">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
               <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white dark:text-white">
                 Grafik Tren Pendapatan SaaS
@@ -180,7 +180,7 @@ export default function SuperAdminDashboard() {
               </select>
             </div>
 
-            <div className="h-[350px] w-full">
+            <div className="h-[250px] sm:h-[300px] lg:h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={revenueData}

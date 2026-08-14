@@ -12,10 +12,10 @@ export default function DetailPembayaranPage() {
   const totalPembayaran = 350000;
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-slate-50 relative shadow-2xl overflow-hidden pb-24">
+    <div className="max-w-md mx-auto h-[100dvh] bg-slate-50 relative shadow-2xl flex flex-col">
       
       {/* 1. Header Mobile */}
-      <div className="bg-white p-4 flex items-center justify-between shadow-sm sticky top-0 z-20">
+      <div className="bg-white p-4 flex items-center justify-between shadow-sm shrink-0 z-20">
         <Link href="/dashboard" className="p-2 -ml-2 rounded-full hover:bg-slate-100 transition-colors">
           <ArrowLeft className="w-6 h-6 text-slate-700" />
         </Link>
@@ -24,7 +24,7 @@ export default function DetailPembayaranPage() {
       </div>
 
       {/* Content Scrollable */}
-      <div className="p-4 space-y-6 overflow-y-auto">
+      <div className="p-4 space-y-6 overflow-y-auto flex-1">
         
         {/* 2. Rincian Tagihan */}
         <div>
@@ -168,7 +168,7 @@ export default function DetailPembayaranPage() {
       </div>
 
       {/* 4. Sticky Bottom Button */}
-      <div className="absolute bottom-0 w-full p-4 bg-white border-t border-slate-100 z-50">
+      <div className="p-4 bg-white border-t border-slate-100 z-50 shrink-0">
         <button className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-xl font-bold shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98] flex justify-center items-center gap-2">
           Konfirmasi & Bayar <span className="opacity-70 font-normal">|</span> {formatRupiah(totalPembayaran)}
         </button>

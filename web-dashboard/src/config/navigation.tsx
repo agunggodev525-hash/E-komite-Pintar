@@ -8,7 +8,8 @@ import {
   FileText, 
   PieChart,
   Banknote,
-  Vote
+  Vote,
+  CreditCard
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -35,6 +36,7 @@ const navigationConfig: Record<string, NavItem[]> = {
     { label: "Daftar Sekolah", href: "/dashboard/sekolah", icon: <Building2 className="w-5 h-5" />, description: "Manajemen Klien SaaS" },
     { label: "Log Sistem", href: "/dashboard/logs", icon: <ShieldCheck className="w-5 h-5" />, description: "Audit trail aktivitas" },
     { label: "Pengaturan Global", href: "/dashboard/settings", icon: <Settings className="w-5 h-5" />, description: "Konfigurasi server SaaS" },
+    { label: "Manajemen Paket", href: "/dashboard/paket", icon: <CreditCard className="w-5 h-5" />, description: "Kelola paket berlangganan" },
   ],
   ADMIN_KOMITE: [
     { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, description: "Ringkasan data" },

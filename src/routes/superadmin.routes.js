@@ -3,7 +3,7 @@
 // ============================================
 
 const express = require('express');
-const { getAnalytics, getTenants, createTenant, toggleTenantStatus, impersonateTenant, resetPasswordTenant, updateTenant, getSystemLogs, getSettings, updateSettings } = require('../controllers/superadmin.controller');
+const { getAnalytics, getTenants, createTenant, toggleTenantStatus, impersonateTenant, resetPasswordTenant, updateTenant, getSystemLogs, getSettings, updateSettings, getPaketList, createPaket, updatePaket, deletePaket, togglePaketStatus } = require('../controllers/superadmin.controller');
 const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 
@@ -30,5 +30,12 @@ router.post('/tenants/:id/reset-password', resetPasswordTenant);
 router.get('/logs', getSystemLogs);
 router.get('/settings', getSettings);
 router.post('/settings', updateSettings);
+
+// Manajemen Paket SaaS
+router.get('/paket', getPaketList);
+router.post('/paket', createPaket);
+router.put('/paket/:id', updatePaket);
+router.delete('/paket/:id', deletePaket);
+router.patch('/paket/:id/status', togglePaketStatus);
 
 module.exports = router;

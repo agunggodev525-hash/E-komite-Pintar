@@ -102,9 +102,9 @@ export default function TransparansiDanaPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-slate-50 relative shadow-2xl overflow-hidden">
+    <div className="max-w-md mx-auto h-[100dvh] bg-slate-50 relative shadow-2xl flex flex-col">
       
-      <div className="bg-white p-4 flex items-center justify-between shadow-sm sticky top-0 z-20">
+      <div className="bg-white p-4 flex items-center justify-between shadow-sm shrink-0 z-20">
         <Link href="/dashboard" className="p-2 -ml-2 rounded-full hover:bg-slate-100 transition-colors">
           <ArrowLeft className="w-6 h-6 text-slate-700" />
         </Link>
@@ -120,7 +120,7 @@ export default function TransparansiDanaPage() {
       </div>
 
       {/* Content Scrollable */}
-      <div className="p-4 space-y-6 overflow-y-auto pb-8">
+      <div className="p-4 space-y-6 overflow-y-auto flex-1">
         
         {/* 2. Ringkasan Kas (Visual) */}
         <div>

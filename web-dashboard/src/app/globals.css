@@ -123,8 +123,9 @@ input:focus, select:focus, textarea:focus {
   outline-offset: 1px;
 }
 
-/* Smooth transitions */
-* {
+/* Smooth transitions — targeted, not wildcard */
+a, button, input, select, textarea,
+[class*="hover:"], [class*="transition"] {
   transition-property: background-color, border-color, color, opacity, box-shadow, transform;
   transition-duration: 300ms;
   transition-timing-function: ease-in-out;
@@ -160,6 +161,12 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
+/* Responsive text scaling utilities */
+.text-responsive-3xl {
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 1.875rem);
+  line-height: 1.2;
+}
+
 /* Floating Animations */
 @keyframes float {
   0% { transform: translateY(0px); }
@@ -189,4 +196,22 @@ input:focus, select:focus, textarea:focus {
 
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Reduced motion for accessibility & low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-subtle,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Safe area for iOS bottom bar */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

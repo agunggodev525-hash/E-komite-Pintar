@@ -152,10 +152,10 @@ export default function DaftarTagihanPage() {
       subtitle="Kelola seluruh tagihan siswa dan catat pembayaran masuk"
     >
       {/* Header Actions */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-8">
-        <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-          <div className="flex bg-white dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 items-center w-full sm:w-64 shadow-sm dark:shadow-xl transition-colors">
-            <Search className="w-5 h-5 text-slate-500 dark:text-slate-400 mr-3" />
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full xl:w-auto">
+          <div className="flex bg-white dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl px-3 sm:px-4 py-2.5 items-center w-full sm:w-64 shadow-sm dark:shadow-xl transition-colors">
+            <Search className="w-5 h-5 text-slate-500 dark:text-slate-400 mr-2 sm:mr-3 shrink-0" />
             <input 
               type="text" 
               value={searchQuery}
@@ -165,7 +165,7 @@ export default function DaftarTagihanPage() {
             />
           </div>
           
-          <div className="flex gap-3 w-full sm:w-auto">
+          <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
             <div className="relative w-full sm:w-40">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Filter className="w-4 h-4"/></span>
               <select 
@@ -194,7 +194,7 @@ export default function DaftarTagihanPage() {
           </div>
         </div>
         
-        <div className="flex gap-3 w-full xl:w-auto">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full xl:w-auto">
           <button 
             disabled={selectedRows.length === 0}
             onClick={() => {
@@ -216,7 +216,7 @@ export default function DaftarTagihanPage() {
           </button>
           <Link 
             href="/dashboard/tagihan/buat"
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#428C7A] hover:bg-[#347363] text-white font-bold rounded-xl transition-all shadow-[0_4px_10px_rgba(66,140,122,0.3)] hover:-translate-y-0.5 text-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#428C7A] hover:bg-[#347363] text-white font-bold rounded-xl transition-all shadow-[0_4px_10px_rgba(66,140,122,0.3)] hover:-translate-y-0.5 text-sm"
           >
             <Plus className="w-4 h-4" />
             Buat Tagihan Baru
@@ -224,13 +224,84 @@ export default function DaftarTagihanPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm dark:shadow-xl">
+      {/* Mobile Card View (< md) */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          <div className="flex justify-center py-12">
+            <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : filteredTagihan.length > 0 ? (
+          filteredTagihan.map((item) => (
+            <div 
+              key={item.id} 
+              className={`bg-white dark:bg-slate-900 rounded-2xl border p-4 transition-colors ${
+                selectedRows.includes(item.id) 
+                  ? 'border-emerald-400 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10' 
+                  : 'border-slate-200 dark:border-white/10'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <input 
+                  type="checkbox" 
+                  checked={selectedRows.includes(item.id)}
+                  onChange={() => handleSelectRow(item.id)}
+                  className="w-4 h-4 mt-1 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-emerald-500 focus:ring-emerald-500 shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">{item.nama}</h3>
+                    <StatusBadge status={item.status} />
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                    {item.kelas} · {item.keterangan.toLowerCase()}
+                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-wider">Sisa Tagihan</p>
+                      <p className={`text-sm font-bold ${item.sisa_tagihan === 0 ? 'text-emerald-500' : 'text-rose-500 dark:text-rose-400'}`}>
+                        {formatRupiah(item.sisa_tagihan)}
+                      </p>
+                    </div>
+                    {(item.status === "DICICIL" || item.status === "BELUM_BAYAR" || item.status === "PENDING") && (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => {
+                            setSelectedTagihan(item);
+                            setNominalDiterima(item.sisa_tagihan.toString());
+                          }}
+                          className="inline-flex items-center justify-center w-9 h-9 bg-blue-500/20 hover:bg-blue-500/30 text-blue-500 dark:text-blue-400 border border-blue-400/20 rounded-xl transition-colors"
+                          title="Terima Bayar Tunai"
+                        >
+                          <Banknote className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => setSelectedDispensasi(item)}
+                          className="inline-flex items-center justify-center w-9 h-9 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10 rounded-xl transition-colors"
+                          title="Opsi Dispensasi"
+                        >
+                          <Settings className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-12 text-slate-400 text-sm">
+            Tidak ada data yang sesuai dengan filter/pencarian.
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table (md+) */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm dark:shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
               <tr>
-                <th scope="col" className="px-6 py-4">
+                <th scope="col" className="px-4 lg:px-6 py-4">
                   <input 
                     type="checkbox" 
                     checked={selectedRows.length === filteredTagihan.length && filteredTagihan.length > 0}
@@ -238,13 +309,13 @@ export default function DaftarTagihanPage() {
                     className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-emerald-500 focus:ring-emerald-500"
                   />
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Nama Siswa</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Kelas</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Keterangan Tagihan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Total Tagihan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Sisa Tagihan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 text-center">Aksi</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Nama Siswa</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Kelas</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Keterangan Tagihan</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Total Tagihan</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Sisa Tagihan</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-white/5 relative">
@@ -260,7 +331,7 @@ export default function DaftarTagihanPage() {
                 ) : filteredTagihan.length > 0 ? (
                 filteredTagihan.map((item) => (
                   <tr key={item.id} className={`hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-50 dark:bg-emerald-500/10' : ''}`}>
-                  <td className="px-6 py-4">
+                  <td className="px-4 lg:px-6 py-4">
                     <input 
                       type="checkbox" 
                       checked={selectedRows.includes(item.id)}
@@ -268,13 +339,13 @@ export default function DaftarTagihanPage() {
                       className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-emerald-500 focus:ring-emerald-500"
                     />
                   </td>
-                  <td className="px-6 py-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.nama}</td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{item.kelas}</td>
-                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 capitalize">{item.keterangan.toLowerCase()}</td>
-                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
-                  <td className={`px-6 py-4 font-semibold whitespace-nowrap ${item.sisa_tagihan === 0 ? 'text-slate-500 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{formatRupiah(item.sisa_tagihan)}</td>
-                  <td className="px-6 py-4"><StatusBadge status={item.status} /></td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-4 lg:px-6 py-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.nama}</td>
+                  <td className="px-4 lg:px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{item.kelas}</td>
+                  <td className="px-4 lg:px-6 py-4 text-slate-700 dark:text-slate-300 capitalize">{item.keterangan.toLowerCase()}</td>
+                  <td className="px-4 lg:px-6 py-4 text-slate-700 dark:text-slate-300 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
+                  <td className={`px-4 lg:px-6 py-4 font-semibold whitespace-nowrap ${item.sisa_tagihan === 0 ? 'text-slate-500 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{formatRupiah(item.sisa_tagihan)}</td>
+                  <td className="px-4 lg:px-6 py-4"><StatusBadge status={item.status} /></td>
+                  <td className="px-4 lg:px-6 py-4 text-center">
                     {(item.status === "DICICIL" || item.status === "BELUM_BAYAR" || item.status === "PENDING") ? (
                       <div className="flex justify-center gap-2">
                         <button 

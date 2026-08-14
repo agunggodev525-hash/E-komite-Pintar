@@ -154,7 +154,7 @@ export default function DashboardPage() {
       title="Dashboard Utama"
       subtitle={`Selamat datang kembali, ${user?.nama_lengkap || "Admin"}!`}
       titleExtra={
-        <div className="flex items-center gap-3 ml-0 lg:ml-4 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 ml-0 lg:ml-4 flex-wrap">
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
@@ -172,7 +172,7 @@ export default function DashboardPage() {
             })}
           </select>
           
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
             <Link 
               href="/dashboard/tagihan/buat" 
               className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap"
@@ -195,17 +195,17 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
               <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Saldo Kas Saat Ini</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.saldoKas)}</h3>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent pb-1 break-words">{formatRupiah(data.saldoKas)}</h3>
               <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 <span className="text-emerald-600 dark:text-emerald-500 font-bold">Real-time</span> dari database
               </p>
             </div>
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
               <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Total Menunggak</p>
-              <h3 className={`text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600' : 'from-rose-600 to-red-800 dark:from-rose-400 dark:to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
+              <h3 className={`text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600' : 'from-rose-600 to-red-800 dark:from-rose-400 dark:to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
               <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 {data.totalMenunggak === 0 ? (
                   <><span className="text-emerald-600 dark:text-emerald-500 font-bold">Semua lunas</span> — Tidak ada tunggakan</>
@@ -214,9 +214,9 @@ export default function DashboardPage() {
                 )}
               </p>
             </div>
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
               <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Dana Cair / Settlement</p>
-              <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-600 to-indigo-800 dark:from-blue-400 dark:to-indigo-600 bg-clip-text text-transparent pb-1">{formatRupiah(data.danaCair)}</h3>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-600 to-indigo-800 dark:from-blue-400 dark:to-indigo-600 bg-clip-text text-transparent pb-1 break-words">{formatRupiah(data.danaCair)}</h3>
               <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 Belum ada pencairan
               </p>
@@ -224,12 +224,12 @@ export default function DashboardPage() {
           </div>
 
           {/* Tren Arus Kas Bulanan Chart */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <CashFlowChart chartData={chartData} loading={chartLoading} />
           </div>
 
-          <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-lg dark:shadow-xl transition-colors">
-            <div className="p-6 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+          <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-lg dark:shadow-xl transition-colors">
+            <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-slate-50 dark:bg-slate-900/50">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight transition-colors">
                 5 Transaksi Masuk Terakhir
               </h2>

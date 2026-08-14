@@ -42,12 +42,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-72 glass-panel border-r border-slate-200/50 dark:border-white/10 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-[260px] sm:w-72 glass-panel border-r border-slate-200/50 dark:border-white/10 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-slate-200 dark:border-white/10 transition-colors">
+        <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-white/10 transition-colors">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gold-400/15 flex items-center justify-center overflow-hidden">
               <img src="/logo.jpg" alt="Logo E-Komite" className="w-full h-full object-cover" />
@@ -62,7 +62,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-3 sm:p-4 space-y-1 overflow-y-auto">
           <p className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
             Menu
           </p>

@@ -28,7 +28,7 @@ export default function StatCard({
 }: StatCardProps) {
   
   return (
-    <div className="group glass-panel rounded-3xl p-6 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 relative overflow-hidden flex flex-col justify-between animate-float-subtle">
+    <div className="group glass-panel rounded-3xl p-4 sm:p-6 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 relative overflow-hidden flex flex-col justify-between">
       
       {/* Decorative subtle gradient */}
       <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-gradient-to-br from-cyan-neon/10 to-transparent rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>

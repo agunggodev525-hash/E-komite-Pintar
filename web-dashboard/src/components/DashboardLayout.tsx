@@ -34,9 +34,9 @@ export default function DashboardLayout({
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#050B14] relative">
       {/* Futuristic abstract glowing background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-neon/10 dark:bg-cyan-neon/20 rounded-full blur-[120px] animate-pulse-glow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-magenta-neon/10 dark:bg-magenta-neon/20 rounded-full blur-[150px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-[40%] left-[30%] w-[30%] h-[30%] bg-blue-500/10 dark:bg-blue-500/10 rounded-full blur-[100px] animate-float-subtle" />
+        <div className="absolute top-[-20%] left-[-10%] w-[30%] sm:w-[50%] h-[30%] sm:h-[50%] bg-cyan-neon/10 dark:bg-cyan-neon/20 rounded-full blur-[80px] sm:blur-[120px] animate-pulse-glow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] sm:w-[60%] h-[40%] sm:h-[60%] bg-magenta-neon/10 dark:bg-magenta-neon/20 rounded-full blur-[100px] sm:blur-[150px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
+        <div className="hidden sm:block absolute top-[40%] left-[30%] w-[30%] h-[30%] bg-blue-500/10 dark:bg-blue-500/10 rounded-full blur-[100px] animate-float-subtle" />
       </div>
 
       {/* Sidebar */}
@@ -55,7 +55,7 @@ export default function DashboardLayout({
         )}
         
         {/* Top Bar (Mobile Only) */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white/70 dark:bg-[#050B14]/60 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/10 px-6 py-4 flex items-center transition-colors">
+        <header className="lg:hidden sticky top-0 z-30 bg-white/70 dark:bg-[#050B14]/60 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/10 px-4 sm:px-6 py-3 sm:py-4 flex items-center transition-colors">
           <div className="flex items-center gap-4">
             {/* Hamburger (mobile) */}
             <button
@@ -85,7 +85,7 @@ export default function DashboardLayout({
             </div>
           </div>
           
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-1 sm:gap-2">
             <ThemeToggle />
             {/* Notification Bell (Mobile) */}
             <NotificationDropdown isMobile={true} />
@@ -93,9 +93,9 @@ export default function DashboardLayout({
         </header>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Desktop Header Title */}
-          <div className="hidden lg:flex justify-between items-start mb-8">
+          <div className="hidden lg:flex justify-between items-start mb-6 lg:mb-8">
             <div>
               <div className="flex items-center flex-wrap gap-y-2">
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{title}</h1>

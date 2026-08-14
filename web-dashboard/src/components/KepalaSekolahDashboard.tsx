@@ -21,17 +21,17 @@ export default function KepalaSekolahDashboard() {
   return (
     <div className="space-y-6">
       {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-400/5 rounded-full blur-3xl group-hover:bg-emerald-400/10 transition-colors duration-500"></div>
           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest relative z-10">Total Saldo Komite</p>
-          <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 relative z-10">{formatRupiah(dummyStats.saldo)}</h3>
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words relative z-10">{formatRupiah(dummyStats.saldo)}</h3>
           <p className="text-xs font-medium text-slate-600 dark:text-slate-400 relative z-10">
             <span className="text-emerald-500 font-bold">+15%</span> vs last month
           </p>
         </div>
         
-        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-blue-400/5 rounded-full blur-3xl group-hover:bg-blue-400/10 transition-colors duration-500"></div>
           <div className="flex justify-between items-end relative z-10">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Pengumpulan Bulan Ini</p>
@@ -45,10 +45,10 @@ export default function KepalaSekolahDashboard() {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-400/5 rounded-full blur-3xl group-hover:bg-rose-400/10 transition-colors duration-500"></div>
           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest relative z-10">Total Pengeluaran Bulan Ini</p>
-          <h3 className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-rose-400 to-red-600 bg-clip-text text-transparent pb-1 relative z-10">{formatRupiah(dummyStats.pengeluaranBulanIni)}</h3>
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-rose-400 to-red-600 bg-clip-text text-transparent pb-1 break-words relative z-10">{formatRupiah(dummyStats.pengeluaranBulanIni)}</h3>
           <p className="text-xs font-medium text-slate-600 dark:text-slate-400 relative z-10">
             <span className="text-rose-500 font-bold">-5%</span> vs last month
           </p>
@@ -56,28 +56,28 @@ export default function KepalaSekolahDashboard() {
       </div>
 
       {/* Grid 2 Columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         
         {/* Kolom Kiri: Tabel 5 Pengeluaran */}
-        <div className="lg:col-span-2 bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl overflow-hidden transition-colors">
-          <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50">
+        <div className="lg:col-span-2 bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl overflow-hidden transition-colors">
+          <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">5 Pengeluaran Terbesar Bulan Ini</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-100 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
                 <tr>
-                  <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">Keterangan</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300 text-right">Nominal</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300 text-center">Nota</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-slate-600 dark:text-slate-300">Keterangan</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-slate-600 dark:text-slate-300 text-right">Nominal</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-slate-600 dark:text-slate-300 text-center">Nota</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                 {dummyPengeluaran.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{item.keterangan}</td>
-                    <td className="px-6 py-4 text-right font-semibold text-rose-400 whitespace-nowrap">{formatRupiah(item.nominal)}</td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-slate-900 dark:text-white text-sm">{item.keterangan}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-rose-400 whitespace-nowrap text-sm">{formatRupiah(item.nominal)}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
                       {item.nota ? (
                         <span className="inline-flex items-center justify-center p-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg border border-emerald-500/20" title="Nota Tersedia">
                           <Receipt className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function KepalaSekolahDashboard() {
         </div>
 
         {/* Kolom Kanan: Donut Chart Statis */}
-        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group">
           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-400/5 rounded-full blur-3xl group-hover:bg-emerald-400/10 transition-colors duration-500"></div>
           
           <h2 className="text-lg font-bold text-slate-900 dark:text-white w-full text-left mb-6 tracking-tight relative z-10">Pemasukan vs Pengeluaran</h2>

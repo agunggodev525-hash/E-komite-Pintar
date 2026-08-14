@@ -103,7 +103,7 @@ export default function CashFlowChart({
   }, [chartData]);
 
   return (
-    <div className="glass-panel rounded-3xl overflow-hidden transition-colors relative group animate-float-subtle">
+    <div className="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden transition-colors relative group">
       {/* Decorative glow behind chart */}
       <div className="absolute top-10 left-20 w-32 h-32 bg-cyan-neon/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-cyan-neon/20 transition-colors duration-700"></div>
       {/* Header */}
@@ -114,7 +114,7 @@ export default function CashFlowChart({
       </div>
 
       {/* Chart Body */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {loading ? (
           <div className="flex items-center justify-center h-[280px]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-neon"></div>

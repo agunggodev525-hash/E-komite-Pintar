@@ -8,8 +8,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // ============================================
@@ -22,9 +22,11 @@ model Sekolah {
   alamat          String?
   status              String   @default("AKTIF") // AKTIF / NONAKTIF
   paket_berlangganan  String   @default("BASIC") // BASIC, PREMIUM, ENTERPRISE
+  paket_id            String?
   created_at          DateTime @default(now())
   updated_at      DateTime @updatedAt
 
+  paket      PaketSaaS? @relation(fields: [paket_id], references: [id], onDelete: SetNull)
   users      User[]
   siswa      Siswa[]
   tagihan    Tagihan[]
@@ -182,6 +184,21 @@ model SystemLog {
   sekolah     Sekolah? @relation(fields: [sekolah_id], references: [id], onDelete: SetNull)
 
   @@map("system_log")
+}
+
+model PaketSaaS {
+  id          String   @id @default(uuid())
+  nama_paket  String   @unique
+  harga       Float
+  durasi      String
+  batas_siswa Int      @default(999999)
+  status      String   @default("AKTIF") // AKTIF / NONAKTIF
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  sekolah     Sekolah[]
+
+  @@map("paket_saas")
 }
 
 model AppSetting {

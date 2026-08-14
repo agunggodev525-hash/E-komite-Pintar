@@ -498,8 +498,8 @@ export default function SiswaPage() {
             <div className="p-6 overflow-y-auto">
               <form id="siswaForm" onSubmit={handleSubmit} className="space-y-5">
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="col-span-1 sm:col-span-2">
                     <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Lengkap Siswa</label>
                     <input required type="text" name="nama_siswa" value={formData.nama_siswa} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="Misal: Ahmad Rizky" />
                   </div>
@@ -535,7 +535,7 @@ export default function SiswaPage() {
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Foto Profil <span className="text-slate-400 font-normal">(Opsional)</span></label>
                       <input type="file" accept="image/*" onChange={(e) => setFotoOrangTua(e.target.files?.[0] || null)} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email <span className="text-slate-400 font-normal">(Opsional)</span></label>
                         <input type="email" name="email_orang_tua" value={formData.email_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="Untuk login" />

@@ -13,7 +13,7 @@ export default function OrangTuaDashboard() {
   const totalTagihan = 500000;
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-hidden pb-20">
+    <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-hidden pb-24">
       
       {/* 1. Header Profil */}
       <div className="p-4 flex justify-between items-center bg-white dark:bg-slate-900 rounded-b-3xl shadow-sm z-10 relative">
@@ -39,7 +39,7 @@ export default function OrangTuaDashboard() {
           
           <div className="relative z-10">
             <p className="text-white/80 text-sm font-medium mb-1 tracking-wide">Total Tagihan Belum Dibayar</p>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">{formatRupiah(totalTagihan)}</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{formatRupiah(totalTagihan)}</h2>
             
             <button className="w-full mt-6 bg-white hover:bg-slate-50 text-blue-900 font-bold rounded-full py-3 px-6 transition-all shadow-md active:scale-[0.98]">
               Bayar Sekarang
@@ -89,7 +89,7 @@ export default function OrangTuaDashboard() {
       </div>
 
       {/* 4. Bottom Navigation Bar */}
-      <div className="absolute bottom-0 w-full bg-white border-t border-slate-200 dark:border-white/10 px-6 py-3 flex justify-between items-center z-50">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md sm:max-w-lg bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 px-6 py-3 pb-safe flex justify-between items-center z-50">
         <button className="flex flex-col items-center gap-1 text-blue-600">
           <Home className="w-6 h-6" />
           <span className="text-[10px] font-bold">Beranda</span>
