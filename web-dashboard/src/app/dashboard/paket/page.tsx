@@ -23,7 +23,7 @@ export default function ManajemenPaketPage() {
   const fetchTenants = async () => {
     setIsTenantsLoading(true);
     try {
-      const res = await apiFetch("/superadmin/tenants");
+      const res = await apiFetch<any[]>("/superadmin/tenants");
       if (res?.success) {
         setTenants(res.data);
       }
@@ -37,7 +37,7 @@ export default function ManajemenPaketPage() {
   const fetchTransactions = async () => {
     setIsTransactionsLoading(true);
     try {
-      const res = await apiFetch("/superadmin/transactions");
+      const res = await apiFetch<any[]>("/superadmin/transactions");
       if (res?.success) {
         setTransactions(res.data);
       }
@@ -60,7 +60,7 @@ export default function ManajemenPaketPage() {
   const fetchPackages = async () => {
     setIsLoading(true);
     try {
-      const res = await apiFetch("/superadmin/paket");
+      const res = await apiFetch<any[]>("/superadmin/paket");
       if (res?.success) {
         setPackages(res.data);
       }

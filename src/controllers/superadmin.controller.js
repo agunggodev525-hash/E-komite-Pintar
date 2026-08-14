@@ -472,7 +472,6 @@ module.exports = {
   impersonateTenant,
   resetPasswordTenant,
   updateTenant,
-  updateTenant,
   getSystemLogs,
   getSettings,
   updateSettings,
