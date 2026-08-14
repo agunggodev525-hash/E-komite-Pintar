@@ -23,7 +23,12 @@ interface Voting {
   kandidat: VotingKandidat[];
 }
 
+import DashboardLayout from "@/components/DashboardLayout";
+import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
+
 export default function VotingAdminPage() {
+  const { user } = useAuth();
   const [votings, setVotings] = useState<Voting[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,13 +52,9 @@ export default function VotingAdminPage() {
 
   const loadVotings = async () => {
     try {
-      const token = localStorage.getItem("ekomite_token");
-      const res = await fetch("/api/backend/voting/admin", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setVotings(data.data);
+      const res = await apiFetch<any>("/voting/admin");
+      if (res.success) {
+        setVotings(res.data);
       }
     } catch (e) {
       console.error(e);
@@ -63,8 +64,12 @@ export default function VotingAdminPage() {
   };
 
   useEffect(() => {
-    loadVotings();
-  }, []);
+    if (user?.role === "ADMIN_KOMITE") {
+      loadVotings();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const handleAddKandidat = () => {
     setFormData({
@@ -83,31 +88,24 @@ export default function VotingAdminPage() {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      const token = localStorage.getItem("ekomite_token");
-      
-      const res = await fetch("/api/backend/voting/admin", {
+      const res = await apiFetch<any>("/voting/admin", {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
-        },
         body: JSON.stringify({
           ...formData,
           kandidat: formData.kandidat.filter(k => k.trim() !== "")
         })
       });
       
-      const data = await res.json();
-      if (data.success) {
+      if (res.success) {
         setIsModalOpen(false);
         setFormData({ judul: "", deskripsi: "", tanggal_berakhir: "", kandidat: ["", ""] });
         loadVotings();
       } else {
-        alert(data.message);
+        alert(res.message);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert("Terjadi kesalahan sistem.");
+      alert(e.message || "Terjadi kesalahan sistem.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,21 +121,18 @@ export default function VotingAdminPage() {
     
     try {
       setIsDeleting(true);
-      const token = localStorage.getItem("ekomite_token");
-      const res = await fetch(`/api/backend/voting/admin/${votingToDelete.id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await apiFetch<any>(`/voting/admin/${votingToDelete.id}`, {
+        method: "DELETE"
       });
-      const data = await res.json();
-      if (data.success) {
+      if (res.success) {
         setIsDeleteModalOpen(false);
         setVotingToDelete(null);
         loadVotings();
       } else {
-        alert(data.message);
+        alert(res.message);
       }
-    } catch (e) {
-      alert("Gagal menghapus voting");
+    } catch (e: any) {
+      alert(e.message || "Gagal menghapus voting");
     } finally {
       setIsDeleting(false);
     }
@@ -149,17 +144,24 @@ export default function VotingAdminPage() {
     return <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-semibold border border-emerald-500/20">AKTIF</span>;
   };
 
-  if (loading) {
-    return <div className="p-8 text-center text-slate-400 animate-pulse">Memuat data voting...</div>;
+  if (user?.role !== "ADMIN_KOMITE") {
+    return (
+      <DashboardLayout title="Akses Ditolak">
+        <div className="bg-rose-50 border border-rose-200 p-6 rounded-2xl text-center">
+          <p className="text-rose-600 text-lg font-semibold mb-2">Akses Ditolak</p>
+          <p className="text-slate-600">Halaman ini khusus untuk Admin Komite.</p>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Kelola E-Voting</h1>
-          <p className="text-slate-400 mt-1 text-sm">Buat polling, pemilihan ketua, dan jajak pendapat untuk wali murid secara digital.</p>
-        </div>
+    <DashboardLayout
+      title="Kelola E-Voting"
+      subtitle="Buat polling, pemilihan ketua, dan jajak pendapat secara digital."
+    >
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div></div>
         <button 
           onClick={() => setIsModalOpen(true)}
           className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
@@ -385,6 +387,6 @@ export default function VotingAdminPage() {
           </div>
         </div>
       )}
-    </div>
+    </DashboardLayout>
   );
 }
