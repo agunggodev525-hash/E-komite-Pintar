@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Plus, Pencil, Trash2, X, Package, CheckCircle2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
 import { formatRupiah, apiFetch } from "@/lib/api";
-import { useEffect } from "react";
 
 export default function ManajemenPaketPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("paket");
 
   const [packages, setPackages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -121,116 +121,144 @@ export default function ManajemenPaketPage() {
     }
   };
 
+  // Array of colors for cards to match the design aesthetics
+  const cardThemes = [
+    { bg: "bg-[#2563EB]", text: "text-blue-500", glow: "shadow-blue-500/20" },
+    { bg: "bg-[#10B981]", text: "text-emerald-500", glow: "shadow-emerald-500/20" },
+    { bg: "bg-[#EF4444]", text: "text-rose-500", glow: "shadow-rose-500/20" },
+    { bg: "bg-[#8B5CF6]", text: "text-purple-500", glow: "shadow-purple-500/20" },
+    { bg: "bg-[#F59E0B]", text: "text-amber-500", glow: "shadow-amber-500/20" },
+  ];
+
   return (
-    <DashboardLayout title="Manajemen Paket" subtitle="Kelola Paket dan Status Berlangganan Sekolah">
+    <DashboardLayout title="Manajemen Langganan & Paket" subtitle="Kelola Paket dan Status Berlangganan Sekolah">
       
-      {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <p className="text-sm text-slate-400">Atur harga dan limitasi fitur untuk sekolah yang berlangganan.</p>
+      {/* Tabs & Action Button Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-5 mb-8">
+        
+        <div className="flex space-x-6 border-b border-white/10 w-full md:w-auto overflow-x-auto pb-px">
+          <button 
+            onClick={() => setActiveTab("paket")}
+            className={`pb-3 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${activeTab === "paket" ? "border-[#10B981] text-[#10B981]" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+          >
+            Kelola Paket
+          </button>
+          <button 
+            onClick={() => setActiveTab("sekolah")}
+            className={`pb-3 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${activeTab === "sekolah" ? "border-[#10B981] text-[#10B981]" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+          >
+            Sekolah Berlangganan
+          </button>
+          <button 
+            onClick={() => setActiveTab("tagihan")}
+            className={`pb-3 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${activeTab === "tagihan" ? "border-[#10B981] text-[#10B981]" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+          >
+            Tagihan & Transaksi
+          </button>
+        </div>
+
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 text-sm w-full sm:w-auto justify-center"
+          className="flex items-center gap-2 px-5 py-2 bg-transparent border border-white/20 hover:border-white/40 text-white font-semibold rounded-lg transition-all text-sm shrink-0"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4" />
           Tambah Paket Baru
         </button>
       </div>
 
-      {/* Table Data */}
-      <div className="bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-800/80 border-b border-white/10 text-xs uppercase tracking-wider font-semibold text-slate-400">
-              <tr>
-                <th className="px-6 py-5">Nama Paket</th>
-                <th className="px-6 py-5">Harga / Durasi</th>
-                <th className="px-6 py-5 text-center">Batas Siswa</th>
-                <th className="px-6 py-5 text-center">Status</th>
-                <th className="px-6 py-5 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat data paket...</td>
-                </tr>
-              ) : packages.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada paket tersedia.</td>
-                </tr>
-              ) : (
-                packages.map((pkg) => (
-                  <tr key={pkg.id} className="hover:bg-white/5 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
-                          <Package className="w-5 h-5" />
-                        </div>
-                        <span className="font-bold text-white text-base">{pkg.nama_paket}</span>
+      {/* Tab Content: Kelola Paket */}
+      {activeTab === "paket" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {isLoading ? (
+            <div className="col-span-full py-12 text-center text-slate-500">Memuat data paket...</div>
+          ) : packages.length === 0 ? (
+            <div className="col-span-full py-12 text-center text-slate-500">Belum ada paket tersedia.</div>
+          ) : (
+            packages.map((pkg, idx) => {
+              const theme = cardThemes[idx % cardThemes.length];
+              return (
+                <div key={pkg.id} className={`bg-[#1A1F2C] rounded-2xl border border-white/5 overflow-hidden flex flex-col shadow-2xl ${theme.glow} transition-transform hover:-translate-y-1 duration-300`}>
+                  
+                  {/* Card Header (Color Block) */}
+                  <div className={`${theme.bg} p-5 flex justify-between items-center`}>
+                    <h3 className="text-xl font-bold text-white tracking-wide">{pkg.nama_paket}</h3>
+                  </div>
+                  
+                  {/* Card Body */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-1.5 mb-1">
+                        <h4 className="text-3xl font-extrabold text-white">{formatRupiah(pkg.harga)}</h4>
+                        <span className="text-sm font-medium text-slate-400 pb-1">/{pkg.durasi.toLowerCase().replace(' ', '')}</span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="font-extrabold text-emerald-400">{formatRupiah(pkg.harga)}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">Per {pkg.durasi}</p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="font-medium text-slate-300 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
-                        {pkg.batas_siswa === 999999 ? "Tanpa Batas" : pkg.batas_siswa}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
+                    </div>
+
+                    <div className="space-y-3 mb-8 flex-1">
+                      <div className="flex gap-2">
+                        <span className="text-slate-400 text-sm">Limit Siswa:</span>
+                        <span className="text-slate-200 text-sm">{pkg.batas_siswa === 999999 ? "Tanpa Batas" : pkg.batas_siswa}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="text-slate-400 text-sm">Fitur:</span>
+                        <span className="text-slate-200 text-sm">
+                          {pkg.batas_siswa < 500 ? "Terbatas (Access A, B, C)" : pkg.batas_siswa < 1000 ? "Penuh (Access A-D, Support)" : "Semua Fitur + Priority Support"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-3 mb-6">
                       <button 
-                        onClick={() => toggleStatus(pkg.id)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-colors ${
-                          pkg.status === "AKTIF" 
-                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20" 
-                            : "bg-slate-800 border-slate-700 text-slate-500 hover:bg-slate-700"
-                        }`}
+                        onClick={() => handleOpenModal(pkg)}
+                        className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-300 text-sm font-medium hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
                       >
-                        {pkg.status === "AKTIF" && <CheckCircle2 className="w-3.5 h-3.5" />}
-                        {pkg.status}
+                        Edit
                       </button>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button 
-                          onClick={() => handleOpenModal(pkg)}
-                          title="Edit Paket"
-                          className="p-2 bg-slate-800 hover:bg-blue-500/20 hover:text-blue-400 text-slate-400 rounded-lg transition-colors border border-slate-700 hover:border-blue-500/30"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(pkg.id)}
-                          title="Hapus Paket"
-                          className="p-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 rounded-lg transition-colors border border-slate-700 hover:border-rose-500/30"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      <button 
+                        onClick={() => handleDelete(pkg.id)}
+                        className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-300 text-sm font-medium hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors flex items-center justify-center gap-2"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-5 border-t border-white/5">
+                      <span className="text-sm text-slate-400">Status</span>
+                      <button onClick={() => toggleStatus(pkg.id)}>
+                        <span className={`text-sm font-bold ${pkg.status === 'AKTIF' ? 'text-[#10B981]' : 'text-slate-500'}`}>
+                          {pkg.status}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
-      </div>
+      )}
+
+      {/* Other Tabs Placeholder */}
+      {activeTab !== "paket" && (
+        <div className="py-20 text-center border border-white/5 border-dashed rounded-2xl bg-[#1A1F2C]">
+          <p className="text-slate-400">Fitur <span className="font-bold text-white">{activeTab === "sekolah" ? "Sekolah Berlangganan" : "Tagihan & Transaksi"}</span> sedang dalam pengembangan.</p>
+        </div>
+      )}
 
       {/* Modal Form */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-[#1A1F2C] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
+            <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/5">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Package className="w-5 h-5 text-blue-400" />
+                <Package className="w-5 h-5 text-emerald-400" />
                 {isEditMode ? "Edit Paket" : "Tambah Paket Baru"}
               </h3>
               <button 
                 onClick={handleCloseModal}
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -247,7 +275,7 @@ export default function ManajemenPaketPage() {
                     name="nama_paket" 
                     value={formData.nama_paket} 
                     onChange={handleChange} 
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-500" 
+                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600" 
                     placeholder="Contoh: Paket Enterprise" 
                   />
                 </div>
@@ -261,7 +289,7 @@ export default function ManajemenPaketPage() {
                       name="harga" 
                       value={formData.harga} 
                       onChange={handleChange} 
-                      className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-500" 
+                      className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600" 
                       placeholder="Contoh: 1500000" 
                     />
                   </div>
@@ -271,11 +299,11 @@ export default function ManajemenPaketPage() {
                       name="durasi" 
                       value={formData.durasi} 
                       onChange={handleChange} 
-                      className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                      className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
                     >
-                      <option value="1 Bulan">1 Bulan</option>
-                      <option value="6 Bulan">6 Bulan</option>
-                      <option value="12 Bulan">12 Bulan (Tahunan)</option>
+                      <option value="1 Bulan" className="bg-slate-800">1 Bulan</option>
+                      <option value="6 Bulan" className="bg-slate-800">6 Bulan</option>
+                      <option value="12 Bulan" className="bg-slate-800">12 Bulan (Tahunan)</option>
                     </select>
                   </div>
                 </div>
@@ -287,7 +315,7 @@ export default function ManajemenPaketPage() {
                     name="batas_siswa" 
                     value={formData.batas_siswa} 
                     onChange={handleChange} 
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-500" 
+                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600" 
                     placeholder="Kosongkan jika tanpa batas (unlimited)" 
                   />
                   <p className="text-xs text-slate-500 mt-2">Batas jumlah siswa yang bisa ditambahkan oleh sekolah pada paket ini.</p>
@@ -296,18 +324,18 @@ export default function ManajemenPaketPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-5 border-t border-slate-800 bg-slate-800/30 flex justify-end gap-3">
+            <div className="px-6 py-5 border-t border-white/5 bg-black/20 flex justify-end gap-3">
               <button 
                 type="button" 
                 onClick={handleCloseModal}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-300 bg-transparent border border-slate-700 hover:bg-slate-800 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-300 bg-transparent border border-white/10 hover:bg-white/5 rounded-xl transition-colors"
               >
                 Batal
               </button>
               <button 
                 type="submit" 
                 form="paketForm"
-                className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-lg hover:shadow-blue-600/30"
+                className="px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-lg hover:shadow-emerald-600/30"
               >
                 {isEditMode ? "Simpan Perubahan" : "Simpan Paket"}
               </button>
