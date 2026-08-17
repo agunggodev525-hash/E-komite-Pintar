@@ -242,7 +242,14 @@ const getBySiswaId = async (req, res, next) => {
 
     // Ambil semua tagihan beserta status pembayaran untuk siswa ini
     const tagihan = await prisma.tagihan.findMany({
-      where: { sekolah_id: req.user.sekolah_id },
+      where: { 
+        sekolah_id: req.user.sekolah_id,
+        pembayaran: {
+          some: {
+            siswa_id: targetSiswaId
+          }
+        }
+      },
       orderBy: { created_at: 'desc' },
       include: {
         admin: {

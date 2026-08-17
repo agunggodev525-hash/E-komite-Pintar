@@ -282,7 +282,8 @@ fun DashboardScreen(
 
                 // Tagihan Lainnya
                 item {
-                    val otherTagihan = uiState.tagihanList.filter { it.statusBayar != "LUNAS" && it != uiState.tagihanList.firstOrNull { t -> t.statusBayar == "PENDING" } }
+                    val pendingTagihan = uiState.tagihanList.firstOrNull { it.statusBayar == "PENDING" || it.statusBayar == "BELUM_BAYAR" }
+                    val otherTagihan = uiState.tagihanList.filter { it.statusBayar != "LUNAS" && it.id != pendingTagihan?.id }
                     if (otherTagihan.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(32.dp))
                         Text(
@@ -297,7 +298,7 @@ fun DashboardScreen(
                 }
 
                 itemsIndexed(
-                    items = uiState.tagihanList.filter { it.statusBayar != "LUNAS" && it != uiState.tagihanList.firstOrNull { t -> t.statusBayar == "PENDING" } },
+                    items = uiState.tagihanList.filter { it.statusBayar != "LUNAS" && it.id != (uiState.tagihanList.firstOrNull { t -> t.statusBayar == "PENDING" || t.statusBayar == "BELUM_BAYAR" }?.id) },
                     key = { _, tagihan -> tagihan.id }
                 ) { index, tagihan ->
                     AnimatedVisibility(visible = showContent, enter = fadeIn() + slideInVertically(initialOffsetY = { 80 + (index * 20) })) {
@@ -399,7 +400,7 @@ fun HeroBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, if (isOptimisticPaid) Color(0xFFD1FAE5) else Color(0xFFFFE4E6))
                 ) {
                     Text(
-                        text = if (isOptimisticPaid) "MEMPROSES" else "PENDING",
+                        text = if (isOptimisticPaid) "MEMPROSES" else tagihan.statusBayar.replace("_", " "),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                         color = if (isOptimisticPaid) Emerald600 else Rose600,
