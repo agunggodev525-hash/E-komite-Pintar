@@ -3,7 +3,7 @@
 // ============================================
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "https://e-komite-pintar.onrender.com/api/v1";
 
 /**
  * Fetch wrapper yang otomatis inject Bearer token.
