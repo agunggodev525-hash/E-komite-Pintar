@@ -167,7 +167,7 @@ export default function BuatTagihanPage() {
                   type="date"
                   value={tenggatWaktu}
                   onChange={(e) => setTenggatWaktu(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-gold-400 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-gold-400 focus:border-transparent outline-none transition-all [color-scheme:light]"
                 />
               </div>
             </div>
