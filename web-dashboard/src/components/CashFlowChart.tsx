@@ -103,7 +103,7 @@ export default function CashFlowChart({
   }, [chartData]);
 
   return (
-    <div className="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden transition-colors relative group">
+    <div className="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden transition-colors relative group select-none">
       {/* Decorative glow behind chart */}
       <div className="absolute top-10 left-20 w-32 h-32 bg-cyan-neon/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-cyan-neon/20 transition-colors duration-700"></div>
       {/* Header */}
