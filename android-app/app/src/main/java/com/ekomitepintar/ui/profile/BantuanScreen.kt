@@ -53,9 +53,13 @@ fun BantuanScreen(
             }
             
             item {
+                val context = androidx.compose.ui.platform.LocalContext.current
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(
-                        onClick = { },
+                        onClick = { 
+                            val intent = android.content.Intent(android.content.Intent.ACTION_DIAL, android.net.Uri.parse("tel:+6281234567890"))
+                            context.startActivity(intent)
+                        },
                         modifier = Modifier.weight(1f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CardWhite),
                         shape = MaterialTheme.shapes.medium
@@ -65,7 +69,10 @@ fun BantuanScreen(
                         Text("Telepon", color = Slate800)
                     }
                     Button(
-                        onClick = { },
+                        onClick = { 
+                            val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO, android.net.Uri.parse("mailto:support@ekomitepintar.com"))
+                            context.startActivity(intent)
+                        },
                         modifier = Modifier.weight(1f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CardWhite),
                         shape = MaterialTheme.shapes.medium

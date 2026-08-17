@@ -18,24 +18,26 @@ datasource db {
 // ============================================
 
 model Sekolah {
-  id              String   @id @default(uuid())
-  nama_sekolah    String
-  alamat          String?
-  status              String   @default("AKTIF") // AKTIF / NONAKTIF
-  paket_berlangganan  String   @default("BASIC") // BASIC, PREMIUM, ENTERPRISE
-  paket_id            String?
-  created_at          DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  nama_sekolah       String
+  alamat             String?
+  status             String   @default("AKTIF") // AKTIF / NONAKTIF
+  paket_berlangganan String   @default("BASIC") // BASIC, PREMIUM, ENTERPRISE
+  paket_id           String?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 
-  paket      PaketSaaS? @relation(fields: [paket_id], references: [id], onDelete: SetNull)
-  users      User[]
-  siswa      Siswa[]
-  tagihan    Tagihan[]
-  voting     Voting[]
-  system_logs SystemLog[]
-  pengeluaran Pengeluaran[]
+  paket             PaketSaaS?        @relation(fields: [paket_id], references: [id], onDelete: SetNull)
+  users             User[]
+  siswa             Siswa[]
+  tagihan           Tagihan[]
+  voting            Voting[]
+  system_logs       SystemLog[]
+  pengeluaran       Pengeluaran[]
   saas_transactions SaaSTransaction[]
 
+  @@index([status])
+  @@index([paket_id])
   @@map("sekolah")
 }
 
@@ -51,7 +53,7 @@ model User {
   no_whatsapp   String?
   role          String   @default("ORANG_TUA")
   status        Boolean  @default(true)
-  sekolah_id    String?  // Nullable karena SUPER_ADMIN tidak terikat sekolah
+  sekolah_id    String? // Nullable karena SUPER_ADMIN tidak terikat sekolah
   fcm_token     String?
   foto_profil   String?
   created_at    DateTime @default(now())
@@ -64,6 +66,9 @@ model User {
   system_logs  SystemLog[]
   pengeluaran  Pengeluaran[]
 
+  @@index([sekolah_id])
+  @@index([role])
+  @@index([status])
   @@map("users")
 }
 
@@ -77,10 +82,12 @@ model Siswa {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  sekolah    Sekolah     @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
-  orang_tua  User        @relation(fields: [orang_tua_id], references: [id], onDelete: Cascade)
+  sekolah    Sekolah      @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  orang_tua  User         @relation(fields: [orang_tua_id], references: [id], onDelete: Cascade)
   pembayaran Pembayaran[]
 
+  @@index([sekolah_id])
+  @@index([orang_tua_id])
   @@map("siswa")
 }
 
@@ -95,29 +102,35 @@ model Tagihan {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
-  sekolah    Sekolah     @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
-  admin      User        @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+  sekolah    Sekolah      @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  admin      User         @relation(fields: [admin_id], references: [id], onDelete: Cascade)
   pembayaran Pembayaran[]
 
+  @@index([sekolah_id])
+  @@index([tenggat_waktu])
   @@map("tagihan")
 }
 
 model Pembayaran {
-  id            String    @id @default(uuid())
-  tagihan_id    String
-  siswa_id      String
-  status        String    @default("PENDING")
-  metode_bayar  String?
-  tanggal_bayar DateTime?
-  payment_token String?
-  nominal_dibayar Float   @default(0)
-  nominal_diskon  Float   @default(0)
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  tagihan_id      String
+  siswa_id        String
+  status          String    @default("PENDING")
+  metode_bayar    String?
+  tanggal_bayar   DateTime?
+  payment_token   String?
+  nominal_dibayar Float     @default(0)
+  nominal_diskon  Float     @default(0)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
 
   tagihan Tagihan @relation(fields: [tagihan_id], references: [id], onDelete: Cascade)
   siswa   Siswa   @relation(fields: [siswa_id], references: [id], onDelete: Cascade)
 
+  @@index([siswa_id])
+  @@index([tagihan_id])
+  @@index([status])
+  @@index([tanggal_bayar])
   @@map("pembayaran")
 }
 
@@ -126,19 +139,21 @@ model Pembayaran {
 // ============================================
 
 model Voting {
-  id              String   @id @default(uuid())
-  judul           String
-  deskripsi       String?
+  id               String   @id @default(uuid())
+  judul            String
+  deskripsi        String?
   tanggal_berakhir DateTime
-  status          String   @default("AKTIF") // AKTIF / SELESAI
-  sekolah_id      String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  status           String   @default("AKTIF") // AKTIF / SELESAI
+  sekolah_id       String
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 
   sekolah  Sekolah          @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
   kandidat VotingKandidat[]
   suara    VotingSuara[]
 
+  @@index([sekolah_id])
+  @@index([status])
   @@map("voting")
 }
 
@@ -151,6 +166,7 @@ model VotingKandidat {
   voting Voting        @relation(fields: [voting_id], references: [id], onDelete: Cascade)
   suara  VotingSuara[]
 
+  @@index([voting_id])
   @@map("voting_kandidat")
 }
 
@@ -167,6 +183,7 @@ model VotingSuara {
 
   // 1 User hanya boleh memberikan 1 suara pada 1 voting
   @@unique([voting_id, user_id])
+  @@index([kandidat_id])
   @@map("voting_suara")
 }
 
@@ -175,16 +192,18 @@ model VotingSuara {
 // ============================================
 
 model SystemLog {
-  id          String   @id @default(uuid())
-  user_id     String?
-  sekolah_id  String?
-  action      String   
-  detail      String?
-  created_at  DateTime @default(now())
+  id         String   @id @default(uuid())
+  user_id    String?
+  sekolah_id String?
+  action     String
+  detail     String?
+  created_at DateTime @default(now())
 
-  user        User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  sekolah     Sekolah? @relation(fields: [sekolah_id], references: [id], onDelete: SetNull)
+  user    User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  sekolah Sekolah? @relation(fields: [sekolah_id], references: [id], onDelete: SetNull)
 
+  @@index([sekolah_id])
+  @@index([user_id])
   @@map("system_log")
 }
 
@@ -198,48 +217,53 @@ model PaketSaaS {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  sekolah     Sekolah[]
-  transaksi   SaaSTransaction[]
+  sekolah   Sekolah[]
+  transaksi SaaSTransaction[]
 
   @@map("paket_saas")
 }
 
 model AppSetting {
-  key         String   @id
-  value       String
-  updated_at  DateTime @updatedAt
+  key        String   @id
+  value      String
+  updated_at DateTime @updatedAt
 
   @@map("app_setting")
 }
 
 model Pengeluaran {
-  id          String   @id @default(uuid())
-  keterangan  String
-  nominal     Float
-  tanggal     DateTime
-  kategori    String   
-  nota_url    String?  
-  admin_id    String
-  sekolah_id  String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id         String   @id @default(uuid())
+  keterangan String
+  nominal    Float
+  tanggal    DateTime
+  kategori   String
+  nota_url   String?
+  admin_id   String
+  sekolah_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  sekolah     Sekolah  @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
-  admin       User     @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+  sekolah Sekolah @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  admin   User    @relation(fields: [admin_id], references: [id], onDelete: Cascade)
 
+  @@index([sekolah_id])
+  @@index([tanggal])
   @@map("pengeluaran")
 }
 
 model SaaSTransaction {
-  id          String   @id @default(uuid())
-  sekolah_id  String
-  paket_id    String
-  nominal     Float
-  status      String   @default("PENDING") // PENDING, LUNAS, GAGAL
-  tanggal     DateTime @default(now())
+  id         String   @id @default(uuid())
+  sekolah_id String
+  paket_id   String
+  nominal    Float
+  status     String   @default("PENDING") // PENDING, LUNAS, GAGAL
+  tanggal    DateTime @default(now())
 
-  sekolah     Sekolah  @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
-  paket       PaketSaaS @relation(fields: [paket_id], references: [id], onDelete: Cascade)
+  sekolah Sekolah   @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
+  paket   PaketSaaS @relation(fields: [paket_id], references: [id], onDelete: Cascade)
 
+  @@index([sekolah_id])
+  @@index([status])
+  @@index([tanggal])
   @@map("saas_transaction")
 }

@@ -361,6 +361,8 @@ fun DonasiDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
 
 @Composable
 fun HeroBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
+    var isOptimisticPaid by remember { mutableStateOf(false) }
+    
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp), // rounded-3xl
@@ -394,14 +396,14 @@ fun HeroBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
                 
                 Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = Rose50,
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6))
+                    color = if (isOptimisticPaid) Emerald50 else Rose50,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, if (isOptimisticPaid) Color(0xFFD1FAE5) else Color(0xFFFFE4E6))
                 ) {
                     Text(
-                        text = "PENDING",
+                        text = if (isOptimisticPaid) "MEMPROSES" else "PENDING",
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                        color = Rose600,
+                        color = if (isOptimisticPaid) Emerald600 else Rose600,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
@@ -427,28 +429,52 @@ fun HeroBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
             
             // Tombol Aksen
             Button(
-                onClick = onBayarClicked,
+                onClick = {
+                    isOptimisticPaid = true
+                    onBayarClicked()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(Brush.linearGradient(listOf(Emerald500, Emerald600)), RoundedCornerShape(16.dp)),
+                    .background(
+                        if (isOptimisticPaid) Brush.linearGradient(listOf(Slate400, Slate500))
+                        else Brush.linearGradient(listOf(Emerald500, Emerald600)), 
+                        RoundedCornerShape(16.dp)
+                    ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues()
+                contentPadding = PaddingValues(),
+                enabled = !isOptimisticPaid
             ) {
-                Icon(
-                    Icons.Rounded.Payments,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Bayar Sekarang",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color.White
-                )
+                if (isOptimisticPaid) {
+                    Icon(
+                        Icons.Filled.CheckCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Berhasil, memuat...",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White
+                    )
+                } else {
+                    Icon(
+                        Icons.Rounded.Payments,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Bayar Sekarang",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White
+                    )
+                }
             }
         }
     }
@@ -582,12 +608,17 @@ fun OtherBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
+            var isOptimisticPaid by remember { mutableStateOf(false) }
             OutlinedButton(
-                onClick = onBayarClicked,
+                onClick = {
+                    isOptimisticPaid = true
+                    onBayarClicked()
+                },
                 shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                enabled = !isOptimisticPaid
             ) {
-                Text("Bayar", style = MaterialTheme.typography.labelMedium, color = Emerald600)
+                Text(if (isOptimisticPaid) "Memproses..." else "Bayar", style = MaterialTheme.typography.labelMedium, color = if (isOptimisticPaid) Slate400 else Emerald600)
             }
         }
     }

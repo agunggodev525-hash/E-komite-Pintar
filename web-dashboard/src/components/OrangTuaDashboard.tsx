@@ -1,51 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch, formatRupiah } from "@/lib/api";
 import { Bell, Clock, History, HelpCircle, Book, Home, FileText, PieChart, User, Vote, CheckCircle2 } from "lucide-react";
 import StatusBadge from "./StatusBadge";
+import SkeletonLoader from "./SkeletonLoader";
 
 export default function OrangTuaDashboard() {
   const { user } = useAuth();
   
-  const [siswaInfo, setSiswaInfo] = useState<any>(null);
-  const [summary, setSummary] = useState<any>({ total_tagihan: 0, lunas: 0, pending: 0, belum_bayar: 0 });
-  const [tagihan, setTagihan] = useState<any[]>([]);
-  const [votingAktif, setVotingAktif] = useState<any[]>([]);
+  const { data: tagihanData, error: tagihanError, isLoading: tagihanLoading } = useSWR(
+    "/tagihan/siswa/dummy-siswa-id",
+    (url) => apiFetch<any>(url).then((res) => res.data)
+  );
+
+  const { data: votingData, error: votingError, isLoading: votingLoading, mutate: mutateVoting } = useSWR(
+    "/voting",
+    (url) => apiFetch<any[]>(url).then((res) => res.data)
+  );
+
+  const siswaInfo = tagihanData?.siswa || null;
+  const summary = tagihanData?.summary || { total_tagihan: 0, lunas: 0, pending: 0, belum_bayar: 0 };
+  const tagihan = tagihanData?.tagihan || [];
+  const votingAktif = votingData || [];
+
+  const loading = tagihanLoading || votingLoading;
   
-  const [loading, setLoading] = useState(true);
   const [isPaying, setIsPaying] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      
-      // 1. Ambil data tagihan anak
-      const tagihanRes = await apiFetch<any>("/tagihan/siswa/dummy-siswa-id");
-      if (tagihanRes.success) {
-        setSiswaInfo(tagihanRes.data.siswa);
-        setSummary(tagihanRes.data.summary);
-        setTagihan(tagihanRes.data.tagihan);
-      }
-
-      // 2. Ambil data E-Voting aktif
-      const votingRes = await apiFetch<any[]>("/voting");
-      if (votingRes.success) {
-        setVotingAktif(votingRes.data);
-      }
-      
-    } catch (error) {
-      console.error("Gagal memuat data orang tua:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   // Hitung total sisa tagihan dari tagihan yang belum lunas
   const totalTagihanBelumDibayar = tagihan
@@ -83,6 +67,18 @@ export default function OrangTuaDashboard() {
   const handleVote = async (voting_id: string, kandidat_id: string) => {
     try {
       setIsVoting(true);
+
+      // Optimistic UI Update: langsung ubah UI seolah-olah sukses
+      mutateVoting(
+        (currentData: any[]) => {
+          if (!currentData) return currentData;
+          return currentData.map((v) =>
+            v.id === voting_id ? { ...v, hasVoted: true } : v
+          );
+        },
+        false // Jangan revalidate langsung
+      );
+
       const res = await apiFetch<any>("/voting/vote", {
         method: "POST",
         body: JSON.stringify({ voting_id, kandidat_id })
@@ -90,12 +86,14 @@ export default function OrangTuaDashboard() {
       
       if (res.success) {
         alert("Suara Anda berhasil dicatat!");
-        loadData(); // Refresh data voting
+        mutateVoting(); // Background sync data asli dari server
       } else {
         alert(res.message || "Gagal memberikan suara.");
+        mutateVoting(); // Rollback UI jika gagal
       }
     } catch (error: any) {
       alert(error.message || "Terjadi kesalahan sistem.");
+      mutateVoting(); // Rollback UI jika gagal
     } finally {
       setIsVoting(false);
     }
@@ -103,9 +101,16 @@ export default function OrangTuaDashboard() {
 
   if (loading) {
     return (
-      <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center items-center">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-sm font-medium text-slate-500">Memuat portal orang tua...</p>
+      <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 p-4 space-y-6 pt-10">
+        <div className="flex justify-between items-center bg-white dark:bg-slate-900 rounded-3xl p-4">
+          <SkeletonLoader type="card" count={1} className="!h-16 w-3/4" />
+          <SkeletonLoader type="circle" count={1} />
+        </div>
+        <SkeletonLoader type="card" count={1} className="!h-32" />
+        <div className="grid grid-cols-4 gap-3">
+          <SkeletonLoader type="card" count={4} className="!h-20" />
+        </div>
+        <SkeletonLoader type="card" count={3} className="!h-24" />
       </div>
     );
   }

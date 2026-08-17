@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { apiFetch, formatRupiah } from "@/lib/api";
 import { Building2, Users, Wallet, Activity } from "lucide-react";
+import SkeletonLoader from "./SkeletonLoader";
 import {
   AreaChart,
   Area,
@@ -24,35 +26,23 @@ const revenueData = [
 ];
 
 export default function SuperAdminDashboard() {
-  const [data, setData] = useState({
+  const { data: apiData, error, isLoading } = useSWR(
+    "/superadmin/analytics",
+    (url) => apiFetch<any>(url).then((res) => res.data)
+  );
+
+  const safeData = apiData || {
     totalKlien: 0,
     totalPengguna: 0,
     estimasiTransaksi: 0,
     statusSistem: "Memuat...",
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadAnalytics() {
-      try {
-        const res = await apiFetch<any>("/superadmin/analytics");
-        if (res.success && res.data) {
-          setData({
-            totalKlien: res.data.totalKlien || 0,
-            totalPengguna: res.data.totalPengguna || 0,
-            estimasiTransaksi: res.data.estimasiTransaksi || 0,
-            statusSistem: res.data.statusSistem || "Unknown",
-          });
-        }
-      } catch (err) {
-        console.error("Gagal memuat analitik:", err);
-        setData((prev) => ({ ...prev, statusSistem: "Error" }));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadAnalytics();
-  }, []);
+  }; // Fallback to initial if not loaded yet
+  const displayData = {
+    totalKlien: safeData.totalKlien || 0,
+    totalPengguna: safeData.totalPengguna || 0,
+    estimasiTransaksi: safeData.estimasiTransaksi || 0,
+    statusSistem: error ? "Error" : safeData.statusSistem || "Memuat...",
+  };
 
   return (
     <div className="space-y-8 pb-12">
@@ -64,9 +54,10 @@ export default function SuperAdminDashboard() {
         </p>
       </div>
 
+      {/* Data Cards Layer */}
       {isLoading ? (
-        <div className="flex justify-center p-12">
-          <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <SkeletonLoader type="card" count={4} />
         </div>
       ) : (
         <>
@@ -86,7 +77,7 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="relative z-10">
                 <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                  {data.totalKlien}
+                  {displayData.totalKlien}
                 </h3>
               </div>
               <div className="relative z-10">
@@ -109,7 +100,7 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="relative z-10">
                 <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                  {data.totalPengguna}
+                  {displayData.totalPengguna}
                 </h3>
               </div>
               <div className="relative z-10">
@@ -132,7 +123,7 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="relative z-10">
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words">
-                  {formatRupiah(data.estimasiTransaksi)}
+                  {formatRupiah(displayData.estimasiTransaksi)}
                 </h3>
               </div>
               <div className="relative z-10">
@@ -155,7 +146,7 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="relative z-10">
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-teal-600 bg-clip-text text-transparent pb-1 break-words">
-                  {data.statusSistem}
+                  {displayData.statusSistem}
                 </h3>
               </div>
               <div className="relative z-10">
