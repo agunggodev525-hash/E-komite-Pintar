@@ -12,6 +12,9 @@
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "keywords": [
     "komite",
     "sekolah",

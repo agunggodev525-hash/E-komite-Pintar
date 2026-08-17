@@ -22,13 +22,13 @@ fun KeamananScreen(
     var isPinEnabled by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Keamanan Akun", color = White, fontWeight = FontWeight.Bold) },
+                title = { Text("Keamanan Akun", color = Slate800, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -49,7 +49,9 @@ fun KeamananScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
-                    colors = CardDefaults.cardColors(containerColor = Navy700)
+                    colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
@@ -59,22 +61,22 @@ fun KeamananScreen(
                         ) {
                             Text(
                                 text = "Login dengan Biometrik",
-                                color = White,
+                                color = Slate800,
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Switch(
                                 checked = isBiometricEnabled,
                                 onCheckedChange = { isBiometricEnabled = it },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Navy900,
-                                    checkedTrackColor = Gold400,
-                                    uncheckedThumbColor = White60,
-                                    uncheckedTrackColor = Navy600
+                                    checkedThumbColor = BackgroundLight,
+                                    checkedTrackColor = Emerald600,
+                                    uncheckedThumbColor = Slate500,
+                                    uncheckedTrackColor = Color(0xFFF1F5F9)
                                 )
                             )
                         }
                         
-                        Divider(modifier = Modifier.padding(vertical = 12.dp), color = Navy600)
+                        Divider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFF1F5F9))
                         
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -83,17 +85,17 @@ fun KeamananScreen(
                         ) {
                             Text(
                                 text = "Gunakan PIN",
-                                color = White,
+                                color = Slate800,
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Switch(
                                 checked = isPinEnabled,
                                 onCheckedChange = { isPinEnabled = it },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Navy900,
-                                    checkedTrackColor = Gold400,
-                                    uncheckedThumbColor = White60,
-                                    uncheckedTrackColor = Navy600
+                                    checkedThumbColor = BackgroundLight,
+                                    checkedTrackColor = Emerald600,
+                                    uncheckedThumbColor = Slate500,
+                                    uncheckedTrackColor = Color(0xFFF1F5F9)
                                 )
                             )
                         }
@@ -109,8 +111,8 @@ fun KeamananScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Gold400),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Gold400),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Emerald600),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Emerald600),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text("Ubah Kata Sandi (Password)", fontWeight = FontWeight.Bold)

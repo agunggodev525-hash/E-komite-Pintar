@@ -5,11 +5,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -48,7 +52,6 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
-    // Animasi masuk
     var showContent by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(100)
@@ -56,7 +59,6 @@ fun LoginScreen(
         viewModel.checkExistingSession()
     }
 
-    // Navigate on success
     LaunchedEffect(uiState.isLoginSuccess) {
         if (uiState.isLoginSuccess) {
             onLoginSuccess()
@@ -66,36 +68,29 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Navy900)
+            .background(BackgroundLight)
     ) {
-        // Glowing Orbs Background
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(PurpleGlow.copy(alpha = 0.4f), Color.Transparent),
-                    center = androidx.compose.ui.geometry.Offset(size.width * 0.8f, size.height * 0.2f),
-                    radius = size.width * 0.7f
-                ),
-                radius = size.width * 0.7f,
-                center = androidx.compose.ui.geometry.Offset(size.width * 0.8f, size.height * 0.2f)
+        // Light Theme Aesthetic Background (Emerald gradient on top)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(280.dp)
+                .clip(RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp))
+                .background(Brush.linearGradient(listOf(Emerald900, Emerald700)))
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .offset(x = 120.dp, y = (-40).dp)
+                    .align(Alignment.TopEnd)
+                    .background(Emerald400.copy(alpha = 0.2f), CircleShape)
             )
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(CyanGlow.copy(alpha = 0.3f), Color.Transparent),
-                    center = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.8f),
-                    radius = size.width * 0.6f
-                ),
-                radius = size.width * 0.6f,
-                center = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.8f)
-            )
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(BlueGlow.copy(alpha = 0.3f), Color.Transparent),
-                    center = androidx.compose.ui.geometry.Offset(size.width * 0.1f, size.height * 0.1f),
-                    radius = size.width * 0.5f
-                ),
-                radius = size.width * 0.5f,
-                center = androidx.compose.ui.geometry.Offset(size.width * 0.1f, size.height * 0.1f)
+            Box(
+                modifier = Modifier
+                    .size(150.dp)
+                    .offset(x = (-50).dp, y = 100.dp)
+                    .align(Alignment.CenterStart)
+                    .background(Emerald100.copy(alpha = 0.1f), CircleShape)
             )
         }
 
@@ -103,108 +98,109 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 28.dp),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
-            // ============================================
             // Logo & Header
-            // ============================================
             AnimatedVisibility(
                 visible = showContent,
-                enter = fadeIn() + slideInVertically(initialOffsetY = { -40 })
+                enter = fadeIn() + slideInVertically(initialOffsetY = { -50 })
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Icon Logo
                     Surface(
-                        modifier = Modifier.size(80.dp),
-                        shape = MaterialTheme.shapes.large,
-                        color = Gold400.copy(alpha = 0.15f),
-                        tonalElevation = 0.dp
+                        shape = CircleShape,
+                        color = Emerald900.copy(alpha = 0.4f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Emerald400.copy(alpha = 0.5f)),
+                        modifier = Modifier.size(80.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
-                                imageVector = Icons.Rounded.School,
+                                Icons.Rounded.School,
                                 contentDescription = "Logo",
-                                modifier = Modifier.size(44.dp),
-                                tint = Gold400
+                                tint = Emerald100,
+                                modifier = Modifier.size(40.dp)
                             )
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
+                    Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = "E-Komite Pintar",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = White,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = Color.White,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.sp
                     )
-
                     Spacer(modifier = Modifier.height(8.dp))
-
                     Text(
-                        text = "Kelola pembayaran komite\nsekolah dengan mudah",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = White60,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 24.sp
+                        text = "Portal Pembayaran & Informasi Sekolah",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Emerald100.copy(alpha = 0.8f)
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // ============================================
-            // Login Form Card (Glassmorphism)
-            // ============================================
+            // Card Form Login
             AnimatedVisibility(
                 visible = showContent,
-                enter = fadeIn() + slideInVertically(initialOffsetY = { 60 })
+                enter = fadeIn() + slideInVertically(initialOffsetY = { 50 })
             ) {
-                Surface(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = Navy800.copy(alpha = 0.6f),
-                    border = androidx.compose.foundation.BorderStroke(
-                        width = 1.dp,
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                White20,
-                                White5
-                            )
-                        )
-                    ),
-                    tonalElevation = 0.dp,
-                    shadowElevation = 0.dp
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = CardWhite),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
                 ) {
                     Column(
-                        modifier = Modifier.padding(28.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp)
                     ) {
                         Text(
-                            text = "Masuk ke Akun Anda",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = White
+                            text = "Login Akun",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Slate800,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Silakan masuk untuk melanjutkan",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Slate500
                         )
 
-                        Spacer(modifier = Modifier.height(28.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        if (uiState.errorMessage != null && !uiState.errorMessage!!.contains("Sesi")) {
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = Rose50,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6)),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = uiState.errorMessage ?: "",
+                                    modifier = Modifier.padding(12.dp),
+                                    color = Rose600,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
 
                         // Email Field
                         OutlinedTextField(
                             value = uiState.email,
-                            onValueChange = viewModel::onEmailChange,
-                            label = { Text("Email") },
-                            placeholder = { Text("contoh@email.com") },
+                            onValueChange = { viewModel.onEmailChange(it) },
+                            label = { Text("Email atau NIS") },
                             leadingIcon = {
-                                Icon(
-                                    Icons.Filled.Email,
-                                    contentDescription = null,
-                                    tint = Gold400
-                                )
+                                Icon(Icons.Filled.Email, contentDescription = null, tint = Slate400)
                             },
-                            modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
@@ -213,53 +209,38 @@ fun LoginScreen(
                             keyboardActions = KeyboardActions(
                                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
                             ),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Gold400,
-                                unfocusedBorderColor = Navy400,
-                                focusedLabelColor = Gold400,
-                                unfocusedLabelColor = White60,
-                                cursorColor = Gold400,
-                                focusedTextColor = White,
-                                unfocusedTextColor = White80,
-                                focusedPlaceholderColor = White40,
-                                unfocusedPlaceholderColor = White40
-                            ),
-                            shape = MaterialTheme.shapes.medium
+                                focusedBorderColor = Emerald500,
+                                unfocusedBorderColor = Color(0xFFE2E8F0),
+                                focusedLabelColor = Emerald600,
+                                unfocusedLabelColor = Slate400,
+                                focusedTextColor = Slate800,
+                                unfocusedTextColor = Slate800,
+                                cursorColor = Emerald600
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Password Field
+                        var passwordVisible by remember { mutableStateOf(false) }
                         OutlinedTextField(
                             value = uiState.password,
-                            onValueChange = viewModel::onPasswordChange,
-                            label = { Text("Password") },
-                            placeholder = { Text("Masukkan password") },
+                            onValueChange = { viewModel.onPasswordChange(it) },
+                            label = { Text("Kata Sandi") },
                             leadingIcon = {
-                                Icon(
-                                    Icons.Filled.Lock,
-                                    contentDescription = null,
-                                    tint = Gold400
-                                )
+                                Icon(Icons.Filled.Lock, contentDescription = null, tint = Slate400)
                             },
                             trailingIcon = {
-                                IconButton(onClick = viewModel::togglePasswordVisibility) {
-                                    Icon(
-                                        imageVector = if (uiState.isPasswordVisible)
-                                            Icons.Filled.Visibility
-                                        else
-                                            Icons.Filled.VisibilityOff,
-                                        contentDescription = "Toggle password",
-                                        tint = White60
-                                    )
+                                val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                    Icon(imageVector = image, contentDescription = "Toggle password", tint = Slate400)
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
-                            visualTransformation = if (uiState.isPasswordVisible)
-                                VisualTransformation.None
-                            else
-                                PasswordVisualTransformation(),
+                            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
                                 imeAction = ImeAction.Done
@@ -270,41 +251,37 @@ fun LoginScreen(
                                     viewModel.onLogin()
                                 }
                             ),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Gold400,
-                                unfocusedBorderColor = Navy400,
-                                focusedLabelColor = Gold400,
-                                unfocusedLabelColor = White60,
-                                cursorColor = Gold400,
-                                focusedTextColor = White,
-                                unfocusedTextColor = White80,
-                                focusedPlaceholderColor = White40,
-                                unfocusedPlaceholderColor = White40
-                            ),
-                            shape = MaterialTheme.shapes.medium
+                                focusedBorderColor = Emerald500,
+                                unfocusedBorderColor = Color(0xFFE2E8F0),
+                                focusedLabelColor = Emerald600,
+                                unfocusedLabelColor = Slate400,
+                                focusedTextColor = Slate800,
+                                unfocusedTextColor = Slate800,
+                                cursorColor = Emerald600
+                            )
                         )
 
-                        // Error message
-                        AnimatedVisibility(visible = uiState.errorMessage != null) {
-                            Surface(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 16.dp),
-                                shape = MaterialTheme.shapes.small,
-                                color = ErrorRed.copy(alpha = 0.15f)
-                            ) {
-                                Text(
-                                    text = uiState.errorMessage ?: "",
-                                    modifier = Modifier.padding(12.dp),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = ErrorRed
-                                )
-                            }
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "Lupa Kata Sandi?",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Emerald600,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.clickable { /* TODO */ }
+                            )
                         }
 
-                        Spacer(modifier = Modifier.height(28.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                        // Login Button — Premium Gold gradient
+                        // Login Button
                         Button(
                             onClick = {
                                 focusManager.clearFocus()
@@ -312,98 +289,28 @@ fun LoginScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(54.dp)
-                                .background(
-                                    brush = Brush.linearGradient(
-                                        colors = listOf(Gold300, Gold500)
-                                    ),
-                                    shape = MaterialTheme.shapes.medium
-                                ),
+                                .height(56.dp)
+                                .background(Brush.linearGradient(listOf(Emerald500, Emerald600)), RoundedCornerShape(16.dp)),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             enabled = !uiState.isLoading,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = Navy900,
-                                disabledContainerColor = Color.Transparent,
-                                disabledContentColor = Navy900.copy(alpha = 0.5f)
-                            ),
-                            contentPadding = PaddingValues(),
-                            elevation = ButtonDefaults.buttonElevation(
-                                defaultElevation = 0.dp,
-                                pressedElevation = 0.dp
-                            )
+                            contentPadding = PaddingValues()
                         ) {
                             if (uiState.isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = Navy900,
-                                    strokeWidth = 2.5.dp
-                                )
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                             } else {
                                 Text(
-                                    text = "Masuk",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp
+                                    text = "MASUK",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = 1.sp
                                 )
                             }
-                        }
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Garis pemisah atau teks "atau"
-                        Text(
-                            text = "ATAU",
-                            color = White40,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Login via WhatsApp OTP Button
-                        OutlinedButton(
-                            onClick = {
-                                focusManager.clearFocus()
-                                onNavigateToOtp()
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(54.dp),
-                            enabled = !uiState.isLoading,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Gold400
-                            ),
-                            border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
-                                brush = Brush.linearGradient(colors = listOf(Gold400, Gold400))
-                            )
-                        ) {
-                            Text(
-                                text = "Login dengan WhatsApp",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            )
                         }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Footer
-            AnimatedVisibility(
-                visible = showContent,
-                enter = fadeIn()
-            ) {
-                Text(
-                    text = "© 2026 E-Komite Pintar",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = White40
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

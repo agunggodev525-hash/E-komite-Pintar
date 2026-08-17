@@ -3,60 +3,47 @@ package com.ekomitepintar.ui.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 // ============================================
-// Material3 Dark Color Scheme — Navy + Gold
+// Material3 Light Color Scheme — Emerald Theme
 // ============================================
 
-private val EKomiteColorScheme = darkColorScheme(
-    // Primary — Gold (aksen utama, tombol CTA)
-    primary = Gold400,
-    onPrimary = Navy900,
-    primaryContainer = Gold500,
-    onPrimaryContainer = Gold100,
+private val EKomiteColorScheme = lightColorScheme(
+    primary = Emerald600,
+    onPrimary = Color.White,
+    primaryContainer = Emerald100,
+    onPrimaryContainer = Emerald900,
 
-    // Secondary — Navy medium
-    secondary = Navy500,
-    onSecondary = White,
-    secondaryContainer = Navy600,
-    onSecondaryContainer = IceBlue,
+    secondary = Emerald500,
+    onSecondary = Color.White,
+    secondaryContainer = Emerald50,
+    onSecondaryContainer = Emerald700,
 
-    // Tertiary — Gold lighter
-    tertiary = Gold300,
-    onTertiary = Navy900,
-    tertiaryContainer = Gold200,
-    onTertiaryContainer = Navy800,
+    tertiary = Slate500,
+    onTertiary = Color.White,
+    tertiaryContainer = Color(0xFFE2E8F0), // Missing? Let's use Color(0xFFE2E8F0) inline
+    onTertiaryContainer = Slate800,
 
-    // Background & Surface
-    background = Navy900,
-    onBackground = White,
-    surface = Navy800,
-    onSurface = White,
-    surfaceVariant = Navy700,
-    onSurfaceVariant = White80,
+    background = BackgroundLight,
+    onBackground = Slate800,
+    
+    surface = CardWhite,
+    onSurface = Slate800,
+    
+    surfaceVariant = Color(0xFFF1F5F9), // Slate100
+    onSurfaceVariant = Slate500,
 
-    // Outline
-    outline = Navy400,
-    outlineVariant = Navy500,
-
-    // Error
-    error = ErrorRed,
-    onError = Navy900,
-
-    // Inverse
-    inverseSurface = White,
-    inverseOnSurface = Navy900,
-    inversePrimary = Gold500,
-
-    // Surface containers (M3 extended tones)
-    surfaceContainerLowest = Navy900,
-    surfaceContainerLow = Navy800,
-    surfaceContainer = Navy700,
-    surfaceContainerHigh = Navy600,
-    surfaceContainerHighest = Navy500,
+    error = Rose600,
+    onError = Color.White,
+    errorContainer = Rose50,
+    onErrorContainer = Rose600,
+    
+    outline = Color(0xFFE2E8F0), // Color(0xFFE2E8F0)
+    outlineVariant = Color(0xFFF1F5F9) // Slate100
 )
 
 // ============================================

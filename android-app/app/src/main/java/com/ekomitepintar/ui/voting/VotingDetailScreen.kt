@@ -2,16 +2,20 @@ package com.ekomitepintar.ui.voting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.border
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ekomitepintar.model.Voting
@@ -39,18 +43,18 @@ fun VotingDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detail Voting", color = White) },
+                title = { Text("Detail Voting", color = Slate800, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Navy900
+                    containerColor = Color.Transparent
                 ),
                 navigationIcon = {
-                    TextButton(onClick = onNavigateBack) {
-                        Text("←", color = White, fontSize = 20.sp)
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 }
             )
         },
-        containerColor = Navy800
+        containerColor = BackgroundLight
     ) { padding ->
         Column(
             modifier = Modifier
@@ -61,23 +65,23 @@ fun VotingDetailScreen(
         ) {
             Text(
                 text = voting.judul,
-                color = White,
+                color = Slate800,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = voting.deskripsi ?: "Tidak ada deskripsi.",
-                color = White80,
+                color = Slate500,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Divider(color = White.copy(alpha = 0.1f))
+            HorizontalDivider(color = Color(0xFFE2E8F0))
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = "Pilih Kandidat / Opsi",
-                color = Gold400,
+                color = Emerald600,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
@@ -88,7 +92,12 @@ fun VotingDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
-                        .background(Navy700, RoundedCornerShape(8.dp))
+                        .background(CardWhite, RoundedCornerShape(12.dp))
+                        .border(
+                            width = 1.dp,
+                            color = if (kandidat.id == selectedKandidatId) Emerald500 else Color(0xFFF3F4F6),
+                            shape = RoundedCornerShape(12.dp)
+                        )
                         .selectable(
                             selected = (kandidat.id == selectedKandidatId),
                             onClick = {
@@ -104,16 +113,17 @@ fun VotingDetailScreen(
                         selected = (kandidat.id == selectedKandidatId) || (voting.hasVoted && voting.voted_kandidat_id == kandidat.id),
                         onClick = null,
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = Gold400,
-                            unselectedColor = White40
+                            selectedColor = Emerald600,
+                            unselectedColor = Slate400
                         ),
                         enabled = !voting.hasVoted
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = kandidat.nama_kandidat,
-                        color = White,
-                        fontSize = 16.sp
+                        color = Slate800,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -125,63 +135,72 @@ fun VotingDetailScreen(
                     onClick = { showDialog = true },
                     enabled = selectedKandidatId != null && !uiState.isLoading,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold400,
-                        contentColor = Navy900
+                        containerColor = Emerald600,
+                        contentColor = Color.White
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp),
-                    shape = RoundedCornerShape(12.dp)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     if (uiState.isLoading) {
-                        CircularProgressIndicator(color = Navy900, modifier = Modifier.size(24.dp))
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                     } else {
                         Text("Submit Suara", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                 }
             } else {
                 Surface(
-                    color = Color(0xFF10B981).copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp),
+                    color = Emerald50,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD1FAE5)),
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "Anda sudah memberikan suara pada voting ini.",
-                        color = Color(0xFF34D399),
+                        color = Emerald600,
                         modifier = Modifier.padding(16.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
 
-            // Alert Dialog Konfirmasi
-            if (showDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDialog = false },
-                    title = { Text("Konfirmasi Suara") },
-                    text = { Text("Apakah Anda yakin dengan pilihan ini? Suara tidak dapat diubah setelah dikirim.") },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                showDialog = false
-                                selectedKandidatId?.let {
-                                    viewModel.submitVote(voting.id, it)
-                                }
-                            }
-                        ) {
-                            Text("Yakin", color = Gold400, fontWeight = FontWeight.Bold)
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDialog = false }) {
-                            Text("Batal", color = Color.Gray)
-                        }
-                    },
-                    containerColor = Navy700,
-                    titleContentColor = White,
-                    textContentColor = White80
+            if (uiState.errorMessage != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = uiState.errorMessage ?: "",
+                    color = Rose600,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Konfirmasi Voting", fontWeight = FontWeight.Bold, color = Slate800) },
+            text = { Text("Apakah Anda yakin ingin memberikan suara untuk kandidat ini? Pilihan tidak dapat diubah.", color = Slate500) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        selectedKandidatId?.let { viewModel.submitVote(voting.id, it) }
+                    }
+                ) {
+                    Text("Ya, Yakin", color = Emerald600, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Batal", color = Slate500)
+                }
+            },
+            containerColor = CardWhite,
+            textContentColor = Slate500,
+            titleContentColor = Slate800
+        )
     }
 }

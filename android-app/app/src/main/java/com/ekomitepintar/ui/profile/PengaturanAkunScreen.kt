@@ -25,13 +25,13 @@ fun PengaturanAkunScreen(
     var telepon by remember { mutableStateOf("081234567890") }
 
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Pengaturan Akun", color = White, fontWeight = FontWeight.Bold) },
+                title = { Text("Pengaturan Akun", color = Slate800, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -52,12 +52,12 @@ fun PengaturanAkunScreen(
                 OutlinedTextField(
                     value = nama,
                     onValueChange = { nama = it },
-                    label = { Text("Nama Lengkap", color = White60) },
+                    label = { Text("Nama Lengkap", color = Slate500) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Gold400,
-                        unfocusedBorderColor = Navy700,
-                        focusedTextColor = White,
-                        unfocusedTextColor = White
+                        focusedBorderColor = Emerald600,
+                        unfocusedBorderColor = CardWhite,
+                        focusedTextColor = Slate800,
+                        unfocusedTextColor = Slate800
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -67,12 +67,12 @@ fun PengaturanAkunScreen(
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Alamat Email", color = White60) },
+                    label = { Text("Alamat Email", color = Slate500) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Gold400,
-                        unfocusedBorderColor = Navy700,
-                        focusedTextColor = White,
-                        unfocusedTextColor = White
+                        focusedBorderColor = Emerald600,
+                        unfocusedBorderColor = CardWhite,
+                        focusedTextColor = Slate800,
+                        unfocusedTextColor = Slate800
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -82,12 +82,12 @@ fun PengaturanAkunScreen(
                 OutlinedTextField(
                     value = telepon,
                     onValueChange = { telepon = it },
-                    label = { Text("Nomor Telepon", color = White60) },
+                    label = { Text("Nomor Telepon", color = Slate500) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Gold400,
-                        unfocusedBorderColor = Navy700,
-                        focusedTextColor = White,
-                        unfocusedTextColor = White
+                        focusedBorderColor = Emerald600,
+                        unfocusedBorderColor = CardWhite,
+                        focusedTextColor = Slate800,
+                        unfocusedTextColor = Slate800
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -101,7 +101,7 @@ fun PengaturanAkunScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Gold400, contentColor = Navy900),
+                    colors = ButtonDefaults.buttonColors(containerColor = Emerald600, contentColor = BackgroundLight),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text("Simpan Perubahan", fontWeight = FontWeight.Bold)

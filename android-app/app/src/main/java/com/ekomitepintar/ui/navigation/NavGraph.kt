@@ -154,6 +154,9 @@ fun NavGraph() {
                 onNavigateToTransparansi = {
                     navController.navigate(Routes.TRANSPARANSI)
                 },
+                onNavigateToNotifikasi = {
+                    navController.navigate(Routes.NOTIFIKASI)
+                },
                 onNavigateBottomTab = { route ->
                     navController.navigate(route) {
                         popUpTo(Routes.DASHBOARD) { saveState = true }

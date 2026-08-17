@@ -22,13 +22,13 @@ fun NotifikasiScreen(
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Notifikasi", color = White, fontWeight = FontWeight.Bold) },
+                title = { Text("Notifikasi", color = Slate800, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -56,7 +56,9 @@ fun NotifikasiScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
-                        colors = CardDefaults.cardColors(containerColor = Navy700)
+                        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -66,14 +68,14 @@ fun NotifikasiScreen(
                         ) {
                             Surface(
                                 shape = CircleShape,
-                                color = Gold400.copy(alpha = 0.12f),
+                                color = Emerald600.copy(alpha = 0.12f),
                                 modifier = Modifier.size(40.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Filled.NotificationsActive,
                                         contentDescription = null,
-                                        tint = Gold400,
+                                        tint = Emerald600,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -84,20 +86,20 @@ fun NotifikasiScreen(
                             Column {
                                 Text(
                                     text = title,
-                                    color = White,
+                                    color = Slate800,
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = desc,
-                                    color = White60,
+                                    color = Slate500,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "Hari ini",
-                                    color = Gold400,
+                                    color = Emerald600,
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }

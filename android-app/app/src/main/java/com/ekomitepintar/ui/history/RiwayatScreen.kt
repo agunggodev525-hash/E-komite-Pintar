@@ -1,10 +1,12 @@
 package com.ekomitepintar.ui.history
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.*
@@ -15,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ekomitepintar.ui.components.BottomNavBar
+import com.ekomitepintar.ui.components.shimmerEffect
+import androidx.compose.ui.draw.clip
 import com.ekomitepintar.ui.navigation.Routes
 import com.ekomitepintar.ui.theme.*
 import com.ekomitepintar.viewmodel.RiwayatViewModel
@@ -44,7 +48,7 @@ fun RiwayatScreen(
     }
 
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         bottomBar = {
             BottomNavBar(
                 currentRoute = Routes.RIWAYAT,
@@ -62,7 +66,7 @@ fun RiwayatScreen(
             
             Text(
                 text = "Riwayat Transaksi",
-                color = White,
+                color = Slate800,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -95,12 +99,17 @@ fun RiwayatScreen(
             }
             
             if (uiState.isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Gold400)
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(bottom = 24.dp)
+                ) {
+                    items(5) {
+                        RiwayatSkeletonCard()
+                    }
                 }
             } else if (filteredTransactions.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Belum ada riwayat transaksi.", color = White60)
+                    Text("Belum ada riwayat transaksi.", color = Slate500)
                 }
             } else {
                 LazyColumn(
@@ -125,12 +134,13 @@ fun RiwayatScreen(
 fun FilterPill(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Surface(
         shape = CircleShape,
-        color = if (isSelected) Gold400 else Navy700,
+        color = if (isSelected) Emerald600 else CardWhite,
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (isSelected) Color.Transparent else Color(0xFFE2E8F0)),
         onClick = onClick
     ) {
         Text(
             text = text,
-            color = if (isSelected) Navy900 else White60,
+            color = if (isSelected) Color.White else Slate500,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
@@ -142,8 +152,10 @@ fun FilterPill(text: String, isSelected: Boolean, onClick: () -> Unit) {
 fun RiwayatCard(data: Tagihan) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Navy700)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -153,15 +165,16 @@ fun RiwayatCard(data: Tagihan) {
         ) {
             // Icon
             Surface(
-                shape = MaterialTheme.shapes.small,
-                color = Gold400.copy(alpha = 0.12f),
+                shape = RoundedCornerShape(12.dp),
+                color = Emerald50,
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD1FAE5)),
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Filled.Description,
                         contentDescription = null,
-                        tint = Gold400,
+                        tint = Emerald600,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -173,14 +186,14 @@ fun RiwayatCard(data: Tagihan) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = data.judul,
-                    color = White,
+                    color = Slate800,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = data.pembayaran?.tanggalBayar ?: data.tenggatWaktu,
-                    color = White60,
+                    color = Slate500,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -189,9 +202,9 @@ fun RiwayatCard(data: Tagihan) {
                 val amountStr = formatter.format(data.nominal).replace("Rp", "Rp ")
                 Text(
                     text = amountStr,
-                    color = Gold400,
+                    color = Emerald600,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.ExtraBold
                 )
             }
             
@@ -200,16 +213,81 @@ fun RiwayatCard(data: Tagihan) {
             val statusText = if (isSuccess) "BERHASIL" else "MENUNGGU"
             Surface(
                 shape = CircleShape,
-                color = if (isSuccess) StatusLunasContainer else StatusPendingContainer
+                color = if (isSuccess) Emerald50 else Rose50,
+                border = androidx.compose.foundation.BorderStroke(1.dp, if (isSuccess) Color(0xFFD1FAE5) else Color(0xFFFFE4E6))
             ) {
                 Text(
                     text = statusText,
-                    color = if (isSuccess) StatusLunas else StatusPending,
+                    color = if (isSuccess) Emerald600 else Rose600,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun RiwayatSkeletonCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon Skeleton
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .shimmerEffect()
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Content Skeleton
+            Column(modifier = Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(14.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+            }
+            
+            // Status Pill Skeleton
+            Box(
+                modifier = Modifier
+                    .width(80.dp)
+                    .height(28.dp)
+                    .clip(CircleShape)
+                    .shimmerEffect()
+            )
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.ekomitepintar.ui.profile
 
+import androidx.compose.ui.graphics.Color
+
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -71,14 +73,14 @@ fun ProfilScreen(
     val context = LocalContext.current
 
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = Navy600,
-                    contentColor = White,
-                    actionColor = Gold400,
+                    containerColor = Color(0xFFF1F5F9),
+                    contentColor = Slate800,
+                    actionColor = Emerald600,
                     shape = MaterialTheme.shapes.medium
                 )
             }
@@ -113,8 +115,8 @@ fun ProfilScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
-                            .border(3.dp, Gold400, CircleShape)
-                            .background(Navy700),
+                            .border(3.dp, Emerald600, CircleShape)
+                            .background(CardWhite),
                         contentAlignment = Alignment.Center
                     ) {
                         if (fotoProfilUrl != null) {
@@ -128,7 +130,7 @@ fun ProfilScreen(
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Icon(Icons.Filled.Person, contentDescription = "Profile Photo", tint = White, modifier = Modifier.size(64.dp))
+                            Icon(Icons.Filled.Person, contentDescription = "Profile Photo", tint = Slate800, modifier = Modifier.size(64.dp))
                         }
                     }
                 }
@@ -143,7 +145,7 @@ fun ProfilScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = userName,
-                        color = White,
+                        color = Slate800,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -152,7 +154,7 @@ fun ProfilScreen(
                     
                     Text(
                         text = "Orang Tua Siswa",
-                        color = White60,
+                        color = Slate500,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -186,7 +188,7 @@ fun ProfilScreen(
                         .fillMaxWidth()
                         .height(52.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Navy900,
+                        containerColor = BackgroundLight,
                         contentColor = ErrorRed
                     ),
                     shape = CircleShape,
@@ -215,7 +217,9 @@ fun ProfilMenuItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             .padding(bottom = 12.dp)
             .clickable { onClick() },
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Navy700)
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -226,20 +230,20 @@ fun ProfilMenuItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                tint = Gold400,
+                tint = Emerald600,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = title,
-                color = White,
+                color = Slate800,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)
             )
             Icon(
                 imageVector = Icons.Filled.ChevronRight,
                 contentDescription = "Go",
-                tint = White60,
+                tint = Slate500,
                 modifier = Modifier.size(24.dp)
             )
         }

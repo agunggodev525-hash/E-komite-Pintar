@@ -20,13 +20,13 @@ fun BantuanScreen(
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Bantuan & Dukungan", color = White, fontWeight = FontWeight.Bold) },
+                title = { Text("Bantuan & Dukungan", color = Slate800, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -46,7 +46,7 @@ fun BantuanScreen(
             item {
                 Text(
                     text = "Hubungi Kami",
-                    color = White,
+                    color = Slate800,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -57,22 +57,22 @@ fun BantuanScreen(
                     Button(
                         onClick = { },
                         modifier = Modifier.weight(1f).height(48.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Navy700),
+                        colors = ButtonDefaults.buttonColors(containerColor = CardWhite),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Icon(Icons.Filled.Phone, contentDescription = null, tint = Gold400, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Filled.Phone, contentDescription = null, tint = Emerald600, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Telepon", color = White)
+                        Text("Telepon", color = Slate800)
                     }
                     Button(
                         onClick = { },
                         modifier = Modifier.weight(1f).height(48.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Navy700),
+                        colors = ButtonDefaults.buttonColors(containerColor = CardWhite),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Icon(Icons.Filled.Email, contentDescription = null, tint = Gold400, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Filled.Email, contentDescription = null, tint = Emerald600, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Email", color = White)
+                        Text("Email", color = Slate800)
                     }
                 }
             }
@@ -82,7 +82,7 @@ fun BantuanScreen(
             item {
                 Text(
                     text = "Pertanyaan yang Sering Diajukan (FAQ)",
-                    color = White,
+                    color = Slate800,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -99,19 +99,21 @@ fun BantuanScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
-                        colors = CardDefaults.cardColors(containerColor = Navy700)
+                        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = q,
-                                color = White,
+                                color = Slate800,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = a,
-                                color = White60,
+                                color = Slate500,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

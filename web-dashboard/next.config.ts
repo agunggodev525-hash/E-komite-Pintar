@@ -5,7 +5,9 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: '/api/backend/:path*',
+        destination: process.env.BACKEND_INTERNAL_URL 
+          ? `${process.env.BACKEND_INTERNAL_URL}/api/v1/:path*`
+          : 'https://e-komite-pintar.onrender.com/api/v1/:path*',
       },
     ];
   },

@@ -24,13 +24,13 @@ fun PengurusScreen(
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Pengurus Komite", color = White, fontWeight = FontWeight.Bold) },
+                title = { Text("Pengurus Komite", color = Slate800, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -59,7 +59,9 @@ fun PengurusScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
-                        colors = CardDefaults.cardColors(containerColor = Navy700)
+                        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -71,24 +73,24 @@ fun PengurusScreen(
                                 modifier = Modifier
                                     .size(48.dp)
                                     .clip(CircleShape)
-                                    .border(2.dp, Gold400, CircleShape)
-                                    .background(Navy900),
+                                    .border(2.dp, Emerald600, CircleShape)
+                                    .background(BackgroundLight),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Filled.Person, contentDescription = null, tint = White, modifier = Modifier.size(28.dp))
+                                Icon(Icons.Filled.Person, contentDescription = null, tint = Slate800, modifier = Modifier.size(28.dp))
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Column {
                                 Text(
                                     text = name,
-                                    color = White,
+                                    color = Slate800,
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = role,
-                                    color = Gold400,
+                                    color = Emerald600,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }

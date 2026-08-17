@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -22,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ekomitepintar.model.TransparansiData
 import com.ekomitepintar.model.TransparansiHistory
+import com.ekomitepintar.ui.components.shimmerEffect
+import androidx.compose.ui.draw.clip
 import com.ekomitepintar.ui.theme.*
 import com.ekomitepintar.viewmodel.TransparansiViewModel
 import kotlinx.coroutines.delay
@@ -46,15 +49,15 @@ fun TransparansiScreen(
     }
 
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
                 title = { 
-                    Text("Transparansi Dana", color = White, fontWeight = FontWeight.Bold) 
+                    Text("Transparansi Dana", color = Slate800, fontWeight = FontWeight.Bold) 
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -71,12 +74,28 @@ fun TransparansiScreen(
                 .padding(paddingValues)
         ) {
             if (uiState.isLoading && uiState.data == null) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Gold400)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item { SkeletonTransparansiSummaryCard() }
+                    item { 
+                        Text(
+                            text = "Riwayat Transaksi",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Slate800,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                    items(4) {
+                        SkeletonTransaksiCard()
+                    }
                 }
             } else if (uiState.errorMessage != null && uiState.data == null) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = uiState.errorMessage!!, color = ErrorRed)
+                    Text(text = uiState.errorMessage!!, color = Rose600)
                 }
             } else if (uiState.data != null) {
                 LazyColumn(
@@ -103,7 +122,7 @@ fun TransparansiScreen(
                             Text(
                                 text = "Riwayat Transaksi",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = White,
+                                color = Slate800,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(top = 8.dp)
                             )
@@ -115,7 +134,7 @@ fun TransparansiScreen(
                         item {
                             Text(
                                 text = "Belum ada transaksi.",
-                                color = White60,
+                                color = Slate500,
                                 modifier = Modifier.padding(top = 16.dp)
                             )
                         }
@@ -144,39 +163,41 @@ fun TransparansiScreen(
 fun TransparansiSummaryCard(data: TransparansiData) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = Navy700)
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(24.dp)) {
             Text(
                 text = "Saldo Kas Komite",
                 style = MaterialTheme.typography.bodyMedium,
-                color = White60
+                color = Slate500
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = formatRupiah(data.saldoAkhir),
                 style = MaterialTheme.typography.headlineLarge,
-                color = Gold400,
-                fontWeight = FontWeight.Bold
+                color = Emerald600,
+                fontWeight = FontWeight.Black
             )
             
             Spacer(modifier = Modifier.height(24.dp))
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Pemasukan", color = White60, style = MaterialTheme.typography.labelMedium)
+                    Text("Pemasukan", color = Slate500, style = MaterialTheme.typography.labelMedium)
                     Text(
                         text = formatRupiah(data.totalPemasukan), 
-                        color = StatusLunas, 
+                        color = Emerald600, 
                         fontWeight = FontWeight.Bold
                     )
                 }
                 Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
-                    Text("Pengeluaran", color = White60, style = MaterialTheme.typography.labelMedium)
+                    Text("Pengeluaran", color = Slate500, style = MaterialTheme.typography.labelMedium)
                     Text(
                         text = formatRupiah(data.totalPengeluaran), 
-                        color = StatusBelumBayar, 
+                        color = Rose600, 
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -194,13 +215,13 @@ fun TransparansiSummaryCard(data: TransparansiData) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),
-                color = StatusBelumBayar,
-                trackColor = StatusLunas,
+                color = Rose600,
+                trackColor = Emerald600,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("${(percentage * 100).toInt()}% Terpakai", color = StatusBelumBayar, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                Text("${((1 - percentage) * 100).toInt()}% Tersisa", color = StatusLunas, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("${(percentage * 100).toInt()}% Terpakai", color = Rose600, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("${((1 - percentage) * 100).toInt()}% Tersisa", color = Emerald600, fontSize = 10.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -210,13 +231,16 @@ fun TransparansiSummaryCard(data: TransparansiData) {
 fun TransaksiCard(item: TransparansiHistory) {
     val isPemasukan = item.jenis == "PEMASUKAN"
     val icon = if (isPemasukan) Icons.Filled.ArrowDownward else Icons.Filled.ArrowUpward
-    val color = if (isPemasukan) StatusLunas else StatusBelumBayar
-    val containerColor = if (isPemasukan) StatusLunasContainer else StatusBelumBayarContainer
+    val color = if (isPemasukan) Emerald600 else Rose600
+    val containerColor = if (isPemasukan) Emerald50 else Rose50
+    val borderColor = if (isPemasukan) Color(0xFFD1FAE5) else Color(0xFFFFE4E6)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Navy700),
-        shape = MaterialTheme.shapes.medium
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -225,6 +249,7 @@ fun TransaksiCard(item: TransparansiHistory) {
             Surface(
                 shape = CircleShape,
                 color = containerColor,
+                border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -236,7 +261,7 @@ fun TransaksiCard(item: TransparansiHistory) {
                 Text(
                     text = item.keterangan,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = White,
+                    color = Slate800,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -246,7 +271,7 @@ fun TransaksiCard(item: TransparansiHistory) {
                     Text(
                         text = formatDate(item.tanggal),
                         style = MaterialTheme.typography.bodySmall,
-                        color = White60
+                        color = Slate500
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -261,7 +286,7 @@ fun TransaksiCard(item: TransparansiHistory) {
                 text = "${if(isPemasukan) "+" else "-"}${formatRupiah(item.nominal)}",
                 style = MaterialTheme.typography.titleMedium,
                 color = color,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.ExtraBold
             )
         }
     }
@@ -280,5 +305,76 @@ private fun formatDate(isoDate: String): String {
         date?.let { outputFormat.format(it) } ?: isoDate
     } catch (_: Exception) {
         isoDate
+    }
+}
+
+@Composable
+fun SkeletonTransparansiSummaryCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
+    ) {
+        Column(modifier = Modifier.padding(24.dp)) {
+            Box(modifier = Modifier.width(120.dp).height(14.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(modifier = Modifier.width(180.dp).height(32.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Box(modifier = Modifier.width(80.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(modifier = Modifier.width(100.dp).height(20.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                }
+                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+                    Box(modifier = Modifier.width(80.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(modifier = Modifier.width(100.dp).height(20.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Box(modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Box(modifier = Modifier.width(60.dp).height(10.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                Box(modifier = Modifier.width(60.dp).height(10.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+            }
+        }
+    }
+}
+
+@Composable
+fun SkeletonTransaksiCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.size(48.dp).clip(CircleShape).shimmerEffect())
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Box(modifier = Modifier.fillMaxWidth(0.8f).height(16.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.width(80.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(modifier = Modifier.width(60.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Box(modifier = Modifier.width(80.dp).height(20.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+        }
     }
 }

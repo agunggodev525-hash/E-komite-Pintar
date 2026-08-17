@@ -2,14 +2,14 @@ package com.ekomitepintar.ui.dashboard
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Receipt
@@ -19,12 +19,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.border
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -37,12 +35,12 @@ import coil.request.ImageRequest
 import com.ekomitepintar.model.Tagihan
 import com.ekomitepintar.model.TagihanSummary
 import com.ekomitepintar.ui.components.BottomNavBar
+import com.ekomitepintar.ui.components.shimmerEffect
 import com.ekomitepintar.ui.navigation.Routes
 import com.ekomitepintar.ui.theme.*
 import com.ekomitepintar.viewmodel.DashboardViewModel
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,19 +51,16 @@ fun DashboardScreen(
     onNavigateToVoting: () -> Unit,
     onNavigateToPayment: (String) -> Unit,
     onNavigateToTransparansi: () -> Unit,
+    onNavigateToNotifikasi: () -> Unit,
     onNavigateBottomTab: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    // Navigate on logout
-    LaunchedEffect(uiState.isLoggedOut) {
-        if (uiState.isLoggedOut) onLogout()
-    }
+    LaunchedEffect(uiState.isLoggedOut) { if (uiState.isLoggedOut) onLogout() }
 
-    // Snackbar state for general errors if needed
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Navigate on checkout token
     LaunchedEffect(uiState.checkoutUrl) {
         uiState.checkoutUrl?.let { url ->
             val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
@@ -74,18 +69,9 @@ fun DashboardScreen(
         }
     }
 
-    // Tampilkan error di Snackbar jika ada
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { msg ->
-            if (uiState.tagihanList.isNotEmpty()) {
-                snackbarHostState.showSnackbar(msg)
-                viewModel.clearError()
-            }
-        }
-    }
-
-    // Animasi masuk & Load Data Awal
     var showContent by remember { mutableStateOf(false) }
+    var showDonasiDialog by remember { mutableStateOf(false) }
+    
     LaunchedEffect(Unit) {
         viewModel.loadTagihan("dummy-siswa-id")
         delay(100)
@@ -93,68 +79,8 @@ fun DashboardScreen(
     }
 
     Scaffold(
-        containerColor = Navy900,
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                Snackbar(
-                    snackbarData = data,
-                    containerColor = Navy800.copy(alpha = 0.9f),
-                    contentColor = White,
-                    actionColor = Gold400,
-                    shape = MaterialTheme.shapes.medium
-                )
-            }
-        },
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Bell Icon with Dot
-                Box(contentAlignment = Alignment.TopEnd) {
-                    IconButton(onClick = { onNavigateBottomTab(Routes.NOTIFIKASI) }) {
-                        Icon(
-                            Icons.Filled.Notifications,
-                            contentDescription = "Notifications",
-                            tint = White,
-                            modifier = Modifier.size(26.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, Gold400, CircleShape)
-                        .background(Navy700)
-                        .clickable { onNavigateBottomTab(Routes.PROFIL) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (uiState.fotoProfil != null) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(uiState.fotoProfil)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "Foto Profil",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Icon(
-                            Icons.Filled.Person,
-                            contentDescription = "Profile",
-                            tint = White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            }
-        },
+        containerColor = BackgroundLight,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             BottomNavBar(
                 currentRoute = Routes.DASHBOARD,
@@ -162,158 +88,118 @@ fun DashboardScreen(
             )
         }
     ) { paddingValues ->
-
         PullToRefreshBox(
             isRefreshing = uiState.isRefreshing,
-            onRefresh = {
-                // TODO: ganti dengan siswaId yang sebenarnya
-                viewModel.onRefresh("dummy-siswa-id")
-            },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            onRefresh = { viewModel.onRefresh("dummy-siswa-id") },
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
-            // Background Glowing Orbs
-            Box(modifier = Modifier.fillMaxSize()) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(BlueGlow.copy(alpha = 0.35f), Color.Transparent),
-                            center = androidx.compose.ui.geometry.Offset(size.width * -0.1f, size.height * -0.1f),
-                            radius = size.width * 0.8f
-                        )
-                    )
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(PurpleGlow.copy(alpha = 0.3f), Color.Transparent),
-                            center = androidx.compose.ui.geometry.Offset(size.width * 1.1f, size.height * 0.6f),
-                            radius = size.width * 0.7f
-                        )
-                    )
-                }
-            }
+            val pendingTagihan = uiState.tagihanList.firstOrNull { it.statusBayar == "PENDING" || it.statusBayar == "UNPAID" }
+            val otherTagihan = uiState.tagihanList.filter { it.id != pendingTagihan?.id && (it.statusBayar == "PENDING" || it.statusBayar == "UNPAID") }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(bottom = 120.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                // ============================================
-                // Header: Sapaan
-                // ============================================
+                // Header (Emerald Gradient) + Urgent Tagihan (Overlap)
                 item {
-                    AnimatedVisibility(
-                        visible = showContent,
-                        enter = fadeIn() + slideInVertically(initialOffsetY = { -30 })
-                    ) {
-                        GreetingSection(userName = uiState.userName)
-                    }
-                }
-
-                // ============================================
-                // Summary Cards
-                // ============================================
-                item {
-                    AnimatedVisibility(
-                        visible = showContent,
-                        enter = fadeIn() + slideInVertically(initialOffsetY = { 40 })
-                    ) {
-                        uiState.summary?.let { summary ->
-                            SummarySection(summary = summary, tagihanList = uiState.tagihanList)
-                        } ?: SummaryPlaceholder()
-                    }
-                }
-
-                // ============================================
-                // Menu E-Voting & Transparansi
-                // ============================================
-                item {
-                    AnimatedVisibility(
-                        visible = showContent,
-                        enter = fadeIn() + slideInVertically(initialOffsetY = { 50 })
-                    ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.large,
-                                colors = CardDefaults.cardColors(containerColor = Navy800.copy(alpha = 0.5f)),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, White10),
-                                onClick = onNavigateToVoting
-                            ) {
+                    // True Z-Stack Overlapping
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        // LAYER BAWAH (Z-Index 0): Background Hijau
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                                .background(Brush.linearGradient(listOf(Color(0xFF10B981), Color(0xFF059669), Color(0xFF0D9488))))
+                        ) {
+                            // Dekorasi cahaya
+                            Box(
+                                modifier = Modifier
+                                    .size(160.dp)
+                                    .offset(x = 100.dp, y = (-20).dp)
+                                    .align(Alignment.TopEnd)
+                                    .background(Emerald400.copy(alpha = 0.2f), CircleShape)
+                            )
+                        }
+                        
+                        // LAYER ATAS (Z-Index 1): Konten Header & Kartu
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            // Header Text & Avatar
+                            AnimatedVisibility(visible = showContent, enter = fadeIn() + slideInVertically(initialOffsetY = { -20 })) {
                                 Row(
-                                    modifier = Modifier.padding(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 20.dp, end = 20.dp, top = 40.dp), // margin atas
+                                    horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    // Gradient Icon Box
-                                    Box(
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .clip(CircleShape)
-                                            .background(Brush.linearGradient(listOf(Gold300, Gold500))),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            Icons.Filled.HowToVote,
-                                            contentDescription = "E-Voting",
-                                            tint = Navy900,
-                                            modifier = Modifier.size(28.dp)
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(16.dp))
                                     Column {
                                         Text(
-                                            text = "E-Voting Komite",
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = White,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = "Beri suara untuk keputusan sekolah",
+                                            text = "Selamat datang kembali,",
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = White60
+                                            color = Emerald50,
+                                            fontWeight = FontWeight.Medium,
+                                            letterSpacing = 0.5.sp
                                         )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = uiState.userName,
+                                            style = MaterialTheme.typography.titleLarge,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 24.sp
+                                        )
+                                    }
+                                    
+                                    Box(
+                                        modifier = Modifier
+                                            .size(52.dp)
+                                            .shadow(12.dp, CircleShape, spotColor = Color.White, ambientColor = Color.White)
+                                            .background(Color.White.copy(alpha = 0.2f), CircleShape)
+                                            .clip(CircleShape)
+                                            .clickable { onNavigateBottomTab(Routes.PROFIL) },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (uiState.fotoProfil != null) {
+                                            AsyncImage(
+                                                model = ImageRequest.Builder(LocalContext.current)
+                                                    .data(uiState.fotoProfil).crossfade(true).build(),
+                                                contentDescription = "Profil",
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        } else {
+                                            Icon(
+                                                Icons.Filled.PersonOutline,
+                                                contentDescription = "Profile",
+                                                tint = Emerald50,
+                                                modifier = Modifier.size(28.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
                             
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.large,
-                                colors = CardDefaults.cardColors(containerColor = Navy800.copy(alpha = 0.5f)),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, White10),
-                                onClick = onNavigateToTransparansi
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
+                            // Memberi jarak agar kartu tumpang tindih di perbatasan hijau dan abu-abu
+                            Spacer(modifier = Modifier.height(32.dp))
+
+                            // Hero Section: Kartu Tagihan (Menimpa)
+                            AnimatedVisibility(visible = showContent, enter = fadeIn() + slideInVertically(initialOffsetY = { 30 })) {
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp)
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .clip(CircleShape)
-                                            .background(Brush.linearGradient(listOf(Color(0xFF64B5F6), Color(0xFF1E88E5)))),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            Icons.Filled.AccountBalanceWallet,
-                                            contentDescription = "Transparansi",
-                                            tint = Navy900,
-                                            modifier = Modifier.size(28.dp)
+                                    if (uiState.isLoading) {
+                                        SkeletonHeroBillCard()
+                                    } else if (pendingTagihan != null) {
+                                        HeroBillCard(
+                                            tagihan = pendingTagihan,
+                                            onBayarClicked = { viewModel.onBayarClicked(pendingTagihan.id, "dummy-siswa-id") }
                                         )
-                                    }
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Column {
-                                        Text(
-                                            text = "Transparansi Keuangan",
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = White,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = "Lihat laporan kas & pengeluaran komite",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = White60
-                                        )
+                                    } else if (uiState.errorMessage == null) {
+                                        NoUrgentBillCard()
                                     }
                                 }
                             }
@@ -321,579 +207,537 @@ fun DashboardScreen(
                     }
                 }
 
-                // ============================================
-                // Section Header: Tagihan Aktif
-                // ============================================
+                // Menu Utama Grid dengan SVG Heroicons
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Rounded.Receipt,
-                            contentDescription = null,
-                            tint = Gold400,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Tagihan Aktif",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = White,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.weight(1f)
-                        )
-                        var expandedFilter by remember { mutableStateOf(false) }
-                        Box {
-                            IconButton(onClick = { expandedFilter = true }) {
-                                Icon(
-                                    Icons.Filled.FilterList,
-                                    contentDescription = "Filter",
-                                    tint = if (uiState.currentFilter == "Semua") White60 else Gold400
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = expandedFilter,
-                                onDismissRequest = { expandedFilter = false },
-                                modifier = Modifier.background(Navy700)
-                            ) {
-                                listOf("Semua", "Belum Bayar", "Lunas").forEach { filterOption ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = filterOption,
-                                                color = if (uiState.currentFilter == filterOption) Gold400 else White,
-                                                fontWeight = if (uiState.currentFilter == filterOption) FontWeight.Bold else FontWeight.Normal
-                                            )
-                                        },
-                                        onClick = {
-                                            viewModel.setFilter(filterOption)
-                                            expandedFilter = false
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    
-
-                }
-
-                // ============================================
-                // Loading State
-                // ============================================
-                if (uiState.isLoading && uiState.tagihanList.isEmpty()) {
-                    item {
-                        Box(
+                    AnimatedVisibility(visible = showContent, enter = fadeIn() + slideInVertically(initialOffsetY = { 40 })) {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
+                                .padding(horizontal = 20.dp)
                         ) {
-                            CircularProgressIndicator(
-                                color = Gold400,
-                                strokeWidth = 3.dp
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.cardColors(containerColor = CardWhite),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(20.dp)) {
+                                    Text(
+                                        text = "Layanan Komite",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = Slate800,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        SuperAppServiceItem(icon = Icons.Filled.CheckBox, iconColor = Color(0xFF118EEA), label = "E-Voting", onClick = onNavigateToVoting)
+                                        SuperAppServiceItem(icon = Icons.Filled.AccountBalanceWallet, iconColor = Color(0xFFF57C00), label = "Keuangan", onClick = onNavigateToTransparansi)
+                                        SuperAppServiceItem(icon = Icons.Filled.FavoriteBorder, iconColor = Color(0xFFE91E63), label = "Donasi", onClick = {
+                                            showDonasiDialog = true
+                                        })
+                                        SuperAppServiceItem(icon = Icons.Filled.NotificationsNone, iconColor = Color(0xFF9C27B0), label = "Informasi", hasBadge = true, onClick = onNavigateToNotifikasi)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Ringkasan Keuangan (Bawah)
+                item {
+                    AnimatedVisibility(visible = showContent, enter = fadeIn() + slideInVertically(initialOffsetY = { 50 })) {
+                        uiState.summary?.let { summary ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                SummaryCard(
+                                    modifier = Modifier.weight(1f),
+                                    icon = Icons.Filled.Check,
+                                    iconTint = Emerald600,
+                                    iconBgColor = Emerald50,
+                                    iconBorderColor = Emerald100,
+                                    label = "SUDAH LUNAS",
+                                    amount = formatShortRupiah(summary.lunas.toDouble())
+                                )
+                                SummaryCard(
+                                    modifier = Modifier.weight(1f),
+                                    icon = Icons.Filled.Schedule,
+                                    iconTint = Rose600,
+                                    iconBgColor = Rose50,
+                                    iconBorderColor = Color(0xFFFFE4E6), // Rose100
+                                    label = "SISA TAGIHAN",
+                                    amount = formatShortRupiah((summary.pending + summary.belumBayar).toDouble())
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Tagihan Lainnya
+                item {
+                    val otherTagihan = uiState.tagihanList.filter { it.statusBayar != "LUNAS" && it != uiState.tagihanList.firstOrNull { t -> t.statusBayar == "PENDING" } }
+                    if (otherTagihan.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Text(
+                            text = "Tagihan Lainnya",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Slate800,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
+                itemsIndexed(
+                    items = uiState.tagihanList.filter { it.statusBayar != "LUNAS" && it != uiState.tagihanList.firstOrNull { t -> t.statusBayar == "PENDING" } },
+                    key = { _, tagihan -> tagihan.id }
+                ) { index, tagihan ->
+                    AnimatedVisibility(visible = showContent, enter = fadeIn() + slideInVertically(initialOffsetY = { 80 + (index * 20) })) {
+                        Box(modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 12.dp)) {
+                            OtherBillCard(
+                                tagihan = tagihan,
+                                onBayarClicked = { viewModel.onBayarClicked(tagihan.id, "dummy-siswa-id") }
                             )
                         }
                     }
                 }
-
-                // ============================================
-                // Error State
-                // ============================================
-                if (uiState.errorMessage != null && uiState.tagihanList.isEmpty()) {
-                    item {
-                        ErrorCard(
-                            message = uiState.errorMessage!!,
-                            onRetry = { viewModel.loadTagihan("dummy-siswa-id") }
-                        )
-                    }
-                }
-
-                // ============================================
-                // Empty State
-                // ============================================
-                if (!uiState.isLoading && uiState.tagihanList.isEmpty() && uiState.errorMessage == null) {
-                    item {
-                        EmptyState()
-                    }
-                }
-
-                // ============================================
-                // Tagihan Cards
-                // ============================================
-                itemsIndexed(
-                    items = uiState.tagihanList,
-                    key = { _, tagihan -> tagihan.id }
-                ) { index, tagihan ->
-                    AnimatedVisibility(
-                        visible = showContent,
-                        enter = fadeIn(initialAlpha = 0f) + slideInVertically(
-                            initialOffsetY = { 80 + (index * 20) }
-                        )
-                    ) {
-                        TagihanCard(
-                            tagihan = tagihan,
-                            onBayarClicked = {
-                                viewModel.onBayarClicked(tagihan.id, "dummy-siswa-id")
-                            }
-                        )
-                    }
-                }
-
-                // Bottom spacing
-                item { Spacer(modifier = Modifier.height(24.dp)) }
             }
         }
     }
-}
-
-// ============================================
-// Greeting Section
-// ============================================
-@Composable
-private fun GreetingSection(userName: String) {
-    Column {
-        Text(
-            text = "Halo, $userName! 👋",
-            style = MaterialTheme.typography.headlineLarge,
-            color = White,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Berikut ringkasan tagihan anak Anda",
-            style = MaterialTheme.typography.bodyLarge,
-            color = White60
-        )
-    }
-}
-
-// ============================================
-// Summary Section — 3 mini cards
-// ============================================
-@Composable
-private fun SummarySection(summary: TagihanSummary, tagihanList: List<Tagihan>) {
-    val totalItems = tagihanList.size
-    val lunasItems = tagihanList.count { it.statusBayar == "LUNAS" }
-    val belumItems = tagihanList.count { it.statusBayar != "LUNAS" }
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        SummaryMiniCard(
-            modifier = Modifier.weight(1f),
-            icon = Icons.Filled.Description,
-            value = formatRupiah(summary.totalTagihan.toDouble()),
-            subtitle = "$totalItems Item",
-            label = "Total",
-            badgeCount = totalItems.toString(),
-            badgeColor = Gold400,
-            accentColor = Gold400,
-            containerColor = Gold400.copy(alpha = 0.12f)
-        )
-        SummaryMiniCard(
-            modifier = Modifier.weight(1f),
-            icon = Icons.Filled.CheckCircle,
-            value = formatRupiah(summary.lunas.toDouble()),
-            subtitle = "$lunasItems Item",
-            label = "Lunas",
-            badgeCount = lunasItems.toString(),
-            badgeColor = StatusLunas,
-            accentColor = StatusLunas,
-            containerColor = StatusLunas.copy(alpha = 0.12f)
-        )
-        SummaryMiniCard(
-            modifier = Modifier.weight(1f),
-            icon = Icons.Filled.Warning,
-            value = formatRupiah((summary.pending + summary.belumBayar).toDouble()),
-            subtitle = "$belumItems Item",
-            label = "Belum",
-            badgeCount = belumItems.toString(),
-            badgeColor = StatusBelumBayar,
-            accentColor = StatusBelumBayar,
-            containerColor = StatusBelumBayar.copy(alpha = 0.12f)
-        )
-    }
-}
-
-@Composable
-private fun SummaryMiniCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    value: String,
-    subtitle: String,
-    label: String,
-    badgeCount: String,
-    badgeColor: Color,
-    accentColor: Color,
-    containerColor: Color
-) {
-    Surface(
-        modifier = modifier.wrapContentHeight(),
-        shape = MaterialTheme.shapes.medium,
-        color = Navy800.copy(alpha = 0.5f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, White5),
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Icon with Badge
-            Box(contentAlignment = Alignment.TopEnd) {
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = containerColor,
-                    modifier = Modifier.size(44.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            icon,
-                            contentDescription = null,
-                            tint = accentColor,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-                // Badge
-                Box(
-                    modifier = Modifier
-                        .offset(x = 6.dp, y = (-6).dp)
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(badgeColor),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = badgeCount,
-                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                        color = Navy900,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            // Label Row (Total >)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = White,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    Icons.Filled.ChevronRight,
-                    contentDescription = null,
-                    tint = White60,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(2.dp))
-            
-            // Subtitle (5 Item)
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelMedium,
-                color = White60
-            )
-            
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            // Value (Rp 200.000)
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleSmall,
-                color = White,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-    }
-}
-
-@Composable
-private fun SummaryPlaceholder() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        repeat(3) {
-            Surface(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(110.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = Navy700.copy(alpha = 0.5f)
-            ) {}
-        }
-    }
-}
-
-// ============================================
-// Tagihan Card — Floating Material3 Card
-// ============================================
-@Composable
-private fun TagihanCard(
-    tagihan: Tagihan,
-    onBayarClicked: () -> Unit
-) {
-    val isLunas = tagihan.statusBayar == "LUNAS"
-    val isTerlambat = tagihan.statusBayar == "TERLAMBAT"
     
-    val statusColor = when {
-        isLunas -> StatusLunas
-        tagihan.statusBayar == "PENDING" -> StatusPending
-        else -> StatusBelumBayar
+    if (showDonasiDialog) {
+        DonasiDialog(
+            onDismiss = { showDonasiDialog = false },
+            onSubmit = { nominal ->
+                showDonasiDialog = false
+                android.widget.Toast.makeText(context, "Mengarahkan ke pembayaran Donasi: Rp $nominal", android.widget.Toast.LENGTH_SHORT).show()
+                // Idealnya: panggil API untuk buat invoice donasi
+            }
+        )
     }
-    val statusContainerColor = when {
-        isLunas -> StatusLunasContainer
-        tagihan.statusBayar == "PENDING" -> StatusPendingContainer
-        else -> StatusBelumBayarContainer
-    }
-    val statusText = when {
-        isLunas -> "LUNAS"
-        tagihan.statusBayar == "PENDING" -> "PENDING"
-        isTerlambat -> "TERLAMBAT"
-        else -> "BELUM BAYAR"
-    }
+}
 
+@Composable
+fun DonasiDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
+    var nominal by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Donasi Sukarela", fontWeight = FontWeight.Bold, color = Slate800) },
+        text = {
+            Column {
+                Text("Masukkan nominal donasi Anda untuk mendukung program komite:", color = Slate600, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = nominal,
+                    onValueChange = { if (it.all { char -> char.isDigit() }) nominal = it },
+                    label = { Text("Nominal (Rp)") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { if (nominal.isNotEmpty()) onSubmit(nominal) },
+                colors = ButtonDefaults.buttonColors(containerColor = Emerald600)
+            ) {
+                Text("Lanjut Bayar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Batal", color = Slate500) }
+        },
+        containerColor = Color.White
+    )
+}
+
+@Composable
+fun HeroBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = Navy800.copy(alpha = 0.6f)
-        ),
-        border = androidx.compose.foundation.BorderStroke(1.dp, White10),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
-        )
+        shape = RoundedCornerShape(24.dp), // rounded-3xl
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)), // border-gray-100
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 20.dp),
-            verticalAlignment = Alignment.Top
-        ) {
-            
-            Column(
-                modifier = Modifier.weight(1f)
+        Column(modifier = Modifier.padding(24.dp)) {
+            // flex justify-between items-center mb-3
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Row 1: Judul + Status Badge
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = tagihan.judul,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = White,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Surface(
-                        shape = MaterialTheme.shapes.small,
-                        color = statusContainerColor
-                    ) {
-                        Text(
-                            text = statusText,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = statusColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-    
-                Spacer(modifier = Modifier.height(12.dp))
-    
-                // Row 2: Nominal (besar, emas)
-                Text(
-                    text = formatRupiah(tagihan.nominal),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Gold400,
-                    fontWeight = FontWeight.Bold
-                )
-    
-                Spacer(modifier = Modifier.height(12.dp))
-    
-                // Row 3: Tenggat waktu
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        Icons.Filled.CalendarToday,
+                        Icons.Filled.Schedule,
                         contentDescription = null,
-                        tint = White40,
+                        tint = Emerald500,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Tenggat: ${formatDate(tagihan.tenggatWaktu)}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = White60
+                        text = "TAGIHAN MENDESAK",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Slate500,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
                     )
                 }
-    
-                // Tombol Bayar — hanya tampil jika BELUM LUNAS
-                if (!isLunas) {
-                    Spacer(modifier = Modifier.height(20.dp))
-    
-                    Button(
-                        onClick = onBayarClicked,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp)
-                            .background(
-                                brush = Brush.linearGradient(listOf(Gold300, Gold500)),
-                                shape = CircleShape
-                            ),
-                        shape = CircleShape,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = Navy900
-                        ),
-                        contentPadding = PaddingValues(),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = 0.dp,
-                            pressedElevation = 0.dp
-                        )
-                    ) {
-                        Icon(
-                            Icons.Rounded.Payments,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Bayar Sekarang",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Rose50,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6))
+                ) {
+                    Text(
+                        text = "PENDING",
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                        color = Rose600,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+            }
+            
+            // text-4xl font-black text-slate-800 mb-1
+            Text(
+                text = formatRupiah(tagihan.nominal),
+                style = MaterialTheme.typography.headlineLarge,
+                color = Slate800,
+                fontWeight = FontWeight.Black,
+                fontSize = 36.sp
+            )
+            
+            // text-slate-400 text-sm font-medium mb-6
+            Text(
+                text = tagihan.judul,
+                style = MaterialTheme.typography.bodySmall,
+                color = Slate400,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+            
+            // Tombol Aksen
+            Button(
+                onClick = onBayarClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(Brush.linearGradient(listOf(Emerald500, Emerald600)), RoundedCornerShape(16.dp)),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                contentPadding = PaddingValues()
+            ) {
+                Icon(
+                    Icons.Rounded.Payments,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Bayar Sekarang",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ServiceItem(icon: ImageVector, label: String, hasBadge: Boolean = false, onClick: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable { onClick() }
+    ) {
+        Box {
+            // bg-white w-[64px] h-[64px] rounded-[18px] shadow-sm border border-gray-100
+            Surface(
+                modifier = Modifier.size(64.dp),
+                shape = RoundedCornerShape(18.dp),
+                color = CardWhite,
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+                shadowElevation = 2.dp
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        icon,
+                        contentDescription = label,
+                        tint = Slate600,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+            if (hasBadge) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-6).dp, y = 6.dp)
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(Rose600)
+                        .border(2.dp, CardWhite, CircleShape)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
+            color = Slate600,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+fun SummaryCard(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    iconTint: Color,
+    iconBgColor: Color,
+    iconBorderColor: Color,
+    label: String,
+    amount: String
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp), // rounded-2xl
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = iconBgColor,
+                border = androidx.compose.foundation.BorderStroke(1.dp, iconBorderColor),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(imageVector = icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(24.dp))
+                }
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(text = label, fontSize = 9.sp, color = Slate500, fontWeight = FontWeight.ExtraBold, letterSpacing = 0.5.sp)
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(text = amount, fontSize = 14.sp, color = Slate800, fontWeight = FontWeight.ExtraBold)
+            }
+        }
+    }
+}
+
+@Composable
+fun OtherBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = BackgroundLight,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(Icons.Rounded.Receipt, contentDescription = null, tint = Slate400)
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = tagihan.judul,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Slate800,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = formatRupiah(tagihan.nominal),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Emerald600,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedButton(
+                onClick = onBayarClicked,
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text("Bayar", style = MaterialTheme.typography.labelMedium, color = Emerald600)
+            }
+        }
+    }
+}
+
+@Composable
+fun NoUrgentBillCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = Emerald600, modifier = Modifier.size(48.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = "Semua Lunas!", style = MaterialTheme.typography.titleMedium, color = Slate800, fontWeight = FontWeight.Bold)
+            Text(text = "Tidak ada tagihan yang mendesak saat ini.", style = MaterialTheme.typography.bodySmall, color = Slate500)
+        }
+    }
+}
+
+// Utilities
+private fun formatRupiah(amount: Double): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
+    return formatter.format(amount).replace(",00", "").replace("Rp", "Rp ")
+}
+
+private fun formatShortRupiah(amount: Double): String {
+    if (amount >= 1_000_000) {
+        val million = amount / 1_000_000.0
+        return "Rp " + String.format(Locale("id", "ID"), "%.1f", million).replace(".0", "") + "M"
+    }
+    return formatRupiah(amount)
+}
+
+@Composable
+fun SkeletonHeroBillCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Pill
+                Box(
+                    modifier = Modifier.width(100.dp).height(24.dp).clip(CircleShape).shimmerEffect()
+                )
+                // Date
+                Box(
+                    modifier = Modifier.width(60.dp).height(16.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect()
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Box(modifier = Modifier.fillMaxWidth(0.6f).height(24.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Column {
+                    Box(modifier = Modifier.width(80.dp).height(14.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(modifier = Modifier.width(120.dp).height(28.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                }
+                Box(
+                    modifier = Modifier.width(48.dp).height(48.dp).clip(CircleShape).shimmerEffect()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SkeletonSummaryCard(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.height(90.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(32.dp).clip(CircleShape).shimmerEffect()
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Box(modifier = Modifier.width(80.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(modifier = Modifier.width(60.dp).height(18.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
                 }
             }
         }
     }
 }
 
-// ============================================
-// Error Card
-// ============================================
 @Composable
-private fun ErrorCard(message: String, onRetry: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = Navy700)
+fun SuperAppServiceItem(icon: ImageVector, iconColor: Color, label: String, hasBadge: Boolean = false, onClick: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(4.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Box {
             Icon(
-                Icons.Filled.CloudOff,
-                contentDescription = null,
-                tint = ErrorRed,
-                modifier = Modifier.size(48.dp)
+                imageVector = icon, 
+                contentDescription = label, 
+                tint = iconColor, 
+                modifier = Modifier.size(36.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = White80,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            OutlinedButton(
-                onClick = onRetry,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Gold400),
-                border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
-                    brush = Brush.linearGradient(listOf(Gold400, Gold300))
+            if (hasBadge) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(Color.Red, CircleShape)
+                        .border(2.dp, Color.White, CircleShape)
+                        .align(Alignment.TopEnd)
+                        .offset(x = 4.dp, y = (-2).dp)
                 )
-            ) {
-                Text("Coba Lagi")
             }
         }
-    }
-}
-
-// ============================================
-// Empty State
-// ============================================
-@Composable
-private fun EmptyState() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = Navy700)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(40.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                Icons.Filled.CheckCircle,
-                contentDescription = null,
-                tint = StatusLunas,
-                modifier = Modifier.size(56.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Tidak ada tagihan",
-                style = MaterialTheme.typography.titleMedium,
-                color = White,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Semua tagihan sudah terbayar 🎉",
-                style = MaterialTheme.typography.bodyMedium,
-                color = White60
-            )
-        }
-    }
-}
-
-// ============================================
-// Utility Functions
-// ============================================
-
-/**
- * Format angka ke format Rupiah: Rp 1.500.000
- */
-private fun formatRupiah(amount: Double): String {
-    val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-    return formatter.format(amount).replace(",00", "")
-}
-
-/**
- * Format ISO date string ke format Indonesia: 15 Agustus 2026
- */
-private fun formatDate(isoDate: String): String {
-    return try {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
-        val date = inputFormat.parse(isoDate)
-        date?.let { outputFormat.format(it) } ?: isoDate
-    } catch (e: Exception) {
-        try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
-            val date = inputFormat.parse(isoDate)
-            date?.let { outputFormat.format(it) } ?: isoDate
-        } catch (e2: Exception) {
-            isoDate
-        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            color = Slate800
+        )
     }
 }

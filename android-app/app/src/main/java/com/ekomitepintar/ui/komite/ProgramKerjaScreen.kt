@@ -23,13 +23,13 @@ fun ProgramKerjaScreen(
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Program Kerja", color = White, fontWeight = FontWeight.Bold) },
+                title = { Text("Program Kerja", color = Slate800, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali", tint = Slate800)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -68,13 +68,13 @@ fun ProgramKerjaScreen(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .clip(CircleShape)
-                                    .background(if (index == 0) Gold400 else Navy700),
+                                    .background(if (index == 0) Emerald600 else CardWhite),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     Icons.Filled.Event,
                                     contentDescription = null,
-                                    tint = if (index == 0) Navy900 else White60,
+                                    tint = if (index == 0) BackgroundLight else Slate500,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -83,7 +83,7 @@ fun ProgramKerjaScreen(
                                     modifier = Modifier
                                         .width(2.dp)
                                         .height(80.dp)
-                                        .background(Navy700)
+                                        .background(CardWhite)
                                 )
                             }
                         }
@@ -94,7 +94,9 @@ fun ProgramKerjaScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = MaterialTheme.shapes.medium,
-                            colors = CardDefaults.cardColors(containerColor = Navy700)
+                            colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -103,14 +105,14 @@ fun ProgramKerjaScreen(
                             ) {
                                 Text(
                                     text = title,
-                                    color = White,
+                                    color = Slate800,
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = desc,
-                                    color = White60,
+                                    color = Slate500,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }

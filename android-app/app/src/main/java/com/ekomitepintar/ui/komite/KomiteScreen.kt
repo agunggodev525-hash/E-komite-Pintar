@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -56,14 +57,14 @@ fun KomiteScreen(
     }
 
     Scaffold(
-        containerColor = Navy900,
+        containerColor = BackgroundLight,
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = Navy600,
-                    contentColor = White,
-                    actionColor = Gold400,
+                    containerColor = Color(0xFFF1F5F9),
+                    contentColor = Slate800,
+                    actionColor = Emerald600,
                     shape = MaterialTheme.shapes.medium
                 )
             }
@@ -85,7 +86,7 @@ fun KomiteScreen(
             
             Text(
                 text = "Komite Sekolah",
-                color = White,
+                color = Slate800,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -130,7 +131,7 @@ fun KomiteScreen(
             
             Text(
                 text = "Pengumuman Terbaru",
-                color = White,
+                color = Slate800,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -145,7 +146,9 @@ fun KomiteScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
-                    colors = CardDefaults.cardColors(containerColor = Navy700)
+                    colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -155,14 +158,14 @@ fun KomiteScreen(
                     ) {
                         Surface(
                             shape = CircleShape,
-                            color = Gold400.copy(alpha = 0.12f),
+                            color = Emerald600.copy(alpha = 0.12f),
                             modifier = Modifier.size(40.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Filled.NotificationsActive,
                                     contentDescription = null,
-                                    tint = Gold400,
+                                    tint = Emerald600,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -173,14 +176,14 @@ fun KomiteScreen(
                         Column {
                             Text(
                                 text = "Rapat Pleno Semester 1",
-                                color = White,
+                                color = Slate800,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Akan diadakan pada hari Sabtu, 20 Agustus 2026. Kehadiran Bapak/Ibu sangat diharapkan.",
-                                color = White60,
+                                color = Slate500,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -196,7 +199,9 @@ fun KomiteCard(item: KomiteMenu, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().aspectRatio(1f),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = Navy700),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = onClick
     ) {
         Column(
@@ -206,14 +211,14 @@ fun KomiteCard(item: KomiteMenu, onClick: () -> Unit) {
         ) {
             Surface(
                 shape = CircleShape,
-                color = Gold400.copy(alpha = 0.12f),
+                color = Emerald600.copy(alpha = 0.12f),
                 modifier = Modifier.size(56.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.title,
-                        tint = Gold400,
+                        tint = Emerald600,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -221,7 +226,7 @@ fun KomiteCard(item: KomiteMenu, onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = item.title,
-                color = White,
+                color = Slate800,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
