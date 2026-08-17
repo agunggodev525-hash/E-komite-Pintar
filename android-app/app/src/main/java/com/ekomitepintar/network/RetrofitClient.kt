@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
  */
 object RetrofitClient {
 
-    private const val BASE_URL = "https://e-komite-pintar-dfxmr3gki-agung-developer-s-projects.vercel.app/api/v1/"
+    private const val BASE_URL = "https://e-komite-pintar.onrender.com/api/v1/"
 
     private var token: String? = null
     private var apiService: ApiService? = null
