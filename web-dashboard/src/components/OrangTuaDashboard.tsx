@@ -4,9 +4,10 @@ import { useState } from "react";
 import useSWR from "swr";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch, formatRupiah } from "@/lib/api";
-import { Bell, Clock, History, HelpCircle, Book, Home, FileText, PieChart, User, Vote, CheckCircle2 } from "lucide-react";
+import { Bell, Clock, History, HelpCircle, Book, Home, FileText, PieChart, User, Vote, CheckCircle2, Heart } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import SkeletonLoader from "./SkeletonLoader";
+import toast from "react-hot-toast";
 
 export default function OrangTuaDashboard() {
   const { user } = useAuth();
@@ -52,13 +53,14 @@ export default function OrangTuaDashboard() {
       });
 
       if (res.success && res.data.redirect_url) {
+        toast.success("Mengarahkan ke pembayaran...");
         // Arahkan ke halaman Midtrans
         window.location.href = res.data.redirect_url;
       } else {
-        alert(res.message || "Gagal menginisiasi pembayaran.");
+        toast.error(res.message || "Gagal menginisiasi pembayaran.");
       }
     } catch (error: any) {
-      alert("Terjadi kesalahan: " + error.message);
+      toast.error("Terjadi kesalahan: " + error.message);
     } finally {
       setIsPaying(false);
     }
@@ -85,14 +87,14 @@ export default function OrangTuaDashboard() {
       });
       
       if (res.success) {
-        alert("Suara Anda berhasil dicatat!");
+        toast.success("Suara Anda berhasil dicatat!");
         mutateVoting(); // Background sync data asli dari server
       } else {
-        alert(res.message || "Gagal memberikan suara.");
+        toast.error(res.message || "Gagal memberikan suara.");
         mutateVoting(); // Rollback UI jika gagal
       }
     } catch (error: any) {
-      alert(error.message || "Terjadi kesalahan sistem.");
+      toast.error(error.message || "Terjadi kesalahan sistem.");
       mutateVoting(); // Rollback UI jika gagal
     } finally {
       setIsVoting(false);
@@ -116,7 +118,7 @@ export default function OrangTuaDashboard() {
   }
 
   return (
-    <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-x-hidden overflow-y-auto pb-24">
+    <div className="max-w-md sm:max-w-lg mx-auto min-h-screen bg-slate-50 dark:bg-slate-950 relative shadow-2xl overflow-x-hidden overflow-y-auto pb-32">
       
       {/* 1. Header Profil */}
       <div className="p-4 flex justify-between items-center bg-white dark:bg-slate-900 rounded-b-3xl shadow-sm z-10 relative">
@@ -154,7 +156,10 @@ export default function OrangTuaDashboard() {
             
             <div className="mt-6 flex items-center justify-between">
               <div className="text-white/80 text-xs">
-                <span className="font-bold text-white">{summary.belum_bayar + summary.pending}</span> Tagihan Menunggu
+                <span className="font-bold text-white text-base">{summary.belum_bayar + summary.pending}</span> Tagihan Menunggu
+              </div>
+              <div className="text-white/80 text-xs text-right">
+                <span className="font-bold text-emerald-300 text-base">{summary.lunas}</span> Sudah Lunas
               </div>
             </div>
           </div>
@@ -165,12 +170,12 @@ export default function OrangTuaDashboard() {
           <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 px-1">Akses Cepat</h3>
           <div className="grid grid-cols-4 gap-3">
             {[
-              { label: "Riwayat", icon: History, color: "text-emerald-500", bg: "bg-emerald-50" },
-              { label: "Cicilan", icon: Clock, color: "text-orange-500", bg: "bg-orange-50" },
-              { label: "Transparansi", icon: Book, color: "text-blue-500", bg: "bg-blue-50" },
-              { label: "Bantuan", icon: HelpCircle, color: "text-purple-500", bg: "bg-purple-50" },
+              { label: "E-Voting", icon: Vote, color: "text-emerald-500", bg: "bg-emerald-50" },
+              { label: "Keuangan", icon: PieChart, color: "text-orange-500", bg: "bg-orange-50" },
+              { label: "Donasi", icon: Heart, color: "text-rose-500", bg: "bg-rose-50" },
+              { label: "Informasi", icon: Bell, color: "text-purple-500", bg: "bg-purple-50" },
             ].map((menu, i) => (
-              <button key={i} className="flex flex-col items-center gap-2 group">
+              <button key={i} onClick={() => toast.success(`Fitur ${menu.label} segera hadir!`)} className="flex flex-col items-center gap-2 group">
                 <div className={`w-14 h-14 rounded-2xl ${menu.bg} flex items-center justify-center transition-transform group-hover:-translate-y-1 group-active:scale-95 shadow-sm`}>
                   <menu.icon className={`w-6 h-6 ${menu.color}`} />
                 </div>
@@ -236,7 +241,7 @@ export default function OrangTuaDashboard() {
           <div className="space-y-3">
             {tagihan.length === 0 ? (
               <div className="text-center py-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10">
-                <p className="text-sm text-slate-500">Tidak ada tagihan untuk saat ini.</p>
+                <p className="text-sm text-slate-500">Belum ada tagihan/data</p>
               </div>
             ) : (
               tagihan.map(item => {

@@ -8,9 +8,18 @@ const { PrismaClient } = require('@prisma/client');
 let prisma;
 
 let dbUrl = process.env.DATABASE_URL || '';
+
 // Jika menggunakan pooler Supabase (6543) tapi lupa menambahkan pgbouncer=true
 if (dbUrl.includes(':6543') && !dbUrl.includes('pgbouncer=true')) {
   dbUrl += dbUrl.includes('?') ? '&pgbouncer=true' : '?pgbouncer=true';
+}
+
+// Tambahkan timeout dan limit untuk deployment Render/Supabase agar mencegah error P1001
+if (!dbUrl.includes('connection_limit')) {
+  dbUrl += dbUrl.includes('?') ? '&connection_limit=5' : '?connection_limit=5';
+}
+if (!dbUrl.includes('pool_timeout')) {
+  dbUrl += '&pool_timeout=20';
 }
 
 const prismaConfig = {

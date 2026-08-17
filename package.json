@@ -4,9 +4,10 @@
   "description": "Backend SaaS untuk manajemen keuangan komite sekolah",
   "main": "src/server.js",
   "scripts": {
+    "prestart": "prisma migrate deploy",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "build": "prisma generate && prisma migrate deploy",
+    "build": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",

@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { apiFetch } from "@/lib/api";
 import { UserPlus, Pencil, Trash2, Search, X, Key, ChevronLeft, ChevronRight, Filter, FileSpreadsheet, UploadCloud, Download, ArrowUpDown } from "lucide-react";
 import * as XLSX from 'xlsx';
+import toast from "react-hot-toast";
 
 // Helper function untuk Title Case
 const toTitleCase = (str: string) => {
@@ -111,10 +112,11 @@ export default function SiswaPage() {
       // Menghapus sekaligus menggunakan Promise.all (berjalan di background paralel)
       await Promise.all(selectedIds.map(id => apiFetch(`/siswa/${id}`, { method: "DELETE" })));
       setSelectedIds([]);
+      toast.success(`${selectedIds.length} data siswa berhasil dihapus`);
       loadSiswa();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Gagal menghapus beberapa data siswa");
+      toast.error(err.message || "Gagal menghapus beberapa data siswa");
       loadSiswa();
     }
   };
@@ -160,12 +162,12 @@ export default function SiswaPage() {
         });
         setFotoOrangTua(null);
         loadSiswa();
-        alert(isEditing ? "Siswa berhasil diperbarui" : "Siswa berhasil ditambahkan");
+        toast.success(isEditing ? "Siswa berhasil diperbarui" : "Siswa berhasil ditambahkan");
       } else {
-        alert(res.message || "Gagal menyimpan data siswa");
+        toast.error(res.message || "Gagal menyimpan data siswa");
       }
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan server");
+      toast.error(err.message || "Terjadi kesalahan server");
     } finally {
       setIsSubmitting(false);
     }
@@ -205,11 +207,12 @@ export default function SiswaPage() {
     try {
       const res = await apiFetch(`/siswa/${id}`, { method: "DELETE" });
       if (res.success) {
+        toast.success("Siswa berhasil dihapus");
         loadSiswa();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Gagal menghapus siswa");
+      toast.error(err.message || "Gagal menghapus siswa");
     }
   };
 
@@ -219,13 +222,13 @@ export default function SiswaPage() {
     try {
       const res = await apiFetch(`/siswa/${id}/reset-password`, { method: "POST" });
       if (res.success) {
-        alert("Password berhasil direset ke 'orangtua1234'.");
+        toast.success("Password berhasil direset ke 'orangtua1234'.");
       } else {
-        alert(res.message || "Gagal mereset password");
+        toast.error(res.message || "Gagal mereset password");
       }
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Terjadi kesalahan server");
+      toast.error(err.message || "Terjadi kesalahan server");
     }
   };
 
@@ -266,9 +269,10 @@ export default function SiswaPage() {
       XLSX.utils.book_append_sheet(workbook, worksheet, "Template_Siswa");
 
       XLSX.writeFile(workbook, "Template_Import_Siswa.xlsx");
+      toast.success("Template berhasil diunduh");
     } catch (err) {
       console.error(err);
-      alert("Gagal mengunduh template Excel.");
+      toast.error("Gagal mengunduh template Excel.");
     }
   };
 
@@ -686,7 +690,7 @@ export default function SiswaPage() {
                         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
                         if (jsonData.length === 0) {
-                          alert("File Excel kosong.");
+                          toast.error("File Excel kosong.");
                           setIsSubmitting(false);
                           return;
                         }
@@ -706,16 +710,16 @@ export default function SiswaPage() {
                         });
 
                         if (res.success) {
-                          alert(res.message || "Data berhasil diimport!");
+                          toast.success(res.message || "Data berhasil diimport!");
                           setIsImportModalOpen(false);
                           setSelectedFile(null);
                           loadSiswa();
                         } else {
-                          alert(res.message || "Gagal mengimport data.");
+                          toast.error(res.message || "Gagal mengimport data.");
                         }
                       } catch (err: any) {
                         console.error(err);
-                        alert("Terjadi kesalahan saat memproses file Excel.");
+                        toast.error("Terjadi kesalahan saat memproses file Excel.");
                       } finally {
                         setIsSubmitting(false);
                       }
@@ -723,7 +727,7 @@ export default function SiswaPage() {
                     reader.readAsArrayBuffer(selectedFile);
                   } catch (err) {
                     setIsSubmitting(false);
-                    alert("Gagal membaca file.");
+                    toast.error("Gagal membaca file.");
                   }
                 }}
                 className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"

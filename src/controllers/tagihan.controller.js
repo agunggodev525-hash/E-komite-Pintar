@@ -265,6 +265,8 @@ const getBySiswaId = async (req, res, next) => {
             status: true,
             metode_bayar: true,
             tanggal_bayar: true,
+            nominal_dibayar: true,
+            nominal_diskon: true,
           },
         },
       },
