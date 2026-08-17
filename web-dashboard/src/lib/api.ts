@@ -2,8 +2,7 @@
 // API Client — Fetch wrapper dengan auth header
 // ============================================
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "https://e-komite-pintar.onrender.com/api/v1";
+const API_BASE = "https://e-komite-pintar.onrender.com/api/v1";
 
 /**
  * Fetch wrapper yang otomatis inject Bearer token.
