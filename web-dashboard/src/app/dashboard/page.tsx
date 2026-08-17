@@ -6,7 +6,7 @@ import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatusBadge from "@/components/StatusBadge";
 import { useAuth } from "@/context/AuthContext";
-import { formatRupiah, formatDate } from "@/lib/api";
+import { formatRupiah, formatDate, apiFetch } from "@/lib/api";
 
 // Import Dasbor Khusus
 import SuperAdminDashboard from "@/components/SuperAdminDashboard";
@@ -77,42 +77,30 @@ export default function DashboardPage() {
 
   async function fetchDashboardData() {
     try {
-      const token = localStorage.getItem("ekomite_token");
-      const res = await fetch("/api/backend/dashboard/admin", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const json = await res.json();
-      if (json.success) {
-        setData(json.data);
+      const res = await apiFetch<any>("/dashboard/admin");
+      if (res.success) {
+        setData(res.data);
       }
     } catch (e) {
       console.error("Gagal mengambil data dashboard:", e);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   async function fetchChartTrend(bulan: string) {
     try {
       setChartLoading(true);
-      const token = localStorage.getItem("ekomite_token");
-      const res = await fetch(`/api/backend/dashboard/admin/chart-trend?bulan=${bulan}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const json = await res.json();
-      if (json.success) {
-        setChartData(json.data.chartData);
+      const res = await apiFetch<any>(`/dashboard/admin/chart-trend?bulan=${bulan}`);
+      if (res.success) {
+        setChartData(res.data.chartData);
       }
     } catch (e) {
       console.error("Gagal mengambil data chart:", e);
     } finally {
       setChartLoading(false);
     }
-  };
+  }
 
   const renderMetodeBadge = (metode: string) => {
     return (
