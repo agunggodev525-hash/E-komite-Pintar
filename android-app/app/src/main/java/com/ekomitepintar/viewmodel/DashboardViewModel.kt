@@ -128,6 +128,32 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     /**
+     * Proses klik "Donasi"
+     */
+    fun onDonasiClicked(siswaId: String, nominal: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            val result = tagihanRepository.createDonasi(siswaId, nominal)
+
+            result.fold(
+                onSuccess = { checkoutData ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        checkoutUrl = checkoutData.redirectUrl ?: "https://app.midtrans.com/snap/v2/vtweb/${checkoutData.snapToken}"
+                    )
+                },
+                onFailure = { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = exception.message
+                    )
+                }
+            )
+        }
+    }
+
+    /**
      * Logout user.
      */
     fun onLogout() {

@@ -8,8 +8,31 @@ const { validate } = require('../middlewares/validate');
 const { authenticate } = require('../middlewares/auth');
 const { authorize } = require('../middlewares/rbac');
 const pembayaranController = require('../controllers/pembayaran.controller');
+const donasiController = require('../controllers/donasi.controller');
 
 const router = express.Router();
+
+/**
+ * POST /api/v1/pembayaran/donasi
+ * Inisiasi donasi sukarela
+ * Akses: ORANG_TUA, ADMIN_KOMITE
+ */
+router.post(
+  '/donasi',
+  authenticate,
+  authorize('ORANG_TUA', 'ADMIN_KOMITE'),
+  [
+    body('nominal')
+      .notEmpty()
+      .withMessage('Nominal wajib diisi.')
+      .isNumeric(),
+    body('siswa_id')
+      .notEmpty()
+      .withMessage('ID siswa wajib diisi.')
+  ],
+  validate,
+  donasiController.checkoutDonasi
+);
 
 /**
  * POST /api/v1/pembayaran/checkout

@@ -68,4 +68,36 @@ class TagihanRepository {
             )
         }
     }
+
+    /**
+     * Inisiasi donasi sukarela.
+     */
+    suspend fun createDonasi(siswaId: String, nominal: String): Result<CheckoutData> {
+        return try {
+            val request = mapOf("siswa_id" to siswaId, "nominal" to nominal)
+            val response = apiService.checkoutDonasi(request)
+
+            if (response.isSuccessful && response.body()?.success == true) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                var errorMessage = "Gagal memproses donasi."
+                try {
+                    val errorString = response.errorBody()?.string()
+                    if (errorString != null) {
+                        val json = org.json.JSONObject(errorString)
+                        if (json.has("message")) {
+                            errorMessage = json.getString("message")
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Ignore parse error
+                }
+                Result.failure(Exception(errorMessage))
+            }
+        } catch (e: Exception) {
+            Result.failure(
+                Exception("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.")
+            )
+        }
+    }
 }

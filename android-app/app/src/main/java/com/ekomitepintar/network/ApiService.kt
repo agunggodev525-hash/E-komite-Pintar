@@ -66,6 +66,11 @@ interface ApiService {
         @Body request: CheckoutRequest
     ): Response<ApiResponse<CheckoutData>>
 
+    @POST("pembayaran/donasi")
+    suspend fun checkoutDonasi(
+        @Body request: Map<String, String>
+    ): Response<ApiResponse<CheckoutData>>
+
     // ============================================
     // E-Voting
     // ============================================

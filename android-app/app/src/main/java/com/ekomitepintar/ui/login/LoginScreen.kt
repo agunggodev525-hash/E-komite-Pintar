@@ -270,12 +270,19 @@ fun LoginScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End
                         ) {
+                            val context = androidx.compose.ui.platform.LocalContext.current
                             Text(
                                 text = "Lupa Kata Sandi?",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = Emerald600,
                                 fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.clickable { /* TODO */ }
+                                modifier = Modifier.clickable {
+                                    android.widget.Toast.makeText(
+                                        context,
+                                        "Silakan hubungi Admin Sekolah Anda untuk mereset kata sandi.",
+                                        android.widget.Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             )
                         }
 

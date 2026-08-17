@@ -93,8 +93,8 @@ fun DashboardScreen(
             onRefresh = { viewModel.onRefresh("dummy-siswa-id") },
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
-            val pendingTagihan = uiState.tagihanList.firstOrNull { it.statusBayar == "PENDING" || it.statusBayar == "UNPAID" }
-            val otherTagihan = uiState.tagihanList.filter { it.id != pendingTagihan?.id && (it.statusBayar == "PENDING" || it.statusBayar == "UNPAID") }
+            val pendingTagihan = uiState.tagihanList.firstOrNull { it.statusBayar == "PENDING" || it.statusBayar == "BELUM_BAYAR" }
+            val otherTagihan = uiState.tagihanList.filter { it.id != pendingTagihan?.id && (it.statusBayar == "PENDING" || it.statusBayar == "BELUM_BAYAR") }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -264,7 +264,7 @@ fun DashboardScreen(
                                     iconBgColor = Emerald50,
                                     iconBorderColor = Emerald100,
                                     label = "SUDAH LUNAS",
-                                    amount = formatShortRupiah(summary.lunas.toDouble())
+                                    amount = "${summary.lunas} Tagihan"
                                 )
                                 SummaryCard(
                                     modifier = Modifier.weight(1f),
@@ -273,7 +273,7 @@ fun DashboardScreen(
                                     iconBgColor = Rose50,
                                     iconBorderColor = Color(0xFFFFE4E6), // Rose100
                                     label = "SISA TAGIHAN",
-                                    amount = formatShortRupiah((summary.pending + summary.belumBayar).toDouble())
+                                    amount = "${summary.pending + summary.belumBayar} Tagihan"
                                 )
                             }
                         }
@@ -318,8 +318,7 @@ fun DashboardScreen(
             onDismiss = { showDonasiDialog = false },
             onSubmit = { nominal ->
                 showDonasiDialog = false
-                android.widget.Toast.makeText(context, "Mengarahkan ke pembayaran Donasi: Rp $nominal", android.widget.Toast.LENGTH_SHORT).show()
-                // Idealnya: panggil API untuk buat invoice donasi
+                viewModel.onDonasiClicked("dummy-siswa-id", nominal)
             }
         )
     }
