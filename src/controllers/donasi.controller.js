@@ -81,7 +81,9 @@ const checkoutDonasi = async (req, res, next) => {
     // Ambil Midtrans Key dari Setting DB atau ENV
     const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'midtrans_server_key' } });
     const serverKey = settingServerKey?.value || process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-DUMMY123';
-    const isProductionKey = !serverKey.startsWith('SB-');
+    
+    const settingIsProd = await prisma.appSetting.findFirst({ where: { key: 'midtrans_is_production' } });
+    const isProductionKey = settingIsProd?.value === 'true';
 
     const snap = new midtransClient.Snap({
       isProduction: isProductionKey,

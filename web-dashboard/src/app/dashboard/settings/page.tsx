@@ -12,6 +12,7 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     midtrans_client_key: "",
     midtrans_server_key: "",
+    midtrans_is_production: "false",
     wa_api_token: "",
     wa_api_url: "",
   });
@@ -25,13 +26,14 @@ export default function SettingsPage() {
       setFormData({
         midtrans_client_key: data.midtrans_client_key || "",
         midtrans_server_key: data.midtrans_server_key || "",
+        midtrans_is_production: data.midtrans_is_production || "false",
         wa_api_token: data.wa_api_token || "",
         wa_api_url: data.wa_api_url || "",
       });
     }
   }, [data]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -92,6 +94,21 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2">Midtrans Payment Gateway</h3>
               
+              <div>
+                <label className="block text-sm font-medium text-white-80 mb-2">
+                  Environment Mode (Sandbox/Production)
+                </label>
+                <select
+                  name="midtrans_is_production"
+                  value={formData.midtrans_is_production}
+                  onChange={handleChange}
+                  className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors text-sm"
+                >
+                  <option value="false">Sandbox (Mode Uji Coba)</option>
+                  <option value="true">Production (Uang Sungguhan)</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-white-80 mb-2">
                   Client Key (Public)
