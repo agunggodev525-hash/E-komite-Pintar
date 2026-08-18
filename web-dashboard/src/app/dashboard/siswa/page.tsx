@@ -22,6 +22,7 @@ export default function SiswaPage() {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("created_at");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [search, setSearch] = useState("");
 
   const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
   const shouldFetch = user?.role === "ADMIN_KOMITE";
@@ -40,7 +41,6 @@ export default function SiswaPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Reset page and selection if search, filter, or sorting changes
