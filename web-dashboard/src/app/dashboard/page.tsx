@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -30,19 +31,6 @@ const CashFlowChart = dynamic(() => import("@/components/CashFlowChart"), {
 export default function DashboardPage() {
   const { user } = useAuth();
   
-  const [data, setData] = useState({
-    saldoKas: 0,
-    totalMenunggak: 0,
-    danaCair: 0,
-    recentTransactions: [] as any[]
-  });
-  const [loading, setLoading] = useState(true);
-
-  // Chart trend data
-  const [chartData, setChartData] = useState<any[]>([]);
-  const [chartLoading, setChartLoading] = useState(true);
-
-  // Period filter
   const now = new Date();
   const [selectedPeriod, setSelectedPeriod] = useState(
     `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
@@ -58,49 +46,29 @@ export default function DashboardPage() {
     return `${bulanNames[parseInt(m) - 1]} ${y}`;
   };
 
-  useEffect(() => {
-    // Hanya ambil data jika user adalah ADMIN_KOMITE
-    if (user?.role === "ADMIN_KOMITE") {
-      fetchDashboardData();
-    } else if (user) {
-      // Untuk role lain, tidak ada data yang perlu dimuat — reset loading
-      setLoading(false);
-    }
-  }, [user]);
+  const shouldFetch = user?.role === "ADMIN_KOMITE";
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
 
-  // Fetch chart data saat period berubah
-  useEffect(() => {
-    if (user?.role === "ADMIN_KOMITE") {
-      fetchChartTrend(selectedPeriod);
-    }
-  }, [user, selectedPeriod]);
+  const { data: dashboardData, error: dashboardError } = useSWR(
+    shouldFetch ? "/dashboard/admin" : null,
+    fetcher
+  );
 
-  async function fetchDashboardData() {
-    try {
-      const res = await apiFetch<any>("/dashboard/admin");
-      if (res.success) {
-        setData(res.data);
-      }
-    } catch (e) {
-      console.error("Gagal mengambil data dashboard:", e);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { data: trendData, error: trendError } = useSWR(
+    shouldFetch ? `/dashboard/admin/chart-trend?bulan=${selectedPeriod}` : null,
+    fetcher
+  );
 
-  async function fetchChartTrend(bulan: string) {
-    try {
-      setChartLoading(true);
-      const res = await apiFetch<any>(`/dashboard/admin/chart-trend?bulan=${bulan}`);
-      if (res.success) {
-        setChartData(res.data.chartData);
-      }
-    } catch (e) {
-      console.error("Gagal mengambil data chart:", e);
-    } finally {
-      setChartLoading(false);
-    }
-  }
+  const data = dashboardData || {
+    saldoKas: 0,
+    totalMenunggak: 0,
+    danaCair: 0,
+    recentTransactions: [] as any[]
+  };
+  const loading = shouldFetch && !dashboardData && !dashboardError;
+
+  const chartData = trendData?.chartData || [];
+  const chartLoading = shouldFetch && !trendData && !trendError;
 
   const renderMetodeBadge = (metode: string) => {
     return (

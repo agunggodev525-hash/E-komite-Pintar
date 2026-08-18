@@ -13,16 +13,21 @@ const getAdminDashboard = async (req, res, next) => {
   try {
     const sekolah_id = req.user.sekolah_id;
 
-    // 1. Saldo Kas (Pemasukan LUNAS - Pengeluaran)
-    const pemasukanAggregate = await prisma.pembayaran.aggregate({
+    // 1. Saldo Kas (Pemasukan LUNAS & DICICIL - Pengeluaran)
+    const pemasukanList = await prisma.pembayaran.findMany({
       where: { 
         tagihan: { sekolah_id },
-        status: 'LUNAS' 
+        status: { in: ['LUNAS', 'DICICIL'] }
       },
-      _sum: {
-        nominal_dibayar: true
+      include: {
+        tagihan: { select: { nominal: true } }
       }
     });
+
+    const totalPemasukan = pemasukanList.reduce((sum, p) => {
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - (p.nominal_diskon || 0));
+      return sum + Number(actualPaid);
+    }, 0);
 
     const pengeluaranAggregate = await prisma.pengeluaran.aggregate({
       where: { sekolah_id },
@@ -31,7 +36,6 @@ const getAdminDashboard = async (req, res, next) => {
       }
     });
 
-    const totalPemasukan = pemasukanAggregate._sum.nominal_dibayar || 0;
     const totalPengeluaran = pengeluaranAggregate._sum.nominal || 0;
     const saldoKas = totalPemasukan - totalPengeluaran;
 
@@ -65,7 +69,7 @@ const getAdminDashboard = async (req, res, next) => {
     const recentTransactions = await prisma.pembayaran.findMany({
       where: {
         tagihan: { sekolah_id },
-        status: 'LUNAS'
+        status: { in: ['LUNAS', 'DICICIL'] }
       },
       orderBy: {
         updated_at: 'desc'
@@ -80,22 +84,26 @@ const getAdminDashboard = async (req, res, next) => {
         },
         tagihan: {
           select: {
-            judul: true
+            judul: true,
+            nominal: true
           }
         }
       }
     });
 
     // Format recent transactions untuk frontend
-    const formattedRecent = recentTransactions.map(trx => ({
-      id: trx.id,
-      siswa: trx.siswa.nama_siswa,
-      tagihan: trx.tagihan.judul,
-      nominal: trx.nominal_dibayar,
-      tanggal: trx.updated_at,
-      status: trx.status,
-      metode: trx.payment_token ? "Midtrans" : "Tunai / Manual"
-    }));
+    const formattedRecent = recentTransactions.map(trx => {
+      const actualPaid = trx.nominal_dibayar > 0 ? trx.nominal_dibayar : (trx.tagihan.nominal - (trx.nominal_diskon || 0));
+      return {
+        id: trx.id,
+        siswa: trx.siswa.nama_siswa,
+        tagihan: trx.tagihan.judul,
+        nominal: Number(actualPaid),
+        tanggal: trx.updated_at,
+        status: trx.status,
+        metode: trx.payment_token ? "Midtrans" : "Tunai / Manual"
+      };
+    });
 
     return successResponse(res, 'Berhasil memuat data dashboard', {
       saldoKas,
@@ -132,19 +140,18 @@ const getChartTrend = async (req, res, next) => {
     const endDate = new Date(year, month, 0, 23, 59, 59, 999); // akhir bulan
     const daysInMonth = new Date(year, month, 0).getDate();
 
-    // Ambil semua pembayaran LUNAS di bulan ini
+    // Ambil semua pembayaran LUNAS & DICICIL di bulan ini
     const pembayaranList = await prisma.pembayaran.findMany({
       where: {
         tagihan: { sekolah_id },
-        status: 'LUNAS',
+        status: { in: ['LUNAS', 'DICICIL'] },
         updated_at: {
           gte: startDate,
           lte: endDate
         }
       },
-      select: {
-        nominal_dibayar: true,
-        updated_at: true
+      include: {
+        tagihan: { select: { nominal: true } }
       }
     });
 
@@ -169,7 +176,8 @@ const getChartTrend = async (req, res, next) => {
 
     pembayaranList.forEach(p => {
       const day = new Date(p.updated_at).getDate();
-      pemasukanPerHari[day - 1] += p.nominal_dibayar;
+      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - (p.nominal_diskon || 0));
+      pemasukanPerHari[day - 1] += Number(actualPaid);
     });
 
     pengeluaranList.forEach(p => {
