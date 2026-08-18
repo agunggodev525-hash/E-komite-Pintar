@@ -22,10 +22,7 @@ class RiwayatViewModel(application: Application) : AndroidViewModel(application)
     private val _uiState = MutableStateFlow(RiwayatUiState())
     val uiState: StateFlow<RiwayatUiState> = _uiState.asStateFlow()
 
-    init {
-        // Load data awal dengan dummy siswa ID
-        loadRiwayat("dummy-siswa-id")
-    }
+
 
     fun loadRiwayat(siswaId: String) {
         viewModelScope.launch {

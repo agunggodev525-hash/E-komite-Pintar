@@ -58,6 +58,13 @@ interface ApiService {
     ): Response<ApiResponse<Map<String, Any>>>
 
     // ============================================
+    // Siswa (Anak)
+    // ============================================
+
+    @GET("siswa/anakku")
+    suspend fun getAnakku(): Response<ApiResponse<List<SiswaInfo>>>
+
+    // ============================================
     // Pembayaran
     // ============================================
 

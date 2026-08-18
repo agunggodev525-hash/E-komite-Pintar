@@ -27,6 +27,18 @@ const upload = multer({
 const router = express.Router();
 
 /**
+ * GET /api/v1/siswa/anakku
+ * Ambil daftar anak untuk orang tua yang login
+ */
+router.get(
+  '/anakku',
+  authenticate,
+  authorize('ORANG_TUA'),
+  siswaController.getAnakku
+);
+
+
+/**
  * GET /api/v1/siswa
  * Ambil daftar siswa untuk sekolah admin
  */

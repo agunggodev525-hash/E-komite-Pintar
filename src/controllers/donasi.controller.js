@@ -20,18 +20,6 @@ const checkoutDonasi = async (req, res, next) => {
       return errorResponse(res, 'Nominal donasi tidak valid.', 400);
     }
 
-    // Resolusi dummy-siswa-id
-    if (siswa_id === 'dummy-siswa-id' && req.user.role === 'ORANG_TUA') {
-      const anakList = await prisma.siswa.findMany({
-        where: { orang_tua_id: req.user.id },
-        take: 1
-      });
-      if (anakList.length > 0) {
-        targetSiswaId = anakList[0].id;
-      } else {
-        return errorResponse(res, 'Tidak dapat memproses donasi, data siswa tidak ditemukan.', 404);
-      }
-    }
 
     const siswa = await prisma.siswa.findUnique({
       where: { id: targetSiswaId },

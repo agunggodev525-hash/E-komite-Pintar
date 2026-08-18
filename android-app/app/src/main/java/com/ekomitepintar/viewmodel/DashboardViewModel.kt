@@ -5,8 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ekomitepintar.model.Tagihan
 import com.ekomitepintar.model.TagihanSummary
+import com.ekomitepintar.model.SiswaInfo
 import com.ekomitepintar.repository.AuthRepository
 import com.ekomitepintar.repository.TagihanRepository
+import com.ekomitepintar.repository.SiswaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +24,8 @@ data class DashboardUiState(
     val isRefreshing: Boolean = false,
     val tagihanList: List<Tagihan> = emptyList(),
     val allTagihanList: List<Tagihan> = emptyList(),
+    val anakList: List<SiswaInfo> = emptyList(),
+    val selectedAnak: SiswaInfo? = null,
     val currentFilter: String = "Semua",
     val summary: TagihanSummary? = null,
     val errorMessage: String? = null,
@@ -36,12 +40,14 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val authRepository = AuthRepository(application.applicationContext)
     private val tagihanRepository = TagihanRepository()
+    private val siswaRepository = SiswaRepository()
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     init {
         loadUserData()
+        loadAnakList()
     }
 
     /**
@@ -59,6 +65,29 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+    private fun loadAnakList() {
+        viewModelScope.launch {
+            val result = siswaRepository.getAnakku()
+            result.onSuccess { list ->
+                val selected = list.firstOrNull()
+                _uiState.value = _uiState.value.copy(
+                    anakList = list,
+                    selectedAnak = selected
+                )
+                // Jika ada anak, otomatis load tagihannya
+                selected?.let { loadTagihan(it.id) }
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(errorMessage = it.message)
+            }
+        }
+    }
+
+    fun selectAnak(anak: SiswaInfo) {
+        _uiState.value = _uiState.value.copy(selectedAnak = anak)
+        loadTagihan(anak.id)
+    }
+
 
     /**
      * Load daftar tagihan untuk siswa tertentu.

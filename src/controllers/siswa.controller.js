@@ -438,11 +438,36 @@ const update = async (req, res, next) => {
   }
 };
 
+/**
+ * GET /api/v1/siswa/anakku
+ * Ambil daftar anak untuk orang tua yang login
+ */
+const getAnakku = async (req, res, next) => {
+  try {
+    const orang_tua_id = req.user.id;
+
+    const anakList = await prisma.siswa.findMany({
+      where: { orang_tua_id },
+      select: {
+        id: true,
+        nama_siswa: true,
+        nisn: true,
+        kelas: true
+      }
+    });
+
+    return successResponse(res, 'Berhasil mengambil daftar anak', anakList);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   create,
   getAll,
   resetPassword,
   remove,
   bulkCreate,
-  update
+  update,
+  getAnakku
 };

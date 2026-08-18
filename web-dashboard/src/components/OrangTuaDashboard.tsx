@@ -12,8 +12,15 @@ import toast from "react-hot-toast";
 export default function OrangTuaDashboard() {
   const { user } = useAuth();
   
+  const { data: anakList } = useSWR(
+    "/siswa/anakku",
+    (url) => apiFetch<any[]>(url).then((res) => res.data)
+  );
+  
+  const selectedAnakId = anakList?.[0]?.id;
+
   const { data: tagihanData, error: tagihanError, isLoading: tagihanLoading } = useSWR(
-    "/tagihan/siswa/dummy-siswa-id",
+    selectedAnakId ? `/tagihan/siswa/${selectedAnakId}` : null,
     (url) => apiFetch<any>(url).then((res) => res.data)
   );
 
@@ -270,16 +277,15 @@ export default function OrangTuaDashboard() {
                           <p className="text-sm font-bold text-rose-600 dark:text-rose-400">Sisa: {formatRupiah(sisa)}</p>
                         )}
                       </div>
-                      
-                      {item.status_bayar !== 'LUNAS' && (
+                      {item.status_bayar !== 'LUNAS' && selectedAnakId ? (
                         <button 
-                          onClick={() => handleBayarSekarang(item)}
+                          onClick={() => handleBayar(item.id, selectedAnakId)}
                           disabled={isPaying}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors disabled:opacity-70"
+                          className="w-full sm:w-auto bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300 text-navy-900 px-6 py-2 rounded-xl font-bold transition-all shadow-lg shadow-gold-500/20 disabled:opacity-50"
                         >
-                          Bayar
+                          {isPaying ? "Memproses..." : "Bayar Sekarang"}
                         </button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 );

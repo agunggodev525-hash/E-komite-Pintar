@@ -22,15 +22,6 @@ const checkout = async (req, res, next) => {
     if (!tagihan) return errorResponse(res, 'Tagihan tidak ditemukan.', 404);
 
     let targetSiswaId = siswa_id;
-    if (siswa_id === 'dummy-siswa-id' && req.user.role === 'ORANG_TUA') {
-      const anakList = await prisma.siswa.findMany({
-        where: { orang_tua_id: req.user.id },
-        take: 1
-      });
-      if (anakList.length > 0) {
-        targetSiswaId = anakList[0].id;
-      }
-    }
 
     const siswa = await prisma.siswa.findUnique({
       where: { id: targetSiswaId },

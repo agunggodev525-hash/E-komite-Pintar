@@ -73,7 +73,6 @@ fun DashboardScreen(
     var showDonasiDialog by remember { mutableStateOf(false) }
     
     LaunchedEffect(Unit) {
-        viewModel.loadTagihan("dummy-siswa-id")
         delay(100)
         showContent = true
     }
@@ -90,7 +89,7 @@ fun DashboardScreen(
     ) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = uiState.isRefreshing,
-            onRefresh = { viewModel.onRefresh("dummy-siswa-id") },
+            onRefresh = { uiState.selectedAnak?.id?.let { viewModel.onRefresh(it) } },
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
             val pendingTagihan = uiState.tagihanList.firstOrNull { it.statusBayar == "PENDING" || it.statusBayar == "BELUM_BAYAR" }
@@ -149,6 +148,57 @@ fun DashboardScreen(
                                             fontWeight = FontWeight.ExtraBold,
                                             fontSize = 24.sp
                                         )
+
+                                        if (uiState.anakList.size > 1) {
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            var expanded by remember { mutableStateOf(false) }
+                                            Box {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(Color.White.copy(alpha = 0.2f))
+                                                        .clickable { expanded = true }
+                                                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(Icons.Filled.Person, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                                                    Spacer(modifier = Modifier.width(8.dp))
+                                                    Text(
+                                                        text = uiState.selectedAnak?.namaSiswa ?: "Pilih Siswa",
+                                                        color = Color.White,
+                                                        fontSize = 14.sp,
+                                                        fontWeight = FontWeight.SemiBold
+                                                    )
+                                                    Spacer(modifier = Modifier.width(8.dp))
+                                                    Icon(Icons.Filled.ArrowDropDown, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                                                }
+                                                DropdownMenu(
+                                                    expanded = expanded,
+                                                    onDismissRequest = { expanded = false }
+                                                ) {
+                                                    uiState.anakList.forEach { anak ->
+                                                        DropdownMenuItem(
+                                                            text = { Text(anak.namaSiswa) },
+                                                            onClick = {
+                                                                viewModel.selectAnak(anak)
+                                                                expanded = false
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        } else if (uiState.selectedAnak != null) {
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Icon(Icons.Filled.Person, contentDescription = null, tint = Emerald50, modifier = Modifier.size(14.dp))
+                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Text(
+                                                    text = "Siswa: ${uiState.selectedAnak?.namaSiswa}",
+                                                    color = Emerald50,
+                                                    fontSize = 12.sp
+                                                )
+                                            }
+                                        }
                                     }
                                     
                                     Box(
@@ -196,7 +246,7 @@ fun DashboardScreen(
                                     } else if (pendingTagihan != null) {
                                         HeroBillCard(
                                             tagihan = pendingTagihan,
-                                            onBayarClicked = { viewModel.onBayarClicked(pendingTagihan.id, "dummy-siswa-id") }
+                                            onBayarClicked = { uiState.selectedAnak?.id?.let { viewModel.onBayarClicked(pendingTagihan.id, it) } }
                                         )
                                     } else if (uiState.errorMessage == null) {
                                         NoUrgentBillCard()
@@ -305,7 +355,7 @@ fun DashboardScreen(
                         Box(modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 12.dp)) {
                             OtherBillCard(
                                 tagihan = tagihan,
-                                onBayarClicked = { viewModel.onBayarClicked(tagihan.id, "dummy-siswa-id") }
+                                onBayarClicked = { uiState.selectedAnak?.id?.let { viewModel.onBayarClicked(tagihan.id, it) } }
                             )
                         }
                     }
@@ -319,7 +369,7 @@ fun DashboardScreen(
             onDismiss = { showDonasiDialog = false },
             onSubmit = { nominal ->
                 showDonasiDialog = false
-                viewModel.onDonasiClicked("dummy-siswa-id", nominal)
+                uiState.selectedAnak?.id?.let { viewModel.onDonasiClicked(it, nominal) }
             }
         )
     }

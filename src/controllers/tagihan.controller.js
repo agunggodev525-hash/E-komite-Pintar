@@ -191,28 +191,6 @@ const getBySiswaId = async (req, res, next) => {
 
     let targetSiswaId = siswaId;
 
-    // Otomatis mencari atau membuat anak jika menggunakan dummy ID dari UI purwarupa
-    if (siswaId === 'dummy-siswa-id' && req.user.role === 'ORANG_TUA') {
-      const anakList = await prisma.siswa.findMany({
-        where: { orang_tua_id: req.user.id },
-        take: 1
-      });
-      if (anakList.length > 0) {
-        targetSiswaId = anakList[0].id;
-      } else {
-        // Buat anak bohongan agar UI tidak error 404
-        const newAnak = await prisma.siswa.create({
-          data: {
-            nama_siswa: 'Anak Demo',
-            nisn: '1234567890',
-            kelas: '10A',
-            orang_tua_id: req.user.id,
-            sekolah_id: req.user.sekolah_id,
-          }
-        });
-        targetSiswaId = newAnak.id;
-      }
-    }
 
     // Pastikan siswa ada
     const siswa = await prisma.siswa.findUnique({
