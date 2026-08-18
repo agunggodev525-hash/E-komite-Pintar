@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch } from "@/lib/api";
 
 export default function SettingsPage() {
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
@@ -16,28 +16,20 @@ export default function SettingsPage() {
     wa_api_url: "",
   });
 
-  const loadSettings = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiFetch<any>("/superadmin/settings");
-      if (res.success && res.data) {
-        setFormData({
-          midtrans_client_key: res.data.midtrans_client_key || "",
-          midtrans_server_key: res.data.midtrans_server_key || "",
-          wa_api_token: res.data.wa_api_token || "",
-          wa_api_url: res.data.wa_api_url || "",
-        });
-      }
-    } catch (err: any) {
-      setMessage({ type: "error", text: "Gagal memuat pengaturan sistem." });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  const { data, error } = useSWR("/superadmin/settings", fetcher);
+  const isLoading = !data && !error;
 
   useEffect(() => {
-    loadSettings();
-  }, []);
+    if (data) {
+      setFormData({
+        midtrans_client_key: data.midtrans_client_key || "",
+        midtrans_server_key: data.midtrans_server_key || "",
+        wa_api_token: data.wa_api_token || "",
+        wa_api_url: data.wa_api_url || "",
+      });
+    }
+  }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

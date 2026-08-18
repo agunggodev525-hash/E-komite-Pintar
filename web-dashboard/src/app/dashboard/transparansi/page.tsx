@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import Link from "next/link";
 import { formatRupiah, apiFetch, formatDate } from "@/lib/api";
 import { ArrowLeft, BookOpen, Brush, Wrench, Utensils, Receipt, X, Image as ImageIcon, ArrowDownCircle, ArrowUpCircle, FileText, Download } from "lucide-react";
@@ -10,22 +11,10 @@ import * as XLSX from "xlsx";
 
 export default function TransparansiDanaPage() {
   const [selectedNota, setSelectedNota] = useState<any>(null);
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await apiFetch<any>("/laporan/transparansi");
-        setData(res.data);
-      } catch (err: any) {
-        alert("Gagal memuat transparansi: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  const { data, error } = useSWR("/laporan/transparansi", fetcher);
+  const loading = !data && !error;
 
   const totalDanaMaksimal = data?.total_pemasukan || 0;
   const sisaSaldo = data?.saldo_akhir || 0;

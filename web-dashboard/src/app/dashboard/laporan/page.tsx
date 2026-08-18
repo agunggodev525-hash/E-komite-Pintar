@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch, formatRupiah } from "@/lib/api";
@@ -13,32 +14,14 @@ export default function LaporanKasPage() {
   const [filterTahun, setFilterTahun] = useState(new Date().getFullYear().toString());
   const [filterJenis, setFilterJenis] = useState("Semua");
   
-  const [transaksiList, setTransaksiList] = useState<any[]>([]);
-  const [totalMasuk, setTotalMasuk] = useState(0);
-  const [totalKeluar, setTotalKeluar] = useState(0);
-  const [sisaKas, setSisaKas] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchLaporan = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiFetch<any>(`/laporan/keuangan?bulan=${filterBulan}&tahun=${filterTahun}`);
-      if (res.success && res.data) {
-        setTransaksiList(res.data.detail_transaksi || []);
-        setTotalMasuk(res.data.total_pemasukan || 0);
-        setTotalKeluar(res.data.total_pengeluaran || 0);
-        setSisaKas(res.data.sisa_kas || 0);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLaporan();
-  }, [filterBulan, filterTahun]);
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  const { data, error } = useSWR(`/laporan/keuangan?bulan=${filterBulan}&tahun=${filterTahun}`, fetcher);
+  
+  const isLoading = !data && !error;
+  const transaksiList = data?.detail_transaksi || [];
+  const totalMasuk = data?.total_pemasukan || 0;
+  const totalKeluar = data?.total_pengeluaran || 0;
+  const sisaKas = data?.sisa_kas || 0;
 
   const handleExport = () => {
     try {

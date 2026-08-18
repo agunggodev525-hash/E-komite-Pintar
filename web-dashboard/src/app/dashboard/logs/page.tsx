@@ -1,40 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch } from "@/lib/api";
 import { Search, RefreshCw, Download, Server, FileSearch, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
 
 export default function LogsPage() {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  
-  // Pagination State
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
+  const { data, error: fetchError, mutate: loadData } = useSWR(`/superadmin/logs?page=${page}&limit=${limit}`, fetcher);
 
-  const loadData = async (currentPage: number) => {
-    try {
-      setIsLoading(true);
-      const res = await apiFetch<any>(`/superadmin/logs?page=${currentPage}&limit=${limit}`);
-      if (res.success && res.data) {
-        setLogs(res.data.logs);
-        setTotalPages(res.data.pagination.totalPages);
-      } else {
-        setError(res.message);
-      }
-    } catch (err: any) {
-      setError(err.message || "Gagal memuat log sistem.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData(page);
-  }, [page]);
+  const logs = data?.logs || [];
+  const totalPages = data?.pagination?.totalPages || 1;
+  const isLoading = !data && !fetchError;
+  const error = fetchError ? "Gagal memuat log sistem." : "";
 
   const handlePrev = () => {
     if (page > 1) setPage(p => p - 1);

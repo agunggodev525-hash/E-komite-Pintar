@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch } from "@/lib/api";
@@ -17,55 +18,29 @@ const toTitleCase = (str: string) => {
 export default function SiswaPage() {
   const { user } = useAuth();
   
-  const [siswa, setSiswa] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [kelasFilter, setKelasFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("created_at");
+  const [sortOrder, setSortOrder] = useState("desc");
+
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  const shouldFetch = user?.role === "ADMIN_KOMITE";
+  const { data, error, mutate: loadSiswa } = useSWR(
+    shouldFetch ? `/siswa?search=${search}&kelas=${kelasFilter}&page=${page}&limit=10&sortBy=${sortBy}&sortOrder=${sortOrder}` : null,
+    fetcher
+  );
+
+  const siswa = data?.data || [];
+  const meta = data?.meta || { total: 0, totalPages: 1 };
+  const isLoading = shouldFetch && !data && !error;
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSiswaId, setEditingSiswaId] = useState<string | null>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [search, setSearch] = useState("");
-  const [kelasFilter, setKelasFilter] = useState("");
-  const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
-  
-  const [sortBy, setSortBy] = useState("created_at");
-  const [sortOrder, setSortOrder] = useState("desc");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  const [formData, setFormData] = useState({
-    nama_siswa: "",
-    nisn: "",
-    kelas: "",
-    nama_orang_tua: "",
-    email_orang_tua: "",
-    whatsapp_orang_tua: "",
-  });
-  const [fotoOrangTua, setFotoOrangTua] = useState<File | null>(null);
-
-  const loadSiswa = async () => {
-    setIsLoading(true);
-    try {
-      const res = await apiFetch<any>(`/siswa?search=${search}&kelas=${kelasFilter}&page=${page}&limit=10&sortBy=${sortBy}&sortOrder=${sortOrder}`);
-      if (res.success && res.data) {
-        setSiswa(res.data.data || []);
-        if (res.data.meta) {
-          setMeta(res.data.meta);
-        }
-      }
-    } catch (err) {
-      console.error("Gagal memuat siswa:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.role === "ADMIN_KOMITE") {
-      loadSiswa();
-    }
-  }, [user, search, kelasFilter, page, sortBy, sortOrder]);
 
   // Reset page and selection if search, filter, or sorting changes
   useEffect(() => {
@@ -77,6 +52,16 @@ export default function SiswaPage() {
   useEffect(() => {
     setSelectedIds([]);
   }, [page]);
+
+  const [formData, setFormData] = useState({
+    nama_siswa: "",
+    nisn: "",
+    kelas: "",
+    nama_orang_tua: "",
+    email_orang_tua: "",
+    whatsapp_orang_tua: "",
+  });
+  const [fotoOrangTua, setFotoOrangTua] = useState<File | null>(null);
 
   const handleSort = (field: string) => {
     if (sortBy === field) {

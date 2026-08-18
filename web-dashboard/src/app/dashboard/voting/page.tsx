@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { Plus, Trash2, PieChart, Users, Calendar, AlertTriangle, Vote } from "lucide-react";
 
 interface VotingKandidat {
@@ -29,8 +30,12 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function VotingAdminPage() {
   const { user } = useAuth();
-  const [votings, setVotings] = useState<Voting[]>([]);
-  const [loading, setLoading] = useState(true);
+  const shouldFetch = user?.role === "ADMIN_KOMITE";
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  const { data, error, mutate } = useSWR(shouldFetch ? "/voting/admin" : null, fetcher);
+
+  const votings = data || [];
+  const loading = shouldFetch && !data && !error;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -49,27 +54,6 @@ export default function VotingAdminPage() {
     tanggal_berakhir: "",
     kandidat: ["", ""]
   });
-
-  const loadVotings = async () => {
-    try {
-      const res = await apiFetch<any>("/voting/admin");
-      if (res.success) {
-        setVotings(res.data);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.role === "ADMIN_KOMITE") {
-      loadVotings();
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
 
   const handleAddKandidat = () => {
     setFormData({
@@ -99,7 +83,7 @@ export default function VotingAdminPage() {
       if (res.success) {
         setIsModalOpen(false);
         setFormData({ judul: "", deskripsi: "", tanggal_berakhir: "", kandidat: ["", ""] });
-        loadVotings();
+        mutate();
       } else {
         alert(res.message);
       }
@@ -127,7 +111,7 @@ export default function VotingAdminPage() {
       if (res.success) {
         setIsDeleteModalOpen(false);
         setVotingToDelete(null);
-        loadVotings();
+        mutate();
       } else {
         alert(res.message);
       }

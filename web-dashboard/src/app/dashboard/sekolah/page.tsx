@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -11,11 +12,16 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function SekolahPage() {
   const { impersonate } = useAuth();
-  const [sekolahList, setSekolahList] = useState<any[]>([]);
-  const [paketList, setPaketList] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  const { data: sekolahListResponse, error: sekolahError, mutate: loadData } = useSWR("/superadmin/tenants", fetcher);
+  const { data: paketListResponse, error: paketError } = useSWR("/superadmin/paket", fetcher);
   
+  const sekolahList = sekolahListResponse || [];
+  const paketList = paketListResponse || [];
+  
+  const isLoading = (!sekolahListResponse && !sekolahError) || (!paketListResponse && !paketError);
+  const errorMsg = (sekolahError || paketError) ? "Terjadi kesalahan sistem." : "";
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditPackageModalOpen, setIsEditPackageModalOpen] = useState(false);
@@ -32,34 +38,11 @@ export default function SekolahPage() {
     admin_password: "",
   });
 
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiFetch<any>("/superadmin/tenants");
-      const resPaket = await apiFetch<any>("/superadmin/paket");
-      
-      if (res.success && res.data) {
-        setSekolahList(res.data);
-      } else {
-        setError(res.message);
-      }
-
-      if (resPaket.success && resPaket.data) {
-        setPaketList(resPaket.data);
-        if (resPaket.data.length > 0) {
-          setFormData(prev => ({ ...prev, paket_berlangganan: prev.paket_berlangganan || resPaket.data[0].id }));
-        }
-      }
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan sistem.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
-  }, []);
+    if (paketList.length > 0 && !formData.paket_berlangganan) {
+      setFormData(prev => ({ ...prev, paket_berlangganan: paketList[0].id }));
+    }
+  }, [paketList]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -609,6 +592,15 @@ export default function SekolahPage() {
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {(tenantsError || paketError) && (
+        <div className="bg-rose-50 border border-rose-200 text-rose-600 p-4 rounded-xl mb-6 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold">Gagal memuat data</p>
+            <p className="text-sm">{tenantsError?.message || paketError?.message}</p>
           </div>
         </div>
       )}

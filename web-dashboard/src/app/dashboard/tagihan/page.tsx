@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatusBadge from "@/components/StatusBadge";
@@ -10,35 +11,23 @@ import { Plus, MessageCircle, Banknote, Search, Settings, X, Filter, Crown, Chec
 
 export default function DaftarTagihanPage() {
   const { user } = useAuth();
-  const [tagihan, setTagihan] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchTagihan = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiFetch<any>(`/pembayaran?limit=50`);
-      if (res.success && res.data) {
-        const mapped = res.data.pembayaran.map((p: any) => ({
-          id: p.id,
-          nama: p.siswa?.nama_siswa || '-',
-          kelas: p.siswa?.kelas || '-',
-          keterangan: p.tagihan?.judul || '-',
-          total_tagihan: p.tagihan?.nominal || 0,
-          sisa_tagihan: p.status === 'LUNAS' ? 0 : Math.max(0, (p.tagihan?.nominal || 0) - (p.nominal_dibayar || 0) - (p.nominal_diskon || 0)),
-          status: p.status
-        }));
-        setTagihan(mapped);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => {
+    if (res.success && res.data) {
+      return res.data.pembayaran.map((p: any) => ({
+        id: p.id,
+        nama: p.siswa?.nama_siswa || '-',
+        kelas: p.siswa?.kelas || '-',
+        keterangan: p.tagihan?.judul || '-',
+        total_tagihan: p.tagihan?.nominal || 0,
+        sisa_tagihan: p.status === 'LUNAS' ? 0 : Math.max(0, (p.tagihan?.nominal || 0) - (p.nominal_dibayar || 0) - (p.nominal_diskon || 0)),
+        status: p.status
+      }));
     }
-  };
+    return [];
+  });
 
-  useEffect(() => {
-    fetchTagihan();
-  }, []);
+  const { data: tagihan, error, mutate: fetchTagihan } = useSWR(`/pembayaran?limit=50`, fetcher, { fallbackData: [] });
+  const isLoading = !tagihan && !error && tagihan.length === 0;
   
   const [selectedTagihan, setSelectedTagihan] = useState<any>(null); // Untuk Modal Kasir Tunai
   

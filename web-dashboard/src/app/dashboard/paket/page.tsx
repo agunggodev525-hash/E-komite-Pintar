@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
 import { formatRupiah, apiFetch } from "@/lib/api";
@@ -11,69 +12,19 @@ export default function ManajemenPaketPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("paket");
 
-  const [packages, setPackages] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
+  
+  const { data: packagesResponse, error: packagesError, mutate: fetchPackages } = useSWR("/superadmin/paket", fetcher);
+  const { data: tenantsResponse, error: tenantsError } = useSWR(activeTab === "sekolah" ? "/superadmin/tenants" : null, fetcher);
+  const { data: transactionsResponse, error: transactionsError } = useSWR(activeTab === "tagihan" ? "/superadmin/transactions" : null, fetcher);
 
-  const [tenants, setTenants] = useState<any[]>([]);
-  const [isTenantsLoading, setIsTenantsLoading] = useState(false);
+  const packages = packagesResponse || [];
+  const tenants = tenantsResponse || [];
+  const transactions = transactionsResponse || [];
 
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [isTransactionsLoading, setIsTransactionsLoading] = useState(false);
-
-  const fetchTenants = async () => {
-    setIsTenantsLoading(true);
-    try {
-      const res = await apiFetch<any[]>("/superadmin/tenants");
-      if (res?.success) {
-        setTenants(res.data);
-      }
-    } catch (error) {
-      console.error("Gagal mengambil data sekolah", error);
-    } finally {
-      setIsTenantsLoading(false);
-    }
-  };
-
-  const fetchTransactions = async () => {
-    setIsTransactionsLoading(true);
-    try {
-      const res = await apiFetch<any[]>("/superadmin/transactions");
-      if (res?.success) {
-        setTransactions(res.data);
-      }
-    } catch (error) {
-      console.error("Gagal mengambil data transaksi", error);
-    } finally {
-      setIsTransactionsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (activeTab === "sekolah" && tenants.length === 0) {
-      fetchTenants();
-    }
-    if (activeTab === "tagihan" && transactions.length === 0) {
-      fetchTransactions();
-    }
-  }, [activeTab]);
-
-  const fetchPackages = async () => {
-    setIsLoading(true);
-    try {
-      const res = await apiFetch<any[]>("/superadmin/paket");
-      if (res?.success) {
-        setPackages(res.data);
-      }
-    } catch (error) {
-      console.error("Gagal mengambil data paket", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackages();
-  }, []);
+  const isLoading = !packagesResponse && !packagesError;
+  const isTenantsLoading = activeTab === "sekolah" && !tenantsResponse && !tenantsError;
+  const isTransactionsLoading = activeTab === "tagihan" && !transactionsResponse && !transactionsError;
 
   const [formData, setFormData] = useState({
     nama_paket: "",

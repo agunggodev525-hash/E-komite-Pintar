@@ -1,29 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { formatRupiah, apiFetch, formatDate } from "@/lib/api";
 import { Plus, Camera, UploadCloud, X, Search, FileText } from "lucide-react";
 
 export default function PengeluaranPage() {
-  const [pengeluaran, setPengeluaran] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  const fetchPengeluaran = async () => {
-    try {
-      setLoading(true);
-      const res = await apiFetch<any[]>("/pengeluaran");
-      setPengeluaran(res.data);
-    } catch (error: any) {
-      alert("Gagal memuat data: " + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPengeluaran();
-  }, []);
+  const fetcher = (url: string) => apiFetch<any[]>(url).then(res => res.data);
+  const { data, error, mutate: fetchPengeluaran } = useSWR("/pengeluaran", fetcher);
+  const pengeluaran = data || [];
+  const loading = !data && !error;
 
   // States for Modals
   const [showAddModal, setShowAddModal] = useState(false);
