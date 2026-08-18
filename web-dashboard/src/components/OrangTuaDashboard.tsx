@@ -55,7 +55,7 @@ export default function OrangTuaDashboard() {
       if (res.success && res.data.redirect_url) {
         toast.success("Mengarahkan ke pembayaran...");
         // Arahkan ke halaman Midtrans
-        window.location.href = res.data.redirect_url;
+        window.location.assign(res.data.redirect_url);
       } else {
         toast.error(res.message || "Gagal menginisiasi pembayaran.");
       }

@@ -4,7 +4,7 @@
 
 const prisma = require('../config/database');
 const { successResponse, errorResponse } = require('../utils/response');
-const { getMidtransSnapUrl } = require('../services/payment.service');
+const midtransClient = require('midtrans-client');
 
 /**
  * Buat invoice donasi dan dapatkan link Midtrans
@@ -78,35 +78,48 @@ const checkoutDonasi = async (req, res, next) => {
       return { tagihan: tagihanDonasi, pembayaran };
     });
 
+    // Ambil Midtrans Key dari Setting DB atau ENV
+    const settingServerKey = await prisma.appSetting.findFirst({ where: { key: 'midtrans_server_key' } });
+    const serverKey = settingServerKey?.value || process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-DUMMY123';
+    const isProductionKey = !serverKey.startsWith('SB-');
+
+    const snap = new midtransClient.Snap({
+      isProduction: isProductionKey,
+      serverKey: serverKey,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-DUMMY123'
+    });
+
     // Panggil Midtrans
-    const midtransPayload = {
-      orderId: result.pembayaran.id,
-      amount: parseFloat(nominal),
-      itemDetails: [{
+    const parameter = {
+      transaction_details: {
+        order_id: result.pembayaran.id,
+        gross_amount: parseFloat(nominal)
+      },
+      item_details: [{
         id: result.tagihan.id,
         price: parseFloat(nominal),
         quantity: 1,
         name: 'Donasi Sukarela'
       }],
-      customerDetails: {
+      customer_details: {
         first_name: siswa.orang_tua.nama_lengkap,
         email: siswa.orang_tua.email,
         phone: siswa.orang_tua.no_whatsapp || ''
       }
     };
 
-    const midtransRes = await getMidtransSnapUrl(midtransPayload);
+    const transaction = await snap.createTransaction(parameter);
 
     // Update payment_token
     await prisma.pembayaran.update({
       where: { id: result.pembayaran.id },
-      data: { payment_token: midtransRes.token }
+      data: { payment_token: transaction.token }
     });
 
     return successResponse(res, 'Berhasil membuat invoice donasi.', {
-      snap_token: midtransRes.token,
+      snap_token: transaction.token,
       order_id: result.pembayaran.id,
-      redirect_url: midtransRes.redirect_url
+      redirect_url: transaction.redirect_url
     });
 
   } catch (error) {

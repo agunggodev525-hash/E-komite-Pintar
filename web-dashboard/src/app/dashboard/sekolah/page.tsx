@@ -5,6 +5,7 @@ import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { AlertCircle } from "lucide-react";
 
 // ============================================
 // Page: Manajemen Klien / Sekolah (SUPER_ADMIN)
