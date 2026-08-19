@@ -78,7 +78,7 @@ export default function LaporanKasPage() {
         <div className="flex justify-end mb-6">
           <button 
             onClick={handleDownloadPDF}
-            className="flex items-center gap-2 px-5 py-2.5 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-xl transition-all shadow-md hover:-translate-y-0.5 text-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-navy-800 hover:bg-slate-800 dark:hover:bg-navy-900 text-white font-bold rounded-xl transition-all shadow-md hover:-translate-y-0.5 text-sm"
           >
             <Download className="w-4 h-4" />
             Unduh Laporan PDF

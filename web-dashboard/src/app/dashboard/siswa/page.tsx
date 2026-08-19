@@ -468,7 +468,7 @@ export default function SiswaPage() {
       {/* Modal Tambah/Edit Siswa */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy-900/60 backdrop-blur-sm" onClick={() => !isSubmitting && handleCloseModal()}></div>
+          <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && handleCloseModal()}></div>
           <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
             
             <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
@@ -573,7 +573,7 @@ export default function SiswaPage() {
       {/* Modal Import Excel */}
       {isImportModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy-900/60 backdrop-blur-sm" onClick={() => setIsImportModalOpen(false)}></div>
+          <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => setIsImportModalOpen(false)}></div>
           <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
             
             <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">

@@ -417,7 +417,7 @@ export default function SekolahPage() {
                       name="alamat"
                       value={formData.alamat}
                       onChange={handleInputChange}
-                      className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
                       placeholder="Kota/Provinsi"
                     />
                   </div>
@@ -454,7 +454,7 @@ export default function SekolahPage() {
                     name="admin_nama"
                     value={formData.admin_nama}
                     onChange={handleInputChange}
-                    className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
                     placeholder="Nama lengkap admin"
                   />
                 </div>
@@ -470,7 +470,7 @@ export default function SekolahPage() {
                       name="admin_email"
                       value={formData.admin_email}
                       onChange={handleInputChange}
-                      className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
                       placeholder="admin@sekolah.id"
                     />
                   </div>
@@ -484,7 +484,7 @@ export default function SekolahPage() {
                       name="admin_password"
                       value={formData.admin_password}
                       onChange={handleInputChange}
-                      className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
                       placeholder="Minimal 6 karakter"
                     />
                   </div>
