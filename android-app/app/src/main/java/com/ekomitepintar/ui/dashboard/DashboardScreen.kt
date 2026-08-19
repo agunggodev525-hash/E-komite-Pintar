@@ -257,7 +257,7 @@ fun DashboardScreen(
                                         )
                                     } else if (uiState.errorMessage != null) {
                                         ErrorBillCard(
-                                            errorMessage = uiState.errorMessage,
+                                            errorMessage = uiState.errorMessage!!,
                                             onRetry = { uiState.selectedAnak?.id?.let { viewModel.onRefresh(it) } }
                                         )
                                     } else {
