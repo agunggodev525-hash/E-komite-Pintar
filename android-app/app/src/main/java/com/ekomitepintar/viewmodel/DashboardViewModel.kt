@@ -30,7 +30,8 @@ data class DashboardUiState(
     val summary: TagihanSummary? = null,
     val errorMessage: String? = null,
     val checkoutUrl: String? = null,
-    val isLoggedOut: Boolean = false
+    val isLoggedOut: Boolean = false,
+    val unreadNotifCount: Int = 0
 )
 
 /**
@@ -41,6 +42,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val authRepository = AuthRepository(application.applicationContext)
     private val tagihanRepository = TagihanRepository()
     private val siswaRepository = SiswaRepository()
+    private val notifikasiRepository = com.ekomitepintar.repository.NotifikasiRepository(com.ekomitepintar.network.RetrofitClient.getApiService())
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
@@ -48,6 +50,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         loadUserData()
         loadAnakList()
+        loadUnreadNotifikasi()
     }
 
     /**
@@ -79,6 +82,21 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 selected?.let { loadTagihan(it.id) }
             }.onFailure {
                 _uiState.value = _uiState.value.copy(errorMessage = it.message)
+            }
+        }
+    }
+
+    fun loadUnreadNotifikasi() {
+        viewModelScope.launch {
+            try {
+                val response = notifikasiRepository.getNotifikasi()
+                if (response.isSuccessful) {
+                    val list = response.body()?.data ?: emptyList()
+                    val unread = list.count { !it.isRead }
+                    _uiState.value = _uiState.value.copy(unreadNotifCount = unread)
+                }
+            } catch (e: Exception) {
+                // Ignore silent error
             }
         }
     }

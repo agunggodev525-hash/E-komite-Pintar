@@ -96,4 +96,14 @@ interface ApiService {
 
     @GET("laporan/transparansi")
     suspend fun getTransparansi(): Response<ApiResponse<TransparansiData>>
+
+    // ============================================
+    // Notifikasi
+    // ============================================
+
+    @GET("notifikasi")
+    suspend fun getNotifikasi(): Response<ApiResponse<List<Notifikasi>>>
+
+    @PATCH("notifikasi/read-all")
+    suspend fun markAllNotifikasiAsRead(): Response<ApiResponse<Any>>
 }

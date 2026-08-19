@@ -298,7 +298,7 @@ fun DashboardScreen(
                                         SuperAppServiceItem(icon = Icons.Filled.FavoriteBorder, iconColor = Color(0xFFE91E63), label = "Donasi", onClick = {
                                             showDonasiDialog.value = true
                                         })
-                                        SuperAppServiceItem(icon = Icons.Filled.NotificationsNone, iconColor = Color(0xFF9C27B0), label = "Informasi", hasBadge = true, onClick = onNavigateToNotifikasi)
+                                        SuperAppServiceItem(icon = Icons.Filled.NotificationsNone, iconColor = Color(0xFF9C27B0), label = "Informasi", hasBadge = uiState.unreadNotifCount > 0, onClick = onNavigateToNotifikasi)
                                     }
                                 }
                             }
