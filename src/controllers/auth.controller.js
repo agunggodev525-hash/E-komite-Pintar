@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../config/database');
 const jwtConfig = require('../config/jwt');
 const { successResponse, errorResponse } = require('../utils/response');
+const { writeLog } = require('../utils/auditLog');
 const axios = require('axios');
 
 // Penyimpanan sementara (In-Memory Map) untuk OTP
@@ -61,6 +62,13 @@ const register = async (req, res, next) => {
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresIn }
     );
+
+    // Audit Log
+    writeLog({
+      action: 'REGISTER',
+      detail: `User baru terdaftar: ${user.nama_lengkap} (${user.email}) sebagai ${user.role}`,
+      userId: user.id,
+    });
 
     return successResponse(
       res,
@@ -125,6 +133,14 @@ const login = async (req, res, next) => {
       foto_profil: user.foto_profil,
       paket: user.sekolah?.paket_berlangganan || 'BASIC',
     };
+
+    // Audit Log
+    writeLog({
+      action: 'LOGIN',
+      detail: `${userData.nama_lengkap} (${userData.email}) berhasil login sebagai ${userData.role}`,
+      userId: user.id,
+      sekolahId: user.sekolah_id || null,
+    });
 
     return successResponse(res, 'Login berhasil.', { user: userData, token });
   } catch (error) {

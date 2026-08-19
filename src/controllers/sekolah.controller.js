@@ -5,6 +5,7 @@
 const prisma = require('../config/database');
 const bcrypt = require('bcryptjs');
 const { successResponse, errorResponse } = require('../utils/response');
+const { writeLog } = require('../utils/auditLog');
 
 /**
  * Mendaftarkan Sekolah Baru & Akun Admin Pertamanya
@@ -141,6 +142,13 @@ const deleteSekolah = async (req, res, next) => {
     // seperti user, siswa, tagihan, pembayaran terkait.
     await prisma.sekolah.delete({
       where: { id },
+    });
+
+    // Audit Log (log sebelum delete karena data akan hilang)
+    writeLog({
+      action: 'DELETE_SEKOLAH',
+      detail: `Menghapus sekolah dengan ID: ${id} beserta seluruh data terkait`,
+      userId: req.user?.id || null,
     });
 
     return successResponse(res, 'Sekolah berhasil dihapus beserta seluruh data terkait.');

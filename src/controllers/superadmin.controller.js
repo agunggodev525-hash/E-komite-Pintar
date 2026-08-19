@@ -6,6 +6,7 @@ const prisma = require('../config/database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { successResponse, errorResponse } = require('../utils/response');
+const { writeLog } = require('../utils/auditLog');
 
 /**
  * Get SaaS Analytics
@@ -154,6 +155,13 @@ const createTenant = async (req, res, next) => {
       return sekolah;
     });
 
+    // Audit Log
+    writeLog({
+      action: 'CREATE_TENANT',
+      detail: `Membuat sekolah baru: ${nama_sekolah} (Admin: ${admin_email})`,
+      userId: req.user.id,
+    });
+
     return successResponse(res, 'Tenant baru dan akun Admin Komite berhasil dibuat.', newTenant, 201);
   } catch (error) {
     next(error);
@@ -178,6 +186,14 @@ const toggleTenantStatus = async (req, res, next) => {
     const updated = await prisma.sekolah.update({
       where: { id },
       data: { status: newStatus }
+    });
+
+    // Audit Log
+    writeLog({
+      action: 'UPDATE_STATUS',
+      detail: `Mengubah status sekolah "${sekolah.nama_sekolah}" menjadi ${newStatus}`,
+      userId: req.user.id,
+      sekolahId: id,
     });
 
     return successResponse(res, `Status tenant berhasil diubah menjadi ${newStatus}`, updated);
@@ -210,6 +226,14 @@ const impersonateTenant = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' } // Token impersonate cukup 1 jam
     );
+
+    // Audit Log
+    writeLog({
+      action: 'IMPERSONATE',
+      detail: `Super Admin masuk sebagai ${admin.nama_lengkap} (${admin.email})`,
+      userId: req.user.id,
+      sekolahId: id,
+    });
 
     return successResponse(res, 'Impersonate berhasil', {
       token,
@@ -248,6 +272,14 @@ const resetPasswordTenant = async (req, res, next) => {
     await prisma.user.update({
       where: { id: admin.id },
       data: { password_hash }
+    });
+
+    // Audit Log
+    writeLog({
+      action: 'RESET_PASSWORD',
+      detail: `Mereset password admin ${admin.nama_lengkap} (${admin.email}) ke default`,
+      userId: req.user.id,
+      sekolahId: id,
     });
 
     return successResponse(res, `Password berhasil direset ke default (${defaultPassword})`, null);
@@ -328,6 +360,13 @@ const updateSettings = async (req, res, next) => {
       })
     );
 
+    // Audit Log
+    writeLog({
+      action: 'UPDATE_SETTINGS',
+      detail: `Memperbarui pengaturan sistem: ${Object.keys(data).join(', ')}`,
+      userId: req.user.id,
+    });
+
     return successResponse(res, 'Pengaturan sistem berhasil disimpan', null);
   } catch (error) {
     next(error);
@@ -359,6 +398,14 @@ const updateTenant = async (req, res, next) => {
     const updated = await prisma.sekolah.update({
       where: { id },
       data: updateData,
+    });
+
+    // Audit Log
+    writeLog({
+      action: 'UPDATE_TENANT',
+      detail: `Memperbarui data sekolah "${sekolah.nama_sekolah}"`,
+      userId: req.user.id,
+      sekolahId: id,
     });
 
     return successResponse(res, 'Tenant berhasil diperbarui.', updated);
@@ -395,6 +442,13 @@ const createPaket = async (req, res, next) => {
         batas_siswa: Number(batas_siswa) || 999999
       }
     });
+    // Audit Log
+    writeLog({
+      action: 'CREATE_PAKET',
+      detail: `Membuat paket baru: ${nama_paket} (Rp ${Number(harga).toLocaleString('id-ID')})`,
+      userId: req.user.id,
+    });
+
     return successResponse(res, 'Berhasil membuat paket baru', newPaket, 201);
   } catch (error) {
     if (error.code === 'P2002') {
@@ -417,6 +471,13 @@ const updatePaket = async (req, res, next) => {
         batas_siswa: Number(batas_siswa) || 999999
       }
     });
+    // Audit Log
+    writeLog({
+      action: 'UPDATE_PAKET',
+      detail: `Memperbarui paket: ${nama_paket}`,
+      userId: req.user.id,
+    });
+
     return successResponse(res, 'Berhasil memperbarui paket', updated);
   } catch (error) {
     next(error);
@@ -427,6 +488,14 @@ const deletePaket = async (req, res, next) => {
   try {
     const { id } = req.params;
     await prisma.paketSaaS.delete({ where: { id } });
+
+    // Audit Log
+    writeLog({
+      action: 'DELETE_PAKET',
+      detail: `Menghapus paket dengan ID: ${id}`,
+      userId: req.user.id,
+    });
+
     return successResponse(res, 'Berhasil menghapus paket', null);
   } catch (error) {
     next(error);

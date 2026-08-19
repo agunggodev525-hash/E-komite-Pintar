@@ -5,6 +5,7 @@
 const crypto = require('crypto');
 const prisma = require('../config/database');
 const { successResponse, errorResponse } = require('../utils/response');
+const { writeLog } = require('../utils/auditLog');
 const midtransClient = require('midtrans-client');
 
 /**
@@ -190,6 +191,14 @@ const bayarManual = async (req, res, next) => {
         tanggal_bayar: new Date(),
         metode_bayar: 'TUNAI_MANUAL'
       }
+    });
+
+    // Audit Log
+    writeLog({
+      action: 'MANUAL_PAYMENT',
+      detail: `Mencatat pembayaran manual Rp ${bayarSekarang.toLocaleString('id-ID')} (Status: ${status})`,
+      userId: req.user.id,
+      sekolahId: req.user.sekolah_id,
     });
 
     return successResponse(res, `Pembayaran berhasil dicatat. Status: ${status}`, updated);

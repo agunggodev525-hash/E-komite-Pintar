@@ -1,6 +1,7 @@
 const prisma = require('../config/database');
 const bcrypt = require('bcryptjs');
 const { successResponse, errorResponse } = require('../utils/response');
+const { writeLog } = require('../utils/auditLog');
 const cloudinary = require('../config/cloudinary');
 
 /**
@@ -137,6 +138,14 @@ const create = async (req, res, next) => {
       return newSiswa;
     });
 
+    // Audit Log
+    writeLog({
+      action: 'CREATE_SISWA',
+      detail: `Menambahkan siswa: ${nama_siswa} (NISN: ${nisn}, Kelas: ${kelas})`,
+      userId: req.user.id,
+      sekolahId: sekolah_id,
+    });
+
     return successResponse(res, 'Siswa berhasil ditambahkan.', result, 201);
   } catch (error) {
     if (error.message === 'Email orang tua sudah digunakan oleh user lain.') {
@@ -262,6 +271,14 @@ const remove = async (req, res, next) => {
       where: { id },
     });
 
+    // Audit Log
+    writeLog({
+      action: 'DELETE_SISWA',
+      detail: `Menghapus siswa: ${siswa.nama_siswa} (NISN: ${siswa.nisn})`,
+      userId: req.user.id,
+      sekolahId: sekolah_id,
+    });
+
     return successResponse(res, 'Siswa berhasil dihapus.');
   } catch (error) {
     next(error);
@@ -362,6 +379,14 @@ const bulkCreate = async (req, res, next) => {
         errors.push(`Baris ${index + 2} (${nama_siswa || 'Unknown'}): ${err.message}`);
       }
     }
+
+    // Audit Log
+    writeLog({
+      action: 'BULK_UPLOAD_SISWA',
+      detail: `Upload massal siswa: ${successCount} berhasil, ${failedCount} gagal`,
+      userId: req.user.id,
+      sekolahId: req.user.sekolah_id,
+    });
 
     return successResponse(res, `Upload selesai. ${successCount} sukses, ${failedCount} gagal.`, {
       successCount,

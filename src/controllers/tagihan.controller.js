@@ -4,6 +4,7 @@
 
 const prisma = require('../config/database');
 const { successResponse, errorResponse } = require('../utils/response');
+const { writeLog } = require('../utils/auditLog');
 const { sendPushNotification } = require('../services/notification.service');
 
 /**
@@ -80,6 +81,14 @@ const create = async (req, res, next) => {
       const body = `Ada tagihan baru sebesar Rp ${nominal} yang perlu dibayar sebelum ${new Date(tenggat_waktu).toLocaleDateString('id-ID')}.`;
       await sendPushNotification(tokens, title, body, { tagihan_id: result.id });
     }
+
+    // Audit Log
+    writeLog({
+      action: 'CREATE_TAGIHAN',
+      detail: `Membuat tagihan "${judul}" sebesar Rp ${Number(nominal).toLocaleString('id-ID')} untuk ${siswaList.length} siswa`,
+      userId: req.user.id,
+      sekolahId: req.user.sekolah_id,
+    });
 
     return successResponse(res, `Tagihan berhasil dibuat. ${siswaList.length} tagihan telah disebarkan ke siswa.`, result, 201);
   } catch (error) {
