@@ -43,7 +43,7 @@ const getAvailablePaket = async (req, res, next) => {
  */
 const checkoutPaket = async (req, res, next) => {
   try {
-    const { paket_id } = req.body;
+    const { paket_id, durasi_bulan = 1 } = req.body;
     
     if (!paket_id) {
       return errorResponse(res, 'ID paket wajib diisi', 400);
@@ -65,11 +65,14 @@ const checkoutPaket = async (req, res, next) => {
     const sekolah = await prisma.sekolah.findUnique({ where: { id: sekolah_id } });
 
     // Buat record SaaSTransaction
+    const totalHarga = paket.harga * durasi_bulan;
+    
     const transaksi = await prisma.saaSTransaction.create({
       data: {
         sekolah_id,
         paket_id,
-        nominal: paket.harga,
+        durasi_bulan,
+        nominal: totalHarga,
         status: 'PENDING'
       }
     });
@@ -92,7 +95,7 @@ const checkoutPaket = async (req, res, next) => {
     const parameter = {
       transaction_details: {
         order_id: order_id,
-        gross_amount: Math.round(paket.harga),
+        gross_amount: Math.round(totalHarga),
       },
       customer_details: {
         first_name: sekolah.nama_sekolah,

@@ -59,10 +59,8 @@ const handleWebhook = async (req, res, next) => {
             where: { id: actualSaaSTx.paket_id }
           });
           
-          let durationDays = 30; // default 1 bulan
-          if (paketSaaS && paketSaaS.durasi.toLowerCase().includes('tahun')) {
-            durationDays = 365;
-          }
+          // Hitung durasi hari dari durasi_bulan transaksi
+          let durationDays = (actualSaaSTx.durasi_bulan || 1) * 30;
 
           // Ambil data sekolah untuk melihat langganan_berakhir saat ini
           const currentSekolah = await prisma.sekolah.findUnique({

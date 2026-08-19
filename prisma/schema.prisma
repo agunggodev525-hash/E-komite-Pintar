@@ -257,6 +257,7 @@ model SaaSTransaction {
   id         String   @id @default(uuid())
   sekolah_id String
   paket_id   String
+  durasi_bulan Int      @default(1)
   nominal    Float
   status        String   @default("PENDING") // PENDING, LUNAS, GAGAL
   payment_token String?

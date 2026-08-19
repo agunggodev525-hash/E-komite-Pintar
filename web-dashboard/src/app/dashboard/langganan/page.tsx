@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 
 export default function LanggananSaaSPage() {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number>(1);
 
   const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
   const { data, error, mutate } = useSWR("/sekolah-paket", fetcher);
@@ -35,7 +36,7 @@ export default function LanggananSaaSPage() {
       setIsProcessing(true);
       const res = await apiFetch<any>("/sekolah-paket/checkout", {
         method: "POST",
-        body: JSON.stringify({ paket_id: paketId })
+        body: JSON.stringify({ paket_id: paketId, durasi_bulan: selectedDuration })
       });
 
       if (res.success && res.data.redirectUrl) {
@@ -129,14 +130,31 @@ export default function LanggananSaaSPage() {
         </div>
       )}
 
-      <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Paket Tersedia</h3>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 md:mb-0">Paket Tersedia</h3>
+        <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+          {[1, 6, 12].map(duration => (
+            <button
+              key={duration}
+              onClick={() => setSelectedDuration(duration)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${selectedDuration === duration ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              {duration} Bulan
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {tersedia.map((paket: any) => (
+        {tersedia.map((paket: any) => {
+          const isCurrentPlan = langgananSaatIni?.id === paket.id && statusSekolah === 'AKTIF';
+          const displayedPrice = paket.harga * selectedDuration;
+          
+          return (
           <div 
             key={paket.id} 
-            className={`bg-white dark:bg-slate-900 rounded-2xl border ${langgananSaatIni?.id === paket.id && statusSekolah === 'AKTIF' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-white/10'} p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden`}
+            className={`bg-white dark:bg-slate-900 rounded-2xl border ${isCurrentPlan ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-white/10'} p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden`}
           >
-            {langgananSaatIni?.id === paket.id && statusSekolah === 'AKTIF' && (
+            {isCurrentPlan && (
               <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
                 SAAT INI
               </div>
@@ -147,9 +165,9 @@ export default function LanggananSaaSPage() {
               </div>
               <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{paket.nama_paket}</h4>
               <p className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1">
-                {formatRupiah(paket.harga)}
+                {formatRupiah(displayedPrice)}
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">per {paket.durasi}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">per {selectedDuration} Bulan</p>
               
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -171,16 +189,16 @@ export default function LanggananSaaSPage() {
               onClick={() => handleCheckout(paket.id)}
               disabled={isProcessing}
               className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 ${
-                langgananSaatIni?.id === paket.id && statusSekolah === 'AKTIF'
+                isCurrentPlan
                   ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
                   : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20'
               }`}
             >
               <CreditCard className="w-4 h-4" />
-              {langgananSaatIni?.id === paket.id && statusSekolah === 'AKTIF' ? 'Sedang Digunakan' : 'Berlangganan Sekarang'}
+              {isCurrentPlan ? 'Sedang Digunakan' : 'Berlangganan Sekarang'}
             </button>
           </div>
-        ))}
+        )})}
         {tersedia.length === 0 && (
           <div className="col-span-3 text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10">
             <p className="text-slate-500">Belum ada paket yang tersedia saat ini.</p>
