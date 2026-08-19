@@ -75,7 +75,7 @@ fun DashboardScreen(
     }
 
     var showContent by remember { mutableStateOf(false) }
-    var showDonasiDialog by remember { mutableStateOf(false) }
+    val showDonasiDialog = remember { mutableStateOf(false) }
     
     LaunchedEffect(Unit) {
         delay(100)
@@ -296,7 +296,7 @@ fun DashboardScreen(
                                         SuperAppServiceItem(icon = Icons.Filled.CheckBox, iconColor = Color(0xFF118EEA), label = "E-Voting", onClick = onNavigateToVoting)
                                         SuperAppServiceItem(icon = Icons.Filled.AccountBalanceWallet, iconColor = Color(0xFFF57C00), label = "Keuangan", onClick = onNavigateToTransparansi)
                                         SuperAppServiceItem(icon = Icons.Filled.FavoriteBorder, iconColor = Color(0xFFE91E63), label = "Donasi", onClick = {
-                                            showDonasiDialog = true
+                                            showDonasiDialog.value = true
                                         })
                                         SuperAppServiceItem(icon = Icons.Filled.NotificationsNone, iconColor = Color(0xFF9C27B0), label = "Informasi", hasBadge = true, onClick = onNavigateToNotifikasi)
                                     }
@@ -373,11 +373,11 @@ fun DashboardScreen(
         }
     }
     
-    if (showDonasiDialog) {
+    if (showDonasiDialog.value) {
         DonasiDialog(
-            onDismiss = { showDonasiDialog = false },
+            onDismiss = { showDonasiDialog.value = false },
             onSubmit = { nominal ->
-                showDonasiDialog = false
+                showDonasiDialog.value = false
                 uiState.selectedAnak?.id?.let { viewModel.onDonasiClicked(it, nominal) }
             }
         )
