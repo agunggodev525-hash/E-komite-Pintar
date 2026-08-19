@@ -61,6 +61,21 @@ export default function LanggananSaaSPage() {
     );
   }
 
+  if (error) {
+    return (
+      <DashboardLayout title="Langganan SaaS">
+        <div className="flex flex-col justify-center items-center h-64 text-center">
+          <AlertTriangle className="w-12 h-12 text-rose-500 mb-4" />
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Gagal Memuat Data</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-4">Pastikan server backend (Render) sudah selesai diperbarui dan sedang aktif.</p>
+          <button onClick={() => mutate()} className="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-lg hover:bg-slate-300 transition-colors">
+            Coba Lagi
+          </button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout 
       title="Langganan SaaS" 
