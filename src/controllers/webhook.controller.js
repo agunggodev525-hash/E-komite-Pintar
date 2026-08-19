@@ -110,6 +110,7 @@ const handleWebhook = async (req, res, next) => {
         });
         console.log(`✅ Webhook: Pembayaran ${identifier} berhasil diupdate menjadi LUNAS.`);
       }
+    }
     } else if (['expire', 'cancel', 'deny', 'failed'].includes(currentStatus)) {
       if (isSaaSTransaction) {
         const saasTxId = identifier.replace('SAAS-', '');
