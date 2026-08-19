@@ -55,7 +55,6 @@ fun DashboardScreen(
     onNavigateBottomTab: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     LaunchedEffect(uiState.isLoggedOut) { if (uiState.isLoggedOut) onLogout() }
 
@@ -100,7 +99,6 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
             val pendingTagihan = uiState.tagihanList.firstOrNull { it.statusBayar == "PENDING" || it.statusBayar == "BELUM_BAYAR" }
-            val otherTagihan = uiState.tagihanList.filter { it.id != pendingTagihan?.id && (it.statusBayar == "PENDING" || it.statusBayar == "BELUM_BAYAR") }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -543,52 +541,6 @@ fun HeroBillCard(tagihan: Tagihan, onBayarClicked: () -> Unit) {
 }
 
 @Composable
-fun ServiceItem(icon: ImageVector, label: String, hasBadge: Boolean = false, onClick: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { onClick() }
-    ) {
-        Box {
-            // bg-white w-[64px] h-[64px] rounded-[18px] shadow-sm border border-gray-100
-            Surface(
-                modifier = Modifier.size(64.dp),
-                shape = RoundedCornerShape(18.dp),
-                color = CardWhite,
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6)),
-                shadowElevation = 2.dp
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(
-                        icon,
-                        contentDescription = label,
-                        tint = Slate600,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-            }
-            if (hasBadge) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .offset(x = (-6).dp, y = 6.dp)
-                        .size(10.dp)
-                        .clip(CircleShape)
-                        .background(Rose600)
-                        .border(2.dp, CardWhite, CircleShape)
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
-            color = Slate600,
-            fontWeight = FontWeight.SemiBold
-        )
-    }
-}
-
-@Composable
 fun SummaryCard(
     modifier: Modifier = Modifier,
     icon: ImageVector,
@@ -742,14 +694,6 @@ private fun formatRupiah(amount: Double): String {
     return formatter.format(amount).replace(",00", "").replace("Rp", "Rp ")
 }
 
-private fun formatShortRupiah(amount: Double): String {
-    if (amount >= 1_000_000) {
-        val million = amount / 1_000_000.0
-        return "Rp " + String.format(Locale("id", "ID"), "%.1f", million).replace(".0", "") + "M"
-    }
-    return formatRupiah(amount)
-}
-
 @Composable
 fun SkeletonHeroBillCard() {
     Card(
@@ -796,33 +740,6 @@ fun SkeletonHeroBillCard() {
                 Box(
                     modifier = Modifier.width(48.dp).height(48.dp).clip(CircleShape).shimmerEffect()
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun SkeletonSummaryCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.height(90.dp),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = CardWhite),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier.size(32.dp).clip(CircleShape).shimmerEffect()
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Box(modifier = Modifier.width(80.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Box(modifier = Modifier.width(60.dp).height(18.dp).clip(RoundedCornerShape(4.dp)).shimmerEffect())
-                }
             }
         }
     }
