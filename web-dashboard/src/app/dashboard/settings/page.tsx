@@ -76,14 +76,14 @@ export default function SettingsPage() {
       )}
 
       {isLoading ? (
-        <div className="text-white-60 text-center py-8">Memuat konfigurasi...</div>
+        <div className="text-slate-400 text-center py-8">Memuat konfigurasi...</div>
       ) : (
-        <div className="bg-navy-800 rounded-2xl border border-white-10 overflow-hidden shadow-2xl max-w-3xl">
-          <div className="p-6 border-b border-white-10 bg-navy-900/30">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-xl dark:shadow-2xl max-w-3xl">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <span className="text-gold-400">⚙️</span> API Integrations
             </h2>
-            <p className="text-sm text-white-60 mt-1">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               Kunci API ini digunakan secara global untuk seluruh transaksi dan notifikasi tenant.
             </p>
           </div>
@@ -92,17 +92,17 @@ export default function SettingsPage() {
             
             {/* Payment Gateway Group */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2">Midtrans Payment Gateway</h3>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Midtrans Payment Gateway</h3>
               
               <div>
-                <label className="block text-sm font-medium text-white-80 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Environment Mode (Sandbox/Production)
                 </label>
                 <select
                   name="midtrans_is_production"
                   value={formData.midtrans_is_production}
                   onChange={handleChange}
-                  className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors text-sm"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors text-sm"
                 >
                   <option value="false">Sandbox (Mode Uji Coba)</option>
                   <option value="true">Production (Uang Sungguhan)</option>
@@ -118,7 +118,7 @@ export default function SettingsPage() {
                   name="midtrans_client_key"
                   value={formData.midtrans_client_key}
                   onChange={handleChange}
-                  className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors font-mono text-sm"
                   placeholder="SB-Mid-client-..."
                 />
               </div>
@@ -132,20 +132,20 @@ export default function SettingsPage() {
                   name="midtrans_server_key"
                   value={formData.midtrans_server_key}
                   onChange={handleChange}
-                  className="w-full bg-navy-900 border border-white-10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors font-mono text-sm"
                   placeholder="SB-Mid-server-..."
                 />
               </div>
             </div>
 
-            <hr className="border-white-10" />
+            <hr className="border-slate-200 dark:border-slate-700" />
 
             {/* Notification Group */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2">WhatsApp Notification (Fonnte/Wablas)</h3>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-2">WhatsApp Notification (Fonnte/Wablas)</h3>
               
               <div>
-                <label className="block text-sm font-medium text-white-80 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   API Token
                 </label>
                 <input
@@ -153,13 +153,13 @@ export default function SettingsPage() {
                   name="wa_api_token"
                   value={formData.wa_api_token}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-navy-900 border border-white-10 rounded-xl text-white focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-colors"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
                   placeholder="Masukkan token API WhatsApp"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white-80 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   API URL / Endpoint (Khusus Wablas/Lainnya)
                 </label>
                 <input
@@ -167,10 +167,10 @@ export default function SettingsPage() {
                   name="wa_api_url"
                   value={formData.wa_api_url}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-navy-900 border border-white-10 rounded-xl text-white focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-colors"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
                   placeholder="Contoh: https://deu.wablas.com/api/send-message"
                 />
-                <p className="text-xs text-white-40 mt-1.5">
+                <p className="text-xs text-slate-400 mt-1.5">
                   Kosongkan jika menggunakan Fonnte. Jika pakai Wablas, wajib diisi lengkap dengan /api/send-message.
                 </p>
               </div>

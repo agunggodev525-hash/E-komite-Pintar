@@ -118,13 +118,13 @@ export default function LogsPage() {
               ) : (
                 logs.map((log: any) => (
                   <tr key={log.id} className="hover:bg-white-5 transition-colors group">
-                    <td className="px-6 py-4 text-xs font-mono">{formatDate(log.created_at)}</td>
-                    <td className="px-6 py-4 font-medium text-white">{log.user?.nama_lengkap || '-'}</td>
-                    <td className="px-6 py-4">{log.sekolah?.nama_sekolah || 'Sistem Global'}</td>
+                  <td className="px-6 py-4 text-xs font-mono text-slate-500 dark:text-slate-400">{formatDate(log.created_at)}</td>
+                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{log.user?.nama_lengkap || '-'}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{log.sekolah?.nama_sekolah || 'Sistem Global'}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-white-10 rounded text-xs font-semibold">{log.action}</span>
+                      <span className="px-2 py-1 bg-blue-50 dark:bg-white/10 text-blue-600 dark:text-blue-300 rounded text-xs font-semibold">{log.action}</span>
                     </td>
-                    <td className="px-6 py-4 max-w-xs truncate" title={log.detail}>{log.detail || '-'}</td>
+                    <td className="px-6 py-4 max-w-xs truncate text-slate-500 dark:text-slate-400" title={log.detail}>{log.detail || '-'}</td>
                   </tr>
                 ))
               )}
@@ -176,7 +176,7 @@ export default function LogsPage() {
           </div>
           
           <div className="flex items-center gap-3">
-            <span className="text-sm text-slate-500 dark:text-slate-400">Halaman 1 dari 1</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
             <select className="px-2 py-1 bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 rounded text-xs text-slate-700 dark:text-slate-300 focus:outline-none">
               <option>10</option>
               <option>50</option>

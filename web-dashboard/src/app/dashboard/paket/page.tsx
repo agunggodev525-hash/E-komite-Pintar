@@ -130,10 +130,10 @@ export default function ManajemenPaketPage() {
       {/* Tabs & Action Button Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-5 mb-8">
         
-        <div className="flex space-x-6 border-b border-white/10 w-full md:w-auto overflow-x-auto pb-px">
+        <div className="flex space-x-6 border-b border-slate-200 dark:border-white/10 w-full md:w-auto overflow-x-auto pb-px">
           <button 
             onClick={() => setActiveTab("paket")}
-            className={`pb-3 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${activeTab === "paket" ? "border-[#10B981] text-[#10B981]" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+            className={`pb-3 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${activeTab === "paket" ? "border-[#10B981] text-[#10B981]" : "border-transparent text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
           >
             Kelola Paket
           </button>
@@ -153,7 +153,7 @@ export default function ManajemenPaketPage() {
 
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-5 py-2 bg-transparent border border-white/20 hover:border-white/40 text-white font-semibold rounded-lg transition-all text-sm shrink-0"
+          className="flex items-center gap-2 px-5 py-2 bg-transparent border border-slate-300 dark:border-white/20 hover:border-slate-400 dark:hover:border-white/40 text-slate-700 dark:text-white font-semibold rounded-lg transition-all text-sm shrink-0"
         >
           <Plus className="w-4 h-4" />
           Tambah Paket Baru
@@ -171,7 +171,7 @@ export default function ManajemenPaketPage() {
             packages.map((pkg, idx) => {
               const theme = cardThemes[idx % cardThemes.length];
               return (
-                <div key={pkg.id} className={`bg-[#1A1F2C] rounded-2xl border border-white/5 overflow-hidden flex flex-col shadow-2xl ${theme.glow} transition-transform hover:-translate-y-1 duration-300`}>
+                <div key={pkg.id} className={`bg-white dark:bg-[#1A1F2C] rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col shadow-xl dark:shadow-2xl ${theme.glow} transition-transform hover:-translate-y-1 duration-300`}>
                   
                   {/* Card Header (Color Block) */}
                   <div className={`${theme.bg} p-5 flex justify-between items-center`}>
@@ -182,7 +182,7 @@ export default function ManajemenPaketPage() {
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="mb-6">
                       <div className="flex items-baseline gap-1.5 mb-1">
-                        <h4 className="text-3xl font-extrabold text-white">{formatRupiah(pkg.harga)}</h4>
+                        <h4 className="text-3xl font-extrabold text-slate-900 dark:text-white">{formatRupiah(pkg.harga)}</h4>
                         <span className="text-sm font-medium text-slate-400 pb-1">/{pkg.durasi.toLowerCase().replace(' ', '')}</span>
                       </div>
                     </div>
@@ -190,11 +190,11 @@ export default function ManajemenPaketPage() {
                     <div className="space-y-3 mb-8 flex-1">
                       <div className="flex gap-2">
                         <span className="text-slate-400 text-sm">Limit Siswa:</span>
-                        <span className="text-slate-200 text-sm">{pkg.batas_siswa === 999999 ? "Tanpa Batas" : pkg.batas_siswa}</span>
+                        <span className="text-slate-600 dark:text-slate-200 text-sm">{pkg.batas_siswa === 999999 ? "Tanpa Batas" : pkg.batas_siswa}</span>
                       </div>
                       <div className="flex gap-2">
                         <span className="text-slate-400 text-sm">Fitur:</span>
-                        <span className="text-slate-200 text-sm">
+                        <span className="text-slate-600 dark:text-slate-200 text-sm">
                           {pkg.batas_siswa < 500 ? "Terbatas (Access A, B, C)" : pkg.batas_siswa < 1000 ? "Penuh (Access A-D, Support)" : "Semua Fitur + Priority Support"}
                         </span>
                       </div>
@@ -204,19 +204,19 @@ export default function ManajemenPaketPage() {
                     <div className="flex gap-3 mb-6">
                       <button 
                         onClick={() => handleOpenModal(pkg)}
-                        className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-300 text-sm font-medium hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
                       >
                         Edit
                       </button>
                       <button 
                         onClick={() => handleDelete(pkg.id)}
-                        className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-300 text-sm font-medium hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400 hover:border-rose-300 dark:hover:border-rose-500/30 transition-colors flex items-center justify-center gap-2"
                       >
                         Hapus
                       </button>
                     </div>
 
-                    <div className="flex justify-between items-center pt-5 border-t border-white/5">
+                    <div className="flex justify-between items-center pt-5 border-t border-slate-100 dark:border-white/5">
                       <span className="text-sm text-slate-400">Status</span>
                       <button onClick={() => toggleStatus(pkg.id)}>
                         <span className={`text-sm font-bold ${pkg.status === 'AKTIF' ? 'text-[#10B981]' : 'text-slate-500'}`}>
@@ -234,10 +234,10 @@ export default function ManajemenPaketPage() {
 
       {/* Tab Content: Sekolah Berlangganan */}
       {activeTab === "sekolah" && (
-        <div className="bg-[#1A1F2C] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-white dark:bg-[#1A1F2C] border border-slate-200 dark:border-white/5 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="bg-black/20 border-b border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-400">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="px-6 py-5">Nama Sekolah / Klien</th>
                   <th className="px-6 py-5">Paket Aktif</th>
@@ -246,7 +246,7 @@ export default function ManajemenPaketPage() {
                   <th className="px-6 py-5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {isTenantsLoading ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat data pelanggan...</td>
@@ -257,9 +257,9 @@ export default function ManajemenPaketPage() {
                   </tr>
                 ) : (
                   tenants.map((tenant) => (
-                    <tr key={tenant.id} className="hover:bg-white/5 transition-colors group">
+                    <tr key={tenant.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                       <td className="px-6 py-4">
-                        <p className="font-bold text-white text-base">{tenant.nama_sekolah}</p>
+                        <p className="font-bold text-slate-900 dark:text-white text-base">{tenant.nama_sekolah}</p>
                         <p className="text-xs text-slate-500 mt-1 line-clamp-1">{tenant.alamat || "Alamat tidak tersedia"}</p>
                       </td>
                       <td className="px-6 py-4">
@@ -269,10 +269,10 @@ export default function ManajemenPaketPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <p className="font-bold text-slate-200">{tenant._count?.siswa || 0} <span className="text-slate-500 font-normal">/ {tenant.paket?.batas_siswa === 999999 ? "∞" : tenant.paket?.batas_siswa || "∞"}</span></p>
+                        <p className="font-bold text-slate-700 dark:text-slate-200">{tenant._count?.siswa || 0} <span className="text-slate-400 dark:text-slate-500 font-normal">/ {tenant.paket?.batas_siswa === 999999 ? "∞" : tenant.paket?.batas_siswa || "∞"}</span></p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-slate-300">{tenant.users?.[0]?.nama_lengkap || "-"}</p>
+                        <p className="font-semibold text-slate-700 dark:text-slate-300">{tenant.users?.[0]?.nama_lengkap || "-"}</p>
                         <p className="text-xs text-slate-500">{tenant.users?.[0]?.email || "-"}</p>
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -295,10 +295,10 @@ export default function ManajemenPaketPage() {
 
       {/* Tab Content: Tagihan & Transaksi */}
       {activeTab === "tagihan" && (
-        <div className="bg-[#1A1F2C] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-white dark:bg-[#1A1F2C] border border-slate-200 dark:border-white/5 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="bg-black/20 border-b border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-400">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="px-6 py-5">Tanggal Transaksi</th>
                   <th className="px-6 py-5">Nama Sekolah</th>
@@ -307,7 +307,7 @@ export default function ManajemenPaketPage() {
                   <th className="px-6 py-5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {isTransactionsLoading ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat riwayat transaksi...</td>
@@ -318,17 +318,17 @@ export default function ManajemenPaketPage() {
                   </tr>
                 ) : (
                   transactions.map((trx) => (
-                    <tr key={trx.id} className="hover:bg-white/5 transition-colors group">
+                    <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-slate-300">
+                        <p className="font-semibold text-slate-700 dark:text-slate-300">
                           {new Date(trx.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
                         <p className="text-xs text-slate-500 mt-1">
                           {new Date(trx.tanggal).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
                         </p>
                       </td>
-                      <td className="px-6 py-4 font-bold text-white">{trx.sekolah?.nama_sekolah || "-"}</td>
-                      <td className="px-6 py-4 text-slate-300">{trx.paket?.nama_paket || "-"}</td>
+                      <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{trx.sekolah?.nama_sekolah || "-"}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{trx.paket?.nama_paket || "-"}</td>
                       <td className="px-6 py-4 font-extrabold text-[#10B981]">{formatRupiah(trx.nominal)}</td>
                       <td className="px-6 py-4 text-center">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
@@ -352,18 +352,18 @@ export default function ManajemenPaketPage() {
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#1A1F2C] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-[#1A1F2C] border border-slate-200 dark:border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/5">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <div className="px-6 py-5 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/5">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Package className="w-5 h-5 text-emerald-400" />
                 {isEditMode ? "Edit Paket" : "Tambah Paket Baru"}
               </h3>
               <button 
                 onClick={handleCloseModal}
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -373,38 +373,38 @@ export default function ManajemenPaketPage() {
             <div className="p-6">
               <form id="paketForm" onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-1.5">Nama Paket</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nama Paket</label>
                   <input 
                     required 
                     type="text" 
                     name="nama_paket" 
                     value={formData.nama_paket} 
                     onChange={handleChange} 
-                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600" 
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600" 
                     placeholder="Contoh: Paket Enterprise" 
                   />
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-1.5">Harga (Rp)</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Harga (Rp)</label>
                     <input 
                       required 
                       type="number" 
                       name="harga" 
                       value={formData.harga} 
                       onChange={handleChange} 
-                      className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600" 
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600" 
                       placeholder="Contoh: 1500000" 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-1.5">Durasi Berlangganan</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Durasi Berlangganan</label>
                     <select 
                       name="durasi" 
                       value={formData.durasi} 
                       onChange={handleChange} 
-                      className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
                     >
                       <option value="1 Bulan" className="bg-slate-800">1 Bulan</option>
                       <option value="6 Bulan" className="bg-slate-800">6 Bulan</option>
@@ -414,13 +414,13 @@ export default function ManajemenPaketPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-1.5">Batas Maksimal Siswa</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Batas Maksimal Siswa</label>
                   <input 
                     type="number" 
                     name="batas_siswa" 
                     value={formData.batas_siswa} 
                     onChange={handleChange} 
-                    className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600" 
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600" 
                     placeholder="Kosongkan jika tanpa batas (unlimited)" 
                   />
                   <p className="text-xs text-slate-500 mt-2">Batas jumlah siswa yang bisa ditambahkan oleh sekolah pada paket ini.</p>
@@ -429,11 +429,11 @@ export default function ManajemenPaketPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-5 border-t border-white/5 bg-black/20 flex justify-end gap-3">
+            <div className="px-6 py-5 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black/20 flex justify-end gap-3">
               <button 
                 type="button" 
                 onClick={handleCloseModal}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-300 bg-transparent border border-white/10 hover:bg-white/5 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors"
               >
                 Batal
               </button>
