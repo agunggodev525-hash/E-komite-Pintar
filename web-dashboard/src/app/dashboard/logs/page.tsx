@@ -40,7 +40,7 @@ export default function LogsPage() {
         </div>
       )}
 
-      <div className="bg-[#1B2A4A] dark:bg-navy-800 rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-xl">
+      <div className="bg-white dark:bg-navy-800 rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-xl">
         
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-900/30 flex flex-wrap items-center gap-3 justify-between">
