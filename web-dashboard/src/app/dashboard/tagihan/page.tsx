@@ -376,18 +376,18 @@ export default function DaftarTagihanPage() {
       {/* Modal Lunas Tunai */}
       {selectedTagihan && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-800 rounded-2xl border border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-white/5 flex justify-between items-center">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-transparent">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Banknote className="w-5 h-5 text-emerald-400" />
                 Terima Pembayaran Tunai
               </h3>
-              <button onClick={() => setSelectedTagihan(null)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setSelectedTagihan(null)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6 space-y-4">
               <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center">
                 <p className="text-sm text-slate-400 mb-1">Nama Siswa</p>
-                <p className="font-bold text-white text-lg mb-2">{selectedTagihan.nama}</p>
+                <p className="font-bold text-slate-900 dark:text-white text-lg mb-2">{selectedTagihan.nama}</p>
                 <span className="px-3 py-1 bg-slate-700 text-slate-200 text-xs rounded-full font-medium mb-1">{selectedTagihan.keterangan}</span>
               </div>
 
@@ -399,7 +399,7 @@ export default function DaftarTagihanPage() {
                     type="number"
                     value={nominalDiterima}
                     onChange={(e) => setNominalDiterima(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white font-semibold focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                    className="w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                   />
                 </div>
                 <p className="text-xs text-slate-400 mt-2">
@@ -412,7 +412,7 @@ export default function DaftarTagihanPage() {
                 const sisa = selectedTagihan.sisa_tagihan - bayar;
                 return (
                   <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-sm text-center">
-                    <span className="text-slate-300">Sisa Tagihan Saat Ini: <strong className="text-white">{formatRupiah(selectedTagihan.sisa_tagihan)}</strong></span>
+                    <span className="text-slate-600 dark:text-slate-300">Sisa Tagihan Saat Ini: <strong className="text-slate-900 dark:text-white">{formatRupiah(selectedTagihan.sisa_tagihan)}</strong></span>
                     <br/>
                     <span className="text-slate-300">Sisa Tagihan Nanti: <strong className={sisa > 0 ? "text-rose-400" : "text-emerald-400"}>{formatRupiah(sisa > 0 ? sisa : 0)}</strong></span>
                   </div>
@@ -449,26 +449,26 @@ export default function DaftarTagihanPage() {
       {/* Modal Dispensasi */}
       {selectedDispensasi && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-800 rounded-2xl border border-white/10 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
             {/* Header Modal */}
-            <div className="p-5 border-b border-white/5 flex justify-between items-center bg-slate-900/50">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <div className="p-5 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Settings className="w-5 h-5 text-slate-400" />
                 Pengaturan Keringanan Biaya
               </h3>
               <button 
                 onClick={() => setSelectedDispensasi(null)}
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             {/* User Info */}
-            <div className="px-6 py-4 bg-slate-800 border-b border-white/5 flex justify-between items-center">
+            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-white/5 flex justify-between items-center">
               <div>
                 <p className="text-sm text-slate-400">Siswa</p>
-                <p className="font-bold text-white">{selectedDispensasi.nama} ({selectedDispensasi.kelas})</p>
+                <p className="font-bold text-slate-900 dark:text-white">{selectedDispensasi.nama} ({selectedDispensasi.kelas})</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-slate-400">Total Tagihan</p>
@@ -518,7 +518,7 @@ export default function DaftarTagihanPage() {
                   </div>
                   <div className="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
                     <p className="text-sm text-slate-400 leading-relaxed">
-                      Tagihan ini akan dipecah menjadi <span className="font-bold text-white">{cicilanCount}</span> sub-tagihan terpisah dengan nominal masing-masing sebesar <span className="font-bold text-blue-400">{formatRupiah(selectedDispensasi.sisa_tagihan / cicilanCount)}</span>. Siswa dapat mencicilnya satu per satu.
+                      Tagihan ini akan dipecah menjadi <span className="font-bold text-slate-900 dark:text-white">{cicilanCount}</span> sub-tagihan terpisah dengan nominal masing-masing sebesar <span className="font-bold text-blue-600 dark:text-blue-400">{formatRupiah(selectedDispensasi.sisa_tagihan / cicilanCount)}</span>. Siswa dapat mencicilnya satu per satu.
                     </p>
                   </div>
                 </div>
@@ -533,10 +533,10 @@ export default function DaftarTagihanPage() {
                           placeholder="Nominal Diskon"
                           value={nominalDiskon}
                           onChange={(e) => setNominalDiskon(e.target.value)}
-                          className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-500"
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         />
                       </div>
-                      <select className="w-24 px-3 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-semibold appearance-none">
+                      <select className="w-24 px-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-semibold appearance-none">
                         <option value="persen">%</option>
                         <option value="rupiah">Rp</option>
                       </select>
@@ -549,7 +549,7 @@ export default function DaftarTagihanPage() {
                       placeholder="Misal: Beasiswa Anak Berprestasi, Keringanan Yatim Piatu..."
                       value={keteranganDiskon}
                       onChange={(e) => setKeteranganDiskon(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none placeholder:text-slate-500"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     />
                   </div>
                 </div>
@@ -579,54 +579,54 @@ export default function DaftarTagihanPage() {
       {/* Modal Peringatan Massal */}
       {showPeringatanModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-800 rounded-2xl border border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-slate-900/50">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <MessageCircle className="w-5 h-5 text-emerald-400" />
                 Kirim Peringatan Massal
               </h3>
               <button 
                 onClick={() => setShowPeringatanModal(false)}
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             <div className="p-6">
-              <p className="text-slate-400 leading-relaxed mb-4 text-sm">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-4 text-sm">
                 Sistem akan mengirimkan pesan pengingat tagihan otomatis (via WhatsApp & Email) kepada 
-                <span className="font-bold text-white mx-1">
+                <span className="font-bold text-slate-900 dark:text-white mx-1">
                   {selectedRows.length}
                 </span> 
                 siswa yang Anda pilih. Anda dapat menyesuaikan template pesan di bawah ini:
               </p>
               
               <div className="mb-4">
-                <label className="block text-sm font-semibold text-slate-300 mb-2">Isi Pesan Peringatan</label>
+                <label className="block text-sm font-semibold text-slate-900 dark:text-slate-300 mb-2">Isi Pesan Peringatan</label>
                 <textarea 
                   rows={6}
                   value={pesanMassal}
                   onChange={(e) => setPesanMassal(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none text-sm placeholder:text-slate-500"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <p className="text-xs text-slate-500 mt-2">
-                  * Teks <code className="bg-slate-700 text-slate-200 px-1 py-0.5 rounded">[Nama Siswa]</code> akan diganti secara otomatis sesuai nama siswa saat pesan dikirim.
+                  * Teks <code className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 px-1 py-0.5 rounded">[Nama Siswa]</code> akan diganti secara otomatis sesuai nama siswa saat pesan dikirim.
                 </p>
               </div>
 
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-                <p className="text-xs text-amber-400 font-medium text-center">
+              <div className="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl">
+                <p className="text-xs text-amber-600 dark:text-amber-400 font-medium text-center">
                   Pastikan isi pesan sudah benar sebelum mengirim.
                 </p>
               </div>
             </div>
 
-            <div className="p-5 border-t border-white/5 bg-slate-900/50 flex justify-end gap-3 shrink-0">
+            <div className="p-5 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 shrink-0">
               <button 
                 type="button"
                 onClick={() => setShowPeringatanModal(false)}
-                className="px-5 py-2.5 rounded-xl text-slate-400 font-medium hover:bg-white/10 transition-colors text-sm"
+                className="px-5 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-100 dark:hover:bg-white/10 transition-colors text-sm"
               >
                 Batal
               </button>
@@ -644,7 +644,7 @@ export default function DaftarTagihanPage() {
       {/* Modal Paywall Premium */}
       {showPaywallModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-800 rounded-3xl border border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(234,179,8,0.15)] relative overflow-hidden animate-in zoom-in-95 duration-200 border border-amber-200/50 dark:border-amber-500/20">
             <div className="p-8 flex flex-col items-center relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-yellow-500/10 to-transparent"></div>
               
@@ -652,7 +652,7 @@ export default function DaftarTagihanPage() {
                 <Crown className="w-8 h-8" />
               </div>
               
-              <h3 className="text-2xl font-bold text-white text-center mb-3 relative z-10">Tingkatkan ke Premium</h3>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white text-center mb-3 relative z-10">Tingkatkan ke Premium</h3>
               
               <p className="text-slate-400 text-center text-sm leading-relaxed mb-6 relative z-10">
                 Fitur WhatsApp Gateway otomatis hanya tersedia untuk Paket Premium. Hemat waktu Anda dari menagih manual satu per satu. Biarkan sistem yang bekerja untuk Anda.
@@ -693,7 +693,7 @@ export default function DaftarTagihanPage() {
                 </button>
                 <button 
                   onClick={() => setShowPaywallModal(false)}
-                  className="w-full py-3 rounded-xl font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                  className="w-full py-3 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                 >
                   Mungkin Nanti
                 </button>
