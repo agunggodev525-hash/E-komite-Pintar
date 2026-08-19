@@ -25,6 +25,7 @@ const sekolahPaketRoutes = require('./routes/sekolah-paket.routes');
 const siswaRoutes = require('./routes/siswa.routes');
 const pengeluaranRoutes = require('./routes/pengeluaran.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
+const notifikasiRoutes = require('./routes/notifikasi.routes');
 
 const app = express();
 
@@ -81,6 +82,7 @@ app.use('/api/v1/superadmin', superadminRoutes);
 app.use('/api/v1/siswa', siswaRoutes);
 app.use('/api/v1/pengeluaran', pengeluaranRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/notifikasi', notifikasiRoutes);
 
 // Webhook dipisah dari v1 untuk memudahkan integrasi eksternal
 app.use('/api/payment', webhookRoutes);

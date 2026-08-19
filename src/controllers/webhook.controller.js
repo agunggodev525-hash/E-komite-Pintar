@@ -4,6 +4,8 @@
 
 const crypto = require('crypto');
 const prisma = require('../config/database');
+const { writeLog } = require('../utils/auditLog');
+const { sendNotificationToSekolahAdmins } = require('../services/notification.service');
 
 /**
  * Handle Payment Gateway Webhook
@@ -108,6 +110,18 @@ const handleWebhook = async (req, res, next) => {
             nominal_dibayar: finalAmount
           },
         });
+        
+        // Ambil info siswa untuk notifikasi
+        const siswa = await prisma.siswa.findUnique({ where: { id: pembayaran.siswa_id } });
+        if (siswa) {
+          await sendNotificationToSekolahAdmins(
+            pembayaran.sekolah_id || tagihan.sekolah_id,
+            'Pembayaran Sukses',
+            `Siswa ${siswa.nama_siswa} telah melunasi tagihan ${tagihan.judul} sejumlah Rp${finalAmount.toLocaleString('id-ID')} melalui Midtrans.`,
+            'SUCCESS'
+          );
+        }
+
         console.log(`✅ Webhook: Pembayaran ${identifier} berhasil diupdate menjadi LUNAS.`);
       }
     }

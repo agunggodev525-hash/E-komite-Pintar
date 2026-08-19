@@ -1,31 +1,58 @@
 // ============================================
-// Service: Notification Service (FCM Mock)
+// Service: Notification 
 // ============================================
 
-/**
- * Simulasi pengiriman notifikasi Push (FCM).
- * Jika integrasi Firebase sebenarnya ingin digunakan, ganti dengan firebase-admin SDK.
- */
-const sendPushNotification = async (tokens, title, body, data = {}) => {
-  if (!tokens || tokens.length === 0) {
-    console.log('⚠️ [NotificationService] Tidak ada token FCM tujuan.');
-    return;
-  }
+const prisma = require('../config/database');
 
-  // MOCK LOGIC: Hanya nge-log ke console
-  console.log(`\n🚀 [NotificationService] Mengirim Push Notification...`);
-  console.log(`- Kepada ${tokens.length} perangkat (Tokens: ${tokens.join(', ')})`);
-  console.log(`- Title : ${title}`);
-  console.log(`- Body  : ${body}`);
-  console.log(`- Data  : ${JSON.stringify(data)}\n`);
-  
-  // Return dummy success
-  return {
-    success: true,
-    message: 'Mock notification sent successfully'
-  };
+/**
+ * Mengirim notifikasi ke satu pengguna tertentu
+ */
+const sendNotificationToUser = async (userId, judul, pesan, tipe = 'INFO') => {
+  try {
+    return await prisma.notifikasi.create({
+      data: {
+        user_id: userId,
+        judul,
+        pesan,
+        tipe
+      }
+    });
+  } catch (error) {
+    console.error('[NotificationService] Gagal mengirim ke user:', error);
+    return null;
+  }
+};
+
+/**
+ * Mengirim notifikasi ke semua ADMIN_KOMITE pada sebuah sekolah
+ */
+const sendNotificationToSekolahAdmins = async (sekolahId, judul, pesan, tipe = 'INFO') => {
+  try {
+    const admins = await prisma.user.findMany({
+      where: {
+        sekolah_id: sekolahId,
+        role: 'ADMIN_KOMITE'
+      }
+    });
+
+    const notifData = admins.map(admin => ({
+      user_id: admin.id,
+      judul,
+      pesan,
+      tipe
+    }));
+
+    if (notifData.length > 0) {
+      await prisma.notifikasi.createMany({
+        data: notifData
+      });
+    }
+  } catch (error) {
+    console.error('[NotificationService] Gagal mengirim ke admin sekolah:', error);
+  }
 };
 
 module.exports = {
-  sendPushNotification
+  sendNotificationToUser,
+  sendNotificationToSekolahAdmins
 };

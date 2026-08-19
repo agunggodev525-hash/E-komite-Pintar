@@ -66,6 +66,7 @@ model User {
   voting_suara VotingSuara[]
   system_logs  SystemLog[]
   pengeluaran  Pengeluaran[]
+  notifikasi   Notifikasi[]
 
   @@index([sekolah_id])
   @@index([role])
@@ -268,4 +269,20 @@ model SaaSTransaction {
   @@index([status])
   @@index([tanggal])
   @@map("saas_transaction")
+}
+
+model Notifikasi {
+  id         String   @id @default(uuid())
+  user_id    String
+  judul      String
+  pesan      String
+  tipe       String   @default("INFO") // INFO, SUCCESS, WARNING, ERROR
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([is_read])
+  @@map("notifikasi")
 }
