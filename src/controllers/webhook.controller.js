@@ -33,8 +33,43 @@ const handleWebhook = async (req, res, next) => {
       }
     }
 
-    // 3. Update status pembayaran jika LUNAS
+    // 3. Pengecekan Transaksi SaaS vs Pembayaran Tagihan Siswa
+    const isSaaSTransaction = identifier.startsWith('SAAS-');
+
     if (['settlement', 'paid', 'success'].includes(currentStatus)) {
+      if (isSaaSTransaction) {
+        // --- LOGIKA TRANSAKSI SAAS ---
+        const saasTxId = identifier.replace('SAAS-', '');
+        const saasTx = await prisma.saaSTransaction.findUnique({
+          where: { id: saasTxId }
+        });
+
+        // Alternatif jika identifier adalah payment_token
+        const saasTxByToken = await prisma.saaSTransaction.findFirst({
+          where: { payment_token: identifier }
+        });
+
+        const actualSaaSTx = saasTx || saasTxByToken;
+
+        if (actualSaaSTx && actualSaaSTx.status !== 'LUNAS') {
+          await prisma.saaSTransaction.update({
+            where: { id: actualSaaSTx.id },
+            data: { status: 'LUNAS', tanggal: new Date() }
+          });
+
+          // Aktifkan sekolah dan update paket_id
+          await prisma.sekolah.update({
+            where: { id: actualSaaSTx.sekolah_id },
+            data: {
+              status: 'AKTIF',
+              paket_id: actualSaaSTx.paket_id
+            }
+          });
+
+          console.log(`✅ Webhook: Transaksi SaaS ${identifier} berhasil diupdate menjadi LUNAS. Sekolah diaktifkan.`);
+        }
+      } else {
+        // --- LOGIKA PEMBAYARAN TAGIHAN SISWA ---
       const pembayaran = await prisma.pembayaran.findFirst({
         where: { payment_token: identifier },
       });
@@ -53,7 +88,20 @@ const handleWebhook = async (req, res, next) => {
         console.log(`✅ Webhook: Pembayaran ${identifier} berhasil diupdate menjadi LUNAS.`);
       }
     } else if (['expire', 'cancel', 'deny', 'failed'].includes(currentStatus)) {
-      // Opsi untuk menandai sebagai GAGAL jika expired/failed
+      if (isSaaSTransaction) {
+        const saasTxId = identifier.replace('SAAS-', '');
+        const saasTxByToken = await prisma.saaSTransaction.findFirst({ where: { payment_token: identifier } });
+        const actualSaaSTx = await prisma.saaSTransaction.findUnique({ where: { id: saasTxId } }).catch(() => null) || saasTxByToken;
+
+        if (actualSaaSTx && actualSaaSTx.status === 'PENDING') {
+          await prisma.saaSTransaction.update({
+            where: { id: actualSaaSTx.id },
+            data: { status: 'GAGAL' }
+          });
+          console.log(`❌ Webhook: Transaksi SaaS ${identifier} diupdate menjadi GAGAL.`);
+        }
+      } else {
+        // Opsi untuk menandai sebagai GAGAL jika expired/failed
       const pembayaran = await prisma.pembayaran.findFirst({
         where: { payment_token: identifier },
       });
@@ -68,8 +116,9 @@ const handleWebhook = async (req, res, next) => {
         console.log(`❌ Webhook: Pembayaran ${identifier} diupdate menjadi GAGAL.`);
       }
     }
+  }
 
-    // 4. Selalu kembalikan 200 OK agar PG tidak melakukan retry
+  // 4. Selalu kembalikan 200 OK agar PG tidak melakukan retry
     return res.status(200).json({ success: true, message: 'Webhook received' });
   } catch (error) {
     console.error('❌ Webhook error:', error);

@@ -9,7 +9,8 @@ import {
   PieChart,
   Banknote,
   Vote,
-  CreditCard
+  CreditCard,
+  Package
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -45,6 +46,7 @@ const navigationConfig: Record<string, NavItem[]> = {
     { label: "Catat Pengeluaran", href: "/dashboard/pengeluaran", icon: <Banknote className="w-5 h-5" />, description: "Catat kas keluar" },
     { label: "Kelola E-Voting", href: "/dashboard/voting", icon: <Vote className="w-5 h-5" />, description: "Pemilihan online" },
     { label: "Laporan Kas", href: "/dashboard/laporan", icon: <PieChart className="w-5 h-5" />, description: "Laporan keuangan" },
+    { label: "Langganan SaaS", href: "/dashboard/langganan", icon: <Package className="w-5 h-5" />, description: "Kelola paket berlangganan" },
   ],
   SEKOLAH: [
     { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, description: "Ringkasan data" },

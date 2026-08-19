@@ -256,8 +256,9 @@ model SaaSTransaction {
   sekolah_id String
   paket_id   String
   nominal    Float
-  status     String   @default("PENDING") // PENDING, LUNAS, GAGAL
-  tanggal    DateTime @default(now())
+  status        String   @default("PENDING") // PENDING, LUNAS, GAGAL
+  payment_token String?
+  tanggal       DateTime @default(now())
 
   sekolah Sekolah   @relation(fields: [sekolah_id], references: [id], onDelete: Cascade)
   paket   PaketSaaS @relation(fields: [paket_id], references: [id], onDelete: Cascade)
