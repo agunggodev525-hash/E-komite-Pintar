@@ -29,7 +29,8 @@ const getAvailablePaket = async (req, res, next) => {
     return successResponse(res, 'Berhasil mengambil daftar paket SaaS', {
       tersedia: paket,
       langganan_saat_ini: sekolah?.paket || null,
-      status_sekolah: sekolah?.status || 'NONAKTIF'
+      status_sekolah: sekolah?.status || 'NONAKTIF',
+      langganan_berakhir: sekolah?.langganan_berakhir || null
     });
   } catch (error) {
     next(error);

@@ -18,7 +18,17 @@ export default function LanggananSaaSPage() {
   const tersedia = data?.tersedia || [];
   const langgananSaatIni = data?.langganan_saat_ini;
   const statusSekolah = data?.status_sekolah || "NONAKTIF";
+  const langgananBerakhir = data?.langganan_berakhir;
   const riwayat = riwayatData || [];
+
+  // Hitung sisa hari
+  let sisaHari = -1;
+  if (langgananBerakhir) {
+    const expiryDate = new Date(langgananBerakhir);
+    const today = new Date();
+    const diffTime = expiryDate.getTime() - today.getTime();
+    sisaHari = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
 
   const handleCheckout = async (paketId: string) => {
     try {
@@ -67,6 +77,18 @@ export default function LanggananSaaSPage() {
         </div>
       )}
 
+      {statusSekolah === "AKTIF" && sisaHari >= 0 && sisaHari <= 7 && (
+        <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-xl flex items-start gap-3 animate-pulse">
+          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+          <div>
+            <h3 className="font-bold text-amber-800 dark:text-amber-300">Peringatan: Langganan Hampir Berakhir</h3>
+            <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">
+              Masa aktif langganan Anda tersisa <strong>{sisaHari} hari</strong> lagi. Segera lakukan perpanjangan agar akses sistem tidak terputus secara otomatis.
+            </p>
+          </div>
+        </div>
+      )}
+
       {langgananSaatIni && statusSekolah === "AKTIF" && (
         <div className="mb-8 p-6 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl shadow-lg text-white">
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
@@ -83,6 +105,12 @@ export default function LanggananSaaSPage() {
               <span className="font-bold text-white tracking-wide">AKTIF</span>
             </div>
           </div>
+          {langgananBerakhir && (
+            <div className="mt-4 pt-4 border-t border-white/20 flex items-center justify-between">
+              <span className="text-emerald-100 text-sm">Berakhir pada:</span>
+              <span className="text-white font-bold">{new Date(langgananBerakhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            </div>
+          )}
         </div>
       )}
 

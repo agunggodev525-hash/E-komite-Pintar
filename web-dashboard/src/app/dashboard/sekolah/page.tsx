@@ -238,6 +238,7 @@ export default function SekolahPage() {
                 <th className="px-6 py-5">Nama Sekolah</th>
                 <th className="px-6 py-5">Kontak Admin</th>
                 <th className="px-6 py-5">Paket</th>
+                <th className="px-6 py-5">Berakhir Pada</th>
                 <th className="px-6 py-5">Status</th>
                 <th className="px-6 py-5 text-right">Aksi</th>
               </tr>
@@ -291,6 +292,15 @@ export default function SekolahPage() {
                           <span className="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 rounded-full px-3 py-1 text-xs font-semibold shadow-[0_0_10px_rgba(100,116,139,0.15)]">
                             {sk.paket_berlangganan || 'Tidak Diketahui'}
                           </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        {sk.langganan_berakhir ? (
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-md ${new Date(sk.langganan_berakhir) < new Date() ? 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
+                            {new Date(sk.langganan_berakhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4">

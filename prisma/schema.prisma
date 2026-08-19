@@ -21,11 +21,12 @@ model Sekolah {
   id                 String   @id @default(uuid())
   nama_sekolah       String
   alamat             String?
-  status             String   @default("AKTIF") // AKTIF / NONAKTIF
-  paket_berlangganan String   @default("BASIC") // BASIC, PREMIUM, ENTERPRISE
+  status             String    @default("AKTIF") // AKTIF / NONAKTIF
+  paket_berlangganan String    @default("BASIC") // BASIC, PREMIUM, ENTERPRISE
   paket_id           String?
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  langganan_berakhir DateTime?
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
 
   paket             PaketSaaS?        @relation(fields: [paket_id], references: [id], onDelete: SetNull)
   users             User[]

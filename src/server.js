@@ -5,6 +5,7 @@
 const app = require('./app');
 const prisma = require('./config/database');
 const { startScheduler } = require('./jobs/reminder.job');
+const { startExpiryCron } = require('./cron/expiry.job');
 
 const PORT = process.env.PORT || 3000;
 
@@ -16,6 +17,9 @@ async function main() {
 
     // Nyalakan Robot Cron Job Reminder WA
     startScheduler();
+
+    // Nyalakan Robot Cron Job Expiry Langganan SaaS
+    startExpiryCron();
 
     // Start server
     app.listen(PORT, '0.0.0.0', () => {

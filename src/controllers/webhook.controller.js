@@ -52,17 +52,40 @@ const handleWebhook = async (req, res, next) => {
         const actualSaaSTx = saasTx || saasTxByToken;
 
         if (actualSaaSTx && actualSaaSTx.status !== 'LUNAS') {
+          // Ambil info durasi dari paketSaaS
+          const paketSaaS = await prisma.paketSaaS.findUnique({
+            where: { id: actualSaaSTx.paket_id }
+          });
+          
+          let durationDays = 30; // default 1 bulan
+          if (paketSaaS && paketSaaS.durasi.toLowerCase().includes('tahun')) {
+            durationDays = 365;
+          }
+
+          // Ambil data sekolah untuk melihat langganan_berakhir saat ini
+          const currentSekolah = await prisma.sekolah.findUnique({
+            where: { id: actualSaaSTx.sekolah_id }
+          });
+
+          // Hitung batas waktu baru: jika masih aktif, tambah dari langganan_berakhir. Jika sudah mati, dari hari ini.
+          let newExpiryDate = new Date();
+          if (currentSekolah?.langganan_berakhir && currentSekolah.langganan_berakhir > new Date()) {
+            newExpiryDate = new Date(currentSekolah.langganan_berakhir);
+          }
+          newExpiryDate.setDate(newExpiryDate.getDate() + durationDays);
+
           await prisma.saaSTransaction.update({
             where: { id: actualSaaSTx.id },
             data: { status: 'LUNAS', tanggal: new Date() }
           });
 
-          // Aktifkan sekolah dan update paket_id
+          // Aktifkan sekolah dan update paket_id serta langganan_berakhir
           await prisma.sekolah.update({
             where: { id: actualSaaSTx.sekolah_id },
             data: {
               status: 'AKTIF',
-              paket_id: actualSaaSTx.paket_id
+              paket_id: actualSaaSTx.paket_id,
+              langganan_berakhir: newExpiryDate
             }
           });
 
