@@ -33,7 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ekomitepintar.model.Tagihan
-import com.ekomitepintar.model.TagihanSummary
 import com.ekomitepintar.ui.components.BottomNavBar
 import com.ekomitepintar.ui.components.shimmerEffect
 import com.ekomitepintar.ui.navigation.Routes
