@@ -20,6 +20,9 @@ export default function SekolahPage() {
   const sekolahList = sekolahListResponse || [];
   const paketList = paketListResponse || [];
   
+  // Optimistic UI state for toggle status
+  const [optimisticStatus, setOptimisticStatus] = useState<Record<string, string>>({});
+
   const isLoading = (!sekolahListResponse && !sekolahError) || (!paketListResponse && !paketError);
   const errorMsg = (sekolahError || paketError) ? "Terjadi kesalahan sistem." : "";
 
@@ -84,6 +87,10 @@ export default function SekolahPage() {
   };
 
   const toggleStatus = async (id: string, currentStatus: string) => {
+    // Terapkan Optimistic UI
+    const newStatus = currentStatus === 'AKTIF' ? 'NONAKTIF' : 'AKTIF';
+    setOptimisticStatus(prev => ({ ...prev, [id]: newStatus }));
+
     try {
       const res = await apiFetch(`/superadmin/tenants/${id}/status`, {
         method: "PATCH"
@@ -91,11 +98,24 @@ export default function SekolahPage() {
 
       if (!res.success) {
         alert("Gagal mengubah status tenant");
+        // Revert on failure
+        setOptimisticStatus(prev => {
+          const newState = { ...prev };
+          delete newState[id];
+          return newState;
+        });
       } else {
         loadData();
       }
     } catch (error) {
       console.error(error);
+      alert("Terjadi kesalahan jaringan.");
+      // Revert on failure
+      setOptimisticStatus(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
     }
   }
 
@@ -275,13 +295,13 @@ export default function SekolahPage() {
                       </td>
                       <td className="px-6 py-4">
                         <button 
-                          onClick={() => toggleStatus(sk.id, sk.status)}
+                          onClick={() => toggleStatus(sk.id, optimisticStatus[sk.id] || sk.status)}
                           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900 ${
-                            sk.status === "AKTIF" ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
+                            (optimisticStatus[sk.id] || sk.status) === "AKTIF" ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
                           }`}
                         >
                           <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            sk.status === "AKTIF" ? "translate-x-6" : "translate-x-1"
+                            (optimisticStatus[sk.id] || sk.status) === "AKTIF" ? "translate-x-6" : "translate-x-1"
                           }`} />
                         </button>
                       </td>
@@ -301,7 +321,9 @@ export default function SekolahPage() {
                             <button 
                               onClick={() => {
                                 setSelectedSekolah(sk);
-                                setNewPackage(sk.paket_id || sk.paket_berlangganan);
+                                // Ensure valid initial value matching options
+                                const validPackage = paketList.find((p: any) => p.id === sk.paket_id);
+                                setNewPackage(validPackage ? validPackage.id : (paketList.length > 0 ? paketList[0].id : ""));
                                 setIsEditPackageModalOpen(true);
                               }}
                               title="Ubah Paket"
@@ -577,7 +599,7 @@ export default function SekolahPage() {
               </button>
               <button 
                 onClick={handleUpdatePackage}
-                disabled={isSubmitting || newPackage === selectedSekolah.paket_berlangganan}
+                disabled={isSubmitting || !newPackage}
                 className="px-6 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(255,193,7,0.3)] hover:shadow-[0_0_25px_rgba(255,193,7,0.5)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isSubmitting ? (
