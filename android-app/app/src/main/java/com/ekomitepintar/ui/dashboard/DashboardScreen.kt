@@ -61,6 +61,13 @@ fun DashboardScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { error ->
+            snackbarHostState.showSnackbar(message = error)
+            viewModel.clearError()
+        }
+    }
+
     LaunchedEffect(uiState.checkoutUrl) {
         uiState.checkoutUrl?.let { url ->
             val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
@@ -248,7 +255,12 @@ fun DashboardScreen(
                                             tagihan = pendingTagihan,
                                             onBayarClicked = { uiState.selectedAnak?.id?.let { viewModel.onBayarClicked(pendingTagihan.id, it) } }
                                         )
-                                    } else if (uiState.errorMessage == null) {
+                                    } else if (uiState.errorMessage != null) {
+                                        ErrorBillCard(
+                                            errorMessage = uiState.errorMessage,
+                                            onRetry = { uiState.selectedAnak?.id?.let { viewModel.onRefresh(it) } }
+                                        )
+                                    } else {
                                         NoUrgentBillCard()
                                     }
                                 }
@@ -691,6 +703,35 @@ fun NoUrgentBillCard() {
             Spacer(modifier = Modifier.height(12.dp))
             Text(text = "Semua Lunas!", style = MaterialTheme.typography.titleMedium, color = Slate800, fontWeight = FontWeight.Bold)
             Text(text = "Tidak ada tagihan yang mendesak saat ini.", style = MaterialTheme.typography.bodySmall, color = Slate500)
+        }
+    }
+}
+
+@Composable
+fun ErrorBillCard(errorMessage: String, onRetry: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = CardWhite),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(Icons.Filled.ErrorOutline, contentDescription = null, tint = Rose600, modifier = Modifier.size(48.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = "Gagal Memuat Data", style = MaterialTheme.typography.titleMedium, color = Slate800, fontWeight = FontWeight.Bold)
+            Text(text = errorMessage, style = MaterialTheme.typography.bodySmall, color = Slate500, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors(containerColor = Rose600),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Coba Lagi")
+            }
         }
     }
 }
