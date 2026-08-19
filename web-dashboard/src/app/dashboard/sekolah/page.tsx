@@ -30,6 +30,7 @@ export default function SekolahPage() {
   const [newPackage, setNewPackage] = useState("BASIC");
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     nama_sekolah: "",
     alamat: "",
@@ -84,20 +85,16 @@ export default function SekolahPage() {
 
   const toggleStatus = async (id: string, currentStatus: string) => {
     try {
-      // Optimistic UI update
-      setSekolahList(prev => prev.map(s => s.id === id ? { ...s, status: currentStatus === "AKTIF" ? "NONAKTIF" : "AKTIF" } : s));
-      
       const res = await apiFetch(`/superadmin/tenants/${id}/status`, {
         method: "PATCH"
       });
 
       if (!res.success) {
-        // Revert if failed
-        setSekolahList(prev => prev.map(s => s.id === id ? { ...s, status: currentStatus } : s));
         alert("Gagal mengubah status tenant");
+      } else {
+        loadData();
       }
     } catch (error) {
-      setSekolahList(prev => prev.map(s => s.id === id ? { ...s, status: currentStatus } : s));
       console.error(error);
     }
   }
@@ -596,12 +593,12 @@ export default function SekolahPage() {
           </div>
         </div>
       )}
-      {(tenantsError || paketError) && (
+      {(sekolahError || paketError) && (
         <div className="bg-rose-50 border border-rose-200 text-rose-600 p-4 rounded-xl mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div>
             <p className="font-bold">Gagal memuat data</p>
-            <p className="text-sm">{tenantsError?.message || paketError?.message}</p>
+            <p className="text-sm">{sekolahError?.message || paketError?.message}</p>
           </div>
         </div>
       )}
