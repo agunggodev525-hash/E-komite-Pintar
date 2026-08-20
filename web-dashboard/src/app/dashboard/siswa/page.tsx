@@ -75,7 +75,7 @@ export default function SiswaPage() {
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedIds(siswa.map(s => s.id));
+      setSelectedIds(siswa.map((s: any) => s.id));
     } else {
       setSelectedIds([]);
     }
@@ -93,7 +93,7 @@ export default function SiswaPage() {
     if (selectedIds.length === 0) return;
     if (!confirm(`Yakin ingin menghapus ${selectedIds.length} data siswa terpilih? Akun orang tua akan tetap ada namun datanya tidak terkait lagi.`)) return;
     
-    setIsLoading(true);
+    setIsSubmitting(true);
     try {
       // Menghapus sekaligus menggunakan Promise.all (berjalan di background paralel)
       await Promise.all(selectedIds.map(id => apiFetch(`/siswa/${id}`, { method: "DELETE" })));
@@ -104,6 +104,8 @@ export default function SiswaPage() {
       console.error(err);
       toast.error(err.message || "Gagal menghapus beberapa data siswa");
       loadSiswa();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -275,7 +277,7 @@ export default function SiswaPage() {
   }
 
   // List of unique kelas for filter
-  const uniqueKelas = Array.from(new Set(siswa.map(s => s.kelas))).filter(Boolean);
+  const uniqueKelas = Array.from(new Set(siswa.map((s: any) => s.kelas))).filter(Boolean);
 
   return (
     <DashboardLayout
@@ -294,7 +296,7 @@ export default function SiswaPage() {
                 placeholder="Cari nama / NISN..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all outline-none"
+                className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 shadow-sm rounded-lg text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all outline-none"
               />
             </div>
             
@@ -305,11 +307,11 @@ export default function SiswaPage() {
               <select 
                 value={kelasFilter}
                 onChange={(e) => setKelasFilter(e.target.value)}
-                className="pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-gold-400 appearance-none cursor-pointer w-full sm:w-40"
+                className="pl-9 pr-8 py-2 bg-white border border-slate-300 shadow-sm rounded-lg text-sm text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-400 appearance-none cursor-pointer w-full sm:w-40 transition-all"
               >
                 <option value="">Semua Kelas</option>
                 {uniqueKelas.map(k => (
-                  <option key={k as string} value={k as string}>{k}</option>
+                  <option key={k as string} value={k as string}>{String(k)}</option>
                 ))}
               </select>
             </div>
@@ -327,14 +329,14 @@ export default function SiswaPage() {
             )}
             <button 
               onClick={() => setIsImportModalOpen(true)}
-              className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-900 text-slate-700 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
             >
               <FileSpreadsheet className="w-4 h-4" />
               <span>Import Excel</span>
             </button>
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto px-4 py-2 bg-gold-400 hover:bg-gold-500 text-slate-900 text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto px-4 py-2 bg-gold-400 hover:bg-gold-500 hover:shadow-md text-slate-900 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm hover:-translate-y-0.5"
             >
               <UserPlus className="w-4 h-4" />
               <span>Tambah Siswa</span>
@@ -350,7 +352,7 @@ export default function SiswaPage() {
                 <th scope="col" className="px-6 py-4 font-semibold w-12">
                   <input 
                     type="checkbox" 
-                    className="rounded border-slate-300 text-gold-500 focus:ring-gold-500 cursor-pointer w-4 h-4"
+                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 accent-blue-600 bg-white"
                     checked={siswa.length > 0 && selectedIds.length === siswa.length}
                     onChange={handleSelectAll}
                     title="Pilih Semua"
@@ -390,18 +392,18 @@ export default function SiswaPage() {
                   </td>
                 </tr>
               ) : (
-                siswa.map((s) => (
+                siswa.map((s: any) => (
                   <tr key={s.id} className={`hover:bg-slate-50/50 transition-colors ${selectedIds.includes(s.id) ? 'bg-blue-50/30' : 'bg-white'}`}>
                     <td className="px-6 py-4">
                       <input 
                         type="checkbox" 
-                        className="rounded border-slate-300 text-gold-500 focus:ring-gold-500 cursor-pointer w-4 h-4"
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 accent-blue-600 bg-white"
                         checked={selectedIds.includes(s.id)}
                         onChange={() => handleSelectRow(s.id)}
                       />
                     </td>
-                    <td className="px-6 py-4 text-slate-500 font-mono">{s.nisn}</td>
-                    <td className="px-6 py-4 font-medium text-slate-800">{toTitleCase(s.nama_siswa)}</td>
+                    <td className="px-6 py-4 text-slate-400 font-mono text-xs">{s.nisn}</td>
+                    <td className="px-6 py-4 font-semibold text-slate-900">{toTitleCase(s.nama_siswa)}</td>
                     <td className="px-6 py-4 text-slate-600">
                       <span className="px-2 py-1 bg-slate-100 rounded-md text-xs font-medium text-slate-600 border border-slate-200">
                         {s.kelas}
@@ -415,22 +417,22 @@ export default function SiswaPage() {
                       <div className="flex justify-end gap-2">
                         <button 
                           onClick={() => openEditModal(s)}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
-                          <Pencil className="w-4 h-4" />
+                          className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                          <Pencil className="w-4 h-4 stroke-[2]" />
                         </button>
                         <button 
                           onClick={() => handleResetPassword(s.id, s.orang_tua?.nama_lengkap || 'Orang Tua')}
-                          className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
+                          className="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
                           title="Reset Password Ortu"
                         >
-                          <Key className="w-4 h-4" />
+                          <Key className="w-4 h-4 stroke-[2]" />
                         </button>
                         <button 
                           onClick={() => handleDelete(s.id)}
-                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" 
+                          className="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" 
                           title="Hapus"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 stroke-[2]" />
                         </button>
                       </div>
                     </td>

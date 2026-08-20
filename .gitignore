@@ -39,3 +39,7 @@ android-app/build/
 /test-*.js
 /create-*.js
 /find-*.js
+
+# Firebase Credentials
+firebase-service-account.json
+android-app/app/google-services.json

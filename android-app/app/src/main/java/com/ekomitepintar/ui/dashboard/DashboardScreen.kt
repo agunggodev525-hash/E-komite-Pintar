@@ -41,6 +41,11 @@ import com.ekomitepintar.viewmodel.DashboardViewModel
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.util.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,6 +85,23 @@ fun DashboardScreen(
     LaunchedEffect(Unit) {
         delay(100)
         showContent = true
+    }
+
+    val context = LocalContext.current
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_REFRESH_TAGIHAN) {
+                    uiState.selectedAnak?.id?.let { viewModel.onRefresh(it) }
+                }
+            }
+        }
+        val filter = IntentFilter(com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_REFRESH_TAGIHAN)
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter)
+
+        onDispose {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
+        }
     }
 
     Scaffold(

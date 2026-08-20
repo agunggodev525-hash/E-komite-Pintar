@@ -136,6 +136,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         isLoading = false,
                         isLoginSuccess = true
                     )
+                    registerFcmToken()
                 },
                 onFailure = { exception ->
                     _uiState.value = _uiState.value.copy(
@@ -216,6 +217,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         isLoading = false,
                         isLoginSuccess = true
                     )
+                    registerFcmToken()
                 },
                 onFailure = { exception ->
                     _uiState.value = _uiState.value.copy(
@@ -233,5 +235,27 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             otpCode = "",
             errorMessage = null
         )
+    }
+
+    private fun registerFcmToken() {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            viewModelScope.launch {
+                try {
+                    val response = com.ekomitepintar.network.RetrofitClient.apiService.updateFcmToken(
+                        mapOf("fcm_token" to token)
+                    )
+                    if (!response.isSuccessful) {
+                        android.util.Log.e("FCM", "Failed to update FCM token to server")
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("FCM", "Error updating FCM token: ${e.message}")
+                }
+            }
+        }
     }
 }

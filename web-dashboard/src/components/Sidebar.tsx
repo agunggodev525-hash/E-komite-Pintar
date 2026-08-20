@@ -71,17 +71,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
               
-            const activeClasses = "bg-[#E6F2ED] dark:bg-cyan-neon/15 dark:border-l-4 dark:neon-border-cyan text-[#2C7A6B] dark:neon-text-cyan font-bold";
+            const activeClasses = "bg-[#E6F2ED] dark:bg-cyan-neon/15 border-l-4 border-[#2C7A6B] dark:border-cyan-400 text-[#2C7A6B] dark:text-cyan-400 font-bold rounded-r-xl rounded-l-none";
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group relative overflow-hidden ${
+                className={`flex items-center gap-3.5 px-4 py-3 text-sm font-medium transition-all duration-300 group relative overflow-hidden ${
                   isActive
                     ? activeClasses
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200"
+                    : "rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 {/* Background glow on hover for inactive */}
