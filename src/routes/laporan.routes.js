@@ -35,3 +35,17 @@ router.get(
 );
 
 module.exports = router;
+
+/**
+ * POST /api/v1/laporan/audit/:tipe/:id
+ * Menambah catatan audit untuk transaksi
+ * Akses: SUPER_ADMIN, ADMIN_KOMITE, SEKOLAH
+ */
+router.post(
+  '/audit/:tipe/:id',
+  authenticate,
+  authorize('ADMIN_KOMITE', 'SEKOLAH'),
+  laporanController.addAuditNote
+);
+
+module.exports = router;

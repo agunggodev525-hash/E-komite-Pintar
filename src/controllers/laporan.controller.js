@@ -14,96 +14,129 @@ const getKeuangan = async (req, res, next) => {
   try {
     const { bulan, tahun } = req.query;
 
-    // Base filter: pembayaran LUNAS atau DICICIL dari sekolah terkait
-    const whereClause = {
+    // Filter tanggal untuk periode saat ini
+    let startDate = null;
+    let endDate = null;
+    if (tahun) {
+      const year = parseInt(tahun);
+      const month = bulan && bulan !== 'semua' ? parseInt(bulan) : null;
+      startDate = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
+      endDate = month ? new Date(year, month, 0, 23, 59, 59, 999) : new Date(year, 11, 31, 23, 59, 59, 999);
+    }
+
+    const wherePembayaranCurrent = {
       status: { in: ['LUNAS', 'DICICIL'] },
       tagihan: { sekolah_id: req.user.sekolah_id }
     };
+    const wherePengeluaranCurrent = {
+      sekolah_id: req.user.sekolah_id
+    };
 
-    // Filter opsional berdasarkan bulan/tahun
-    if (tahun) {
-      const year = parseInt(tahun);
-      const month = bulan ? parseInt(bulan) : null;
-
-      const startDate = month
-        ? new Date(year, month - 1, 1)
-        : new Date(year, 0, 1);
-      const endDate = month
-        ? new Date(year, month, 0, 23, 59, 59, 999)
-        : new Date(year, 11, 31, 23, 59, 59, 999);
-
-      whereClause.tanggal_bayar = {
-        gte: startDate,
-        lte: endDate,
-      };
+    if (startDate) {
+      wherePembayaranCurrent.tanggal_bayar = { gte: startDate, lte: endDate };
+      wherePengeluaranCurrent.tanggal = { gte: startDate, lte: endDate };
     }
 
-    // 1. Hitung jumlah pembayaran lunas
-    const totalLunas = await prisma.pembayaran.count({
-      where: whereClause,
-    });
-
-    // 2. Ambil detail pembayaran lunas dengan nominal tagihan
+    // 1. Ambil data PEMASUKAN periode ini
     const pembayaranLunas = await prisma.pembayaran.findMany({
-      where: whereClause,
+      where: wherePembayaranCurrent,
       include: {
-        tagihan: {
-          select: {
-            id: true,
-            judul: true,
-            nominal: true,
-          },
-        },
-        siswa: {
-          select: {
-            id: true,
-            nama_siswa: true,
-            kelas: true,
-          },
-        },
+        tagihan: { select: { id: true, judul: true, nominal: true } },
+        siswa: { select: { id: true, nama_siswa: true, kelas: true } },
       },
-      orderBy: { tanggal_bayar: 'desc' },
+      orderBy: { tanggal_bayar: 'asc' },
     });
 
-    const transaksiList = pembayaranLunas.map((p) => {
-      const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
-      return {
-        id: p.id,
-        tanggal: p.tanggal_bayar,
-        siswa: p.siswa.nama_siswa,
-        kelas: p.siswa.kelas,
-        keterangan: p.tagihan.judul + (p.status === 'DICICIL' ? ' (Cicilan)' : ''),
-        nominal: Number(actualPaid),
-      };
-    });
+    const totalLunas = await prisma.pembayaran.count({ where: wherePembayaranCurrent });
 
-    // 3. Hitung total pemasukan dari nominal yang benar-benar dibayar
     const totalPemasukan = pembayaranLunas.reduce((sum, p) => {
       const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
       return sum + Number(actualPaid);
     }, 0);
 
-    // 4. Ringkasan per tagihan
-    const perTagihan = {};
-    pembayaranLunas.forEach((p) => {
-      const key = p.tagihan.id;
-      if (!perTagihan[key]) {
-        perTagihan[key] = {
-          tagihan_id: p.tagihan.id,
-          judul: p.tagihan.judul,
-          nominal_per_siswa: Number(p.tagihan.nominal),
-          jumlah_lunas: 0,
-          subtotal: 0,
-        };
-      }
+    const dataPemasukan = pembayaranLunas.map((p) => {
       const actualPaid = p.nominal_dibayar > 0 ? p.nominal_dibayar : (p.tagihan.nominal - p.nominal_diskon);
-      if (p.status === 'LUNAS') {
-        perTagihan[key].jumlah_lunas += 1;
-      }
-      perTagihan[key].subtotal += Number(actualPaid);
+      return {
+        id: p.id,
+        tipe: 'PEMASUKAN',
+        tanggal: p.tanggal_bayar,
+        siswa: p.siswa.nama_siswa,
+        kelas: p.siswa.kelas,
+        keterangan: p.tagihan.judul + (p.status === 'DICICIL' ? ' (Cicilan)' : ''),
+        nominal: Number(actualPaid),
+        is_flagged: p.is_flagged || false,
+        audit_note: p.audit_note || null
+      };
     });
 
-    // 5. Hitung total tagihan dan berapa persen sudah lunas
+    // 2. Ambil data PENGELUARAN periode ini
+    const pengeluaranList = await prisma.pengeluaran.findMany({
+      where: wherePengeluaranCurrent,
+      orderBy: { tanggal: 'asc' }
+    });
+
+    const totalPengeluaran = pengeluaranList.reduce((sum, p) => sum + Number(p.nominal), 0);
+
+    const dataPengeluaran = pengeluaranList.map((p) => ({
+      id: p.id,
+      tipe: 'PENGELUARAN',
+      tanggal: p.tanggal,
+      siswa: '-', // Tidak ada siswa
+      kelas: '-',
+      keterangan: p.keterangan,
+      nominal: Number(p.nominal),
+      is_flagged: p.is_flagged || false,
+      audit_note: p.audit_note || null
+    }));
+
+    // 3. Hitung SALDO AWAL (sebelum startDate)
+    let saldoAwal = 0;
+    if (startDate) {
+      const wherePembayaranPast = {
+        status: { in: ['LUNAS', 'DICICIL'] },
+        tagihan: { sekolah_id: req.user.sekolah_id },
+        tanggal_bayar: { lt: startDate }
+      };
+      const wherePengeluaranPast = {
+        sekolah_id: req.user.sekolah_id,
+        tanggal: { lt: startDate }
+      };
+
+      const pastPembayaran = await prisma.pembayaran.findMany({
+        where: wherePembayaranPast,
+        include: { tagihan: { select: { nominal: true } } }
+      });
+      const sumPastPembayaran = pastPembayaran.reduce((sum, p) => sum + (p.nominal_dibayar > 0 ? p.nominal_dibayar : p.tagihan.nominal - p.nominal_diskon), 0);
+
+      const pastPengeluaran = await prisma.pengeluaran.aggregate({
+        where: wherePengeluaranPast,
+        _sum: { nominal: true }
+      });
+      const sumPastPengeluaran = pastPengeluaran._sum.nominal || 0;
+
+      saldoAwal = sumPastPembayaran - sumPastPengeluaran;
+    }
+
+    // 4. Gabungkan dan urutkan Ascending untuk menghitung Saldo Berjalan
+    let arusKas = [...dataPemasukan, ...dataPengeluaran].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+
+    let runningBalance = saldoAwal;
+    arusKas = arusKas.map((item) => {
+      if (item.tipe === 'PEMASUKAN') {
+        runningBalance += item.nominal;
+      } else {
+        runningBalance -= item.nominal;
+      }
+      return {
+        ...item,
+        saldo_berjalan: runningBalance
+      };
+    });
+
+    // Urutkan kembali ke descending agar yg terbaru di atas
+    arusKas.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+    // 5. Statistik
     const totalSemuaTagihan = await prisma.tagihan.count({
       where: { sekolah_id: req.user.sekolah_id }
     });
@@ -111,33 +144,50 @@ const getKeuangan = async (req, res, next) => {
       where: { tagihan: { sekolah_id: req.user.sekolah_id } }
     });
 
-    // 6. Hitung Total Pengeluaran pada periode yang sama
-    const wherePengeluaran = {
-      sekolah_id: req.user.sekolah_id
-    };
-    
-    if (tahun) {
-      wherePengeluaran.tanggal = whereClause.tanggal_bayar; // reuse the same date filter
-    }
-
-    const pengeluaranList = await prisma.pengeluaran.findMany({
-      where: wherePengeluaran
-    });
-
-    const totalPengeluaran = pengeluaranList.reduce((sum, p) => sum + Number(p.nominal), 0);
+    // 6. Ringkasan Pertumbuhan (Sederhana)
     const sisaKas = totalPemasukan - totalPengeluaran;
+    let pertumbuhan = 0;
+    
+    if(startDate) {
+      const firstDayPrevMonth = new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1);
+      const lastDayPrevMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 0, 23, 59, 59, 999);
+      
+      const prevIn = await prisma.pembayaran.findMany({
+        where: {
+          status: { in: ['LUNAS', 'DICICIL'] },
+          tagihan: { sekolah_id: req.user.sekolah_id },
+          tanggal_bayar: { gte: firstDayPrevMonth, lte: lastDayPrevMonth }
+        },
+        include: { tagihan: { select: { nominal: true } } }
+      });
+      const sumPrevIn = prevIn.reduce((sum, p) => sum + (p.nominal_dibayar > 0 ? p.nominal_dibayar : p.tagihan.nominal - p.nominal_diskon), 0);
+      
+      const prevOut = await prisma.pengeluaran.aggregate({
+        where: { sekolah_id: req.user.sekolah_id, tanggal: { gte: firstDayPrevMonth, lte: lastDayPrevMonth } },
+        _sum: { nominal: true }
+      });
+      const sumPrevOut = prevOut._sum.nominal || 0;
+      
+      const prevSaldo = sumPrevIn - sumPrevOut;
+      if (prevSaldo > 0) {
+        pertumbuhan = ((sisaKas - prevSaldo) / prevSaldo) * 100;
+      } else if (prevSaldo < 0 && sisaKas > 0) {
+        pertumbuhan = 100;
+      }
+    }
 
     return successResponse(res, 'Laporan keuangan berhasil diambil.', {
       total_pemasukan: totalPemasukan,
       total_pengeluaran: totalPengeluaran,
+      saldo_awal: saldoAwal,
       sisa_kas: sisaKas,
+      pertumbuhan_persen: pertumbuhan.toFixed(1),
       total_pemasukan_formatted: `Rp ${totalPemasukan.toLocaleString('id-ID')}`,
       jumlah_transaksi_lunas: totalLunas,
       filter: {
         bulan: bulan || 'semua',
         tahun: tahun || 'semua',
       },
-      ringkasan_per_tagihan: Object.values(perTagihan),
       statistik: {
         total_tagihan_dibuat: totalSemuaTagihan,
         total_pembayaran: totalSemuaPembayaran,
@@ -146,7 +196,7 @@ const getKeuangan = async (req, res, next) => {
           ? `${((totalLunas / totalSemuaPembayaran) * 100).toFixed(1)}%`
           : '0%',
       },
-      detail_transaksi: transaksiList
+      detail_transaksi: arusKas
     });
   } catch (error) {
     next(error);
@@ -230,4 +280,34 @@ const getTransparansi = async (req, res, next) => {
   }
 };
 
-module.exports = { getKeuangan, getTransparansi };
+/**
+ * Tambah Catatan Audit pada Transaksi (Pemasukan/Pengeluaran)
+ * POST /api/v1/laporan/audit/:tipe/:id
+ * Akses: SUPER_ADMIN, ADMIN_KOMITE, SEKOLAH
+ */
+const addAuditNote = async (req, res, next) => {
+  try {
+    const { tipe, id } = req.params;
+    const { audit_note, is_flagged } = req.body;
+
+    if (tipe === 'pemasukan') {
+      const updated = await prisma.pembayaran.update({
+        where: { id },
+        data: { audit_note, is_flagged }
+      });
+      return successResponse(res, 'Catatan audit pemasukan disimpan.', updated);
+    } else if (tipe === 'pengeluaran') {
+      const updated = await prisma.pengeluaran.update({
+        where: { id },
+        data: { audit_note, is_flagged }
+      });
+      return successResponse(res, 'Catatan audit pengeluaran disimpan.', updated);
+    } else {
+      return res.status(400).json({ success: false, message: 'Tipe transaksi tidak valid.' });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getKeuangan, getTransparansi, addAuditNote };

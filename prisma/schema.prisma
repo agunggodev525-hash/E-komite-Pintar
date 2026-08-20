@@ -123,6 +123,8 @@ model Pembayaran {
   payment_token   String?
   nominal_dibayar Float     @default(0)
   nominal_diskon  Float     @default(0)
+  is_flagged      Boolean   @default(false)
+  audit_note      String?
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
 
@@ -242,6 +244,8 @@ model Pengeluaran {
   nota_url   String?
   admin_id   String
   sekolah_id String
+  is_flagged Boolean  @default(false)
+  audit_note String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
