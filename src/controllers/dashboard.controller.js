@@ -217,7 +217,126 @@ const getChartTrend = async (req, res, next) => {
   }
 };
 
+/**
+ * Mengambil ringkasan data Dashboard Kepala Sekolah
+ * GET /api/v1/dashboard/sekolah
+ */
+const getSekolahDashboard = async (req, res, next) => {
+  try {
+    const sekolah_id = req.user.sekolah_id;
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    // 1. Total Saldo Komite (Sepanjang waktu)
+    const pemasukanAll = await prisma.pembayaran.findMany({
+      where: { tagihan: { sekolah_id }, status: { in: ['LUNAS', 'DICICIL'] } },
+      include: { tagihan: { select: { nominal: true } } }
+    });
+    const totalPemasukanAll = pemasukanAll.reduce((sum, p) => sum + (p.nominal_dibayar > 0 ? p.nominal_dibayar : p.tagihan.nominal - (p.nominal_diskon || 0)), 0);
+
+    const pengeluaranAll = await prisma.pengeluaran.aggregate({
+      where: { sekolah_id },
+      _sum: { nominal: true }
+    });
+    const totalPengeluaranAll = pengeluaranAll._sum.nominal || 0;
+    const saldo = totalPemasukanAll - totalPengeluaranAll;
+
+    // Persentase pertumbuhan saldo (dibanding bulan lalu)
+    const firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastDayPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+
+    const pemasukanPrev = await prisma.pembayaran.findMany({
+      where: { tagihan: { sekolah_id }, status: { in: ['LUNAS', 'DICICIL'] }, tanggal_bayar: { lte: lastDayPrevMonth } },
+      include: { tagihan: { select: { nominal: true } } }
+    });
+    const totalPemasukanPrev = pemasukanPrev.reduce((sum, p) => sum + (p.nominal_dibayar > 0 ? p.nominal_dibayar : p.tagihan.nominal - (p.nominal_diskon || 0)), 0);
+    const pengeluaranPrev = await prisma.pengeluaran.aggregate({
+      where: { sekolah_id, tanggal: { lte: lastDayPrevMonth } },
+      _sum: { nominal: true }
+    });
+    const totalPengeluaranPrev = pengeluaranPrev._sum.nominal || 0;
+    const saldoPrev = totalPemasukanPrev - totalPengeluaranPrev;
+    
+    let pertumbuhanSaldo = 0;
+    if (saldoPrev > 0) {
+      pertumbuhanSaldo = ((saldo - saldoPrev) / saldoPrev) * 100;
+    }
+
+    // 2. Pemasukan & Pengeluaran Bulan Ini
+    const pemasukanBulanIni = await prisma.pembayaran.findMany({
+      where: { tagihan: { sekolah_id }, status: { in: ['LUNAS', 'DICICIL'] }, tanggal_bayar: { gte: firstDayOfMonth, lte: lastDayOfMonth } },
+      include: { tagihan: { select: { nominal: true } } }
+    });
+    const totalPemasukanBulanIni = pemasukanBulanIni.reduce((sum, p) => sum + (p.nominal_dibayar > 0 ? p.nominal_dibayar : p.tagihan.nominal - (p.nominal_diskon || 0)), 0);
+
+    const pengeluaranBulanIniAgg = await prisma.pengeluaran.aggregate({
+      where: { sekolah_id, tanggal: { gte: firstDayOfMonth, lte: lastDayOfMonth } },
+      _sum: { nominal: true }
+    });
+    const totalPengeluaranBulanIni = pengeluaranBulanIniAgg._sum.nominal || 0;
+
+    // Pertumbuhan pengeluaran dibanding bulan lalu (hanya dalam 1 bulan penuh)
+    const pengeluaranBulanLaluAgg = await prisma.pengeluaran.aggregate({
+      where: { sekolah_id, tanggal: { gte: firstDayPrevMonth, lte: lastDayPrevMonth } },
+      _sum: { nominal: true }
+    });
+    const totalPengeluaranBulanLalu = pengeluaranBulanLaluAgg._sum.nominal || 0;
+    let pertumbuhanPengeluaran = 0;
+    if (totalPengeluaranBulanLalu > 0) {
+      pertumbuhanPengeluaran = ((totalPengeluaranBulanIni - totalPengeluaranBulanLalu) / totalPengeluaranBulanLalu) * 100;
+    } else if (totalPengeluaranBulanIni > 0) {
+      pertumbuhanPengeluaran = 100;
+    }
+
+    // 3. Persentase Lunas Bulan Ini
+    let persentaseLunas = 0;
+    const totalPembayaranBulanIni = await prisma.pembayaran.count({
+      where: { tagihan: { sekolah_id }, created_at: { gte: firstDayOfMonth, lte: lastDayOfMonth } }
+    });
+    const lunasPembayaranBulanIni = await prisma.pembayaran.count({
+      where: { tagihan: { sekolah_id }, created_at: { gte: firstDayOfMonth, lte: lastDayOfMonth }, status: 'LUNAS' }
+    });
+    
+    if (totalPembayaranBulanIni > 0) {
+      persentaseLunas = (lunasPembayaranBulanIni / totalPembayaranBulanIni) * 100;
+    } else {
+      const allTagihan = await prisma.pembayaran.count({ where: { tagihan: { sekolah_id } } });
+      const allLunas = await prisma.pembayaran.count({ where: { tagihan: { sekolah_id }, status: 'LUNAS' } });
+      if (allTagihan > 0) persentaseLunas = (allLunas / allTagihan) * 100;
+    }
+
+    // 4. 5 Pengeluaran Terbesar Bulan Ini
+    const pengeluaranTerbesar = await prisma.pengeluaran.findMany({
+      where: { sekolah_id, tanggal: { gte: firstDayOfMonth, lte: lastDayOfMonth } },
+      orderBy: { nominal: 'desc' },
+      take: 5
+    });
+
+    const formattedPengeluaran = pengeluaranTerbesar.map(p => ({
+      id: p.id,
+      keterangan: p.keterangan,
+      nominal: p.nominal,
+      nota: !!p.nota_url
+    }));
+
+    return successResponse(res, 'Berhasil memuat data dashboard eksekutif', {
+      saldo,
+      pertumbuhanSaldo: pertumbuhanSaldo.toFixed(1),
+      totalPemasukanBulanIni,
+      totalPengeluaranBulanIni,
+      pertumbuhanPengeluaran: pertumbuhanPengeluaran.toFixed(1),
+      persentaseLunas: Math.round(persentaseLunas),
+      pengeluaranTerbesar: formattedPengeluaran
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAdminDashboard,
-  getChartTrend
+  getChartTrend,
+  getSekolahDashboard
 };

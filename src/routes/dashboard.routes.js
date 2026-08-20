@@ -29,4 +29,13 @@ router.get(
   dashboardController.getChartTrend
 );
 
+/**
+ * GET /api/v1/dashboard/sekolah
+ */
+router.get(
+  '/sekolah',
+  authorize('SEKOLAH'),
+  dashboardController.getSekolahDashboard
+);
+
 module.exports = router;
