@@ -13,6 +13,10 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
+  const handleGoogleLogin = () => {
+    setError("Fitur login dengan Google saat ini sedang dalam pengembangan.");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -205,6 +209,7 @@ export default function LoginPage() {
             <div>
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="w-full py-[14px] px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md"
               >
                 <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">
