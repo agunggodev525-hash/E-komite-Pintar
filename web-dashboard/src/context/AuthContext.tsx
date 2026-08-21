@@ -31,6 +31,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (accessToken: string) => Promise<void>;
   logout: () => void;
   impersonate: (token: string, user: User) => void;
   stopImpersonate: () => void;
@@ -112,6 +113,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [router]
   );
 
+  const loginWithGoogle = useCallback(
+    async (accessToken: string) => {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://e-komite-pintar.onrender.com/api/v1";
+
+      const response = await fetch(`${API_BASE}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Login dengan Google gagal");
+      }
+
+      const loginData = data.data;
+
+      // Hanya ADMIN_KOMITE dan SEKOLAH yang boleh akses dashboard web
+      const allowedRoles: UserRole[] = [
+        "SUPER_ADMIN",
+        "ADMIN_KOMITE",
+        "SEKOLAH",
+      ];
+      if (!allowedRoles.includes(loginData.user.role)) {
+        throw new Error(
+          `Dashboard web hanya untuk Admin dan Sekolah. Role Anda: ${loginData.user.role}. Silakan gunakan aplikasi Android.`
+        );
+      }
+
+      // Simpan ke state dan localStorage
+      setToken(loginData.token);
+      setUser(loginData.user);
+      localStorage.setItem("ekomite_token", loginData.token);
+      localStorage.setItem("ekomite_user", JSON.stringify(loginData.user));
+
+      router.push("/dashboard");
+    },
+    [router]
+  );
+
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
@@ -164,6 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isAuthenticated: !!token && !!user,
         login,
+        loginWithGoogle,
         logout,
         impersonate,
         stopImpersonate,

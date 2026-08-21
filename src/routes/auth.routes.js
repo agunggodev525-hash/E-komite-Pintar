@@ -12,6 +12,7 @@ const {
   requestOtp,
   verifyOtp,
   updateFcmToken,
+  googleLogin,
 } = require('../controllers/auth.controller');
 
 const router = express.Router();
@@ -80,6 +81,21 @@ router.post(
   ],
   validate,
   login
+);
+
+/**
+ * POST /api/v1/auth/google
+ * Login user via Google
+ */
+router.post(
+  '/google',
+  [
+    body('accessToken')
+      .notEmpty()
+      .withMessage('Token Google wajib diisi.'),
+  ],
+  validate,
+  googleLogin
 );
 
 // ============================================

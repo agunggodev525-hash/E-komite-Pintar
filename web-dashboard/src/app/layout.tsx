@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "react-hot-toast";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,7 +40,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID'}>
+            <AuthProvider>{children}</AuthProvider>
+          </GoogleOAuthProvider>
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>

@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff, Lock, Mail, Loader2, ArrowRight, ShieldCheck } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
-  const { login, isLoading: authLoading } = useAuth();
+  const { login, loginWithGoogle, isLoading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -13,9 +14,20 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const handleGoogleLogin = () => {
-    setError("Fitur login dengan Google saat ini sedang dalam pengembangan.");
-  };
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        await loginWithGoogle(tokenResponse.access_token);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Gagal login dengan Google.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: () => setError("Autentikasi Google dibatalkan atau gagal."),
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

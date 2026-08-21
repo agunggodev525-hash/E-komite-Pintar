@@ -9,6 +9,9 @@ const jwtConfig = require('../config/jwt');
 const { successResponse, errorResponse } = require('../utils/response');
 const { writeLog } = require('../utils/auditLog');
 const axios = require('axios');
+const { OAuth2Client } = require('google-auth-library');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID');
 
 // Penyimpanan sementara (In-Memory Map) untuk OTP
 // Format: Map<no_whatsapp, { otp: string, expiresAt: number }>
@@ -358,4 +361,105 @@ const updateFotoProfil = async (req, res) => {
   }
 };
 
-module.exports = { register, login, requestOtp, verifyOtp, updateFcmToken, updateFotoProfil };
+/**
+ * Login dengan Google
+ * POST /api/v1/auth/google
+ */
+const googleLogin = async (req, res, next) => {
+  try {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+      return errorResponse(res, 'Token Google wajib disertakan.', 400);
+    }
+
+    // Ambil data user dari Google menggunakan accessToken
+    const googleResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    
+    const payload = googleResponse.data;
+    const email = payload['email'];
+    const name = payload['name'];
+    const picture = payload['picture'];
+
+    // Cari user di database
+    let user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        sekolah: {
+          select: { paket_berlangganan: true }
+        }
+      }
+    });
+
+    // Jika belum ada, buat user baru
+    if (!user) {
+      // Buat password acak karena daftar via Google
+      const randomPassword = Math.random().toString(36).slice(-8);
+      const salt = await bcrypt.genSalt(12);
+      const password_hash = await bcrypt.hash(randomPassword, salt);
+
+      user = await prisma.user.create({
+        data: {
+          nama_lengkap: name,
+          email,
+          password_hash,
+          role: 'ORANG_TUA', // Default role
+          foto_profil: picture,
+          status: true,
+        },
+        include: {
+          sekolah: {
+            select: { paket_berlangganan: true }
+          }
+        }
+      });
+      
+      writeLog({
+        action: 'REGISTER_GOOGLE',
+        detail: `User baru mendaftar via Google: ${user.nama_lengkap} (${user.email})`,
+        userId: user.id,
+      });
+    }
+
+    // Cek status aktif
+    if (!user.status) {
+      return errorResponse(res, 'Akun Anda telah dinonaktifkan. Hubungi admin.', 403);
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      jwtConfig.secret,
+      { expiresIn: jwtConfig.expiresIn }
+    );
+
+    const userData = {
+      id: user.id,
+      nama_lengkap: user.nama_lengkap,
+      email: user.email,
+      no_whatsapp: user.no_whatsapp,
+      role: user.role,
+      status: user.status,
+      foto_profil: user.foto_profil,
+      paket: user.sekolah?.paket_berlangganan || 'BASIC',
+    };
+
+    writeLog({
+      action: 'LOGIN_GOOGLE',
+      detail: `${userData.nama_lengkap} (${userData.email}) berhasil login via Google`,
+      userId: user.id,
+      sekolahId: user.sekolah_id || null,
+    });
+
+    return successResponse(res, 'Login dengan Google berhasil.', { user: userData, token });
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    return res.status(500).json({ success: false, message: 'Autentikasi Google gagal.' });
+  }
+};
+
+module.exports = { register, login, requestOtp, verifyOtp, updateFcmToken, updateFotoProfil, googleLogin };
