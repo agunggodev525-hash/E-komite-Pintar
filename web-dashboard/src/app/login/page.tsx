@@ -221,7 +221,7 @@ export default function LoginPage() {
             <div>
               <button
                 type="button"
-                onClick={handleGoogleLogin}
+                onClick={() => handleGoogleLogin()}
                 className="w-full py-[14px] px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md"
               >
                 <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">

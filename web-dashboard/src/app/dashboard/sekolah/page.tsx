@@ -429,7 +429,7 @@ export default function SekolahPage() {
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none font-medium"
                       >
                         {paketList.length === 0 && <option value="">Memuat paket...</option>}
-                        {paketList.map((p) => (
+                        {paketList.map((p: any) => (
                           <option key={p.id} value={p.id}>
                             📦 {p.nama_paket} - Rp {p.harga.toLocaleString('id-ID')}
                           </option>
@@ -457,7 +457,7 @@ export default function SekolahPage() {
 
                 {/* Dynamic UI: Info Paket */}
                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                  {paketList.filter(p => p.id === formData.paket_berlangganan).map(p => (
+                  {paketList.filter((p: any) => p.id === formData.paket_berlangganan).map((p: any) => (
                     <div key={p.id} className="p-4 bg-blue-500/10 rounded-xl shadow-inner border border-blue-500/20">
                       <p className="text-sm text-blue-600 dark:text-blue-300 font-medium leading-relaxed">
                         Maksimal Siswa: {p.batas_siswa === 999999 ? 'Tanpa Batas' : p.batas_siswa} Siswa. <br/>
@@ -585,7 +585,7 @@ export default function SekolahPage() {
                     onChange={(e) => setNewPackage(e.target.value)}
                     className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none appearance-none transition-all cursor-pointer"
                   >
-                    {paketList.map((p) => (
+                    {paketList.map((p: any) => (
                       <option key={p.id} value={p.id}>
                         📦 {p.nama_paket} (Maks. {p.batas_siswa === 999999 ? 'Tanpa Batas' : p.batas_siswa} Siswa)
                       </option>

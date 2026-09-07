@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
   typescript: {
     // Memastikan build Vercel tidak gagal hanya karena ada type 'any'
     ignoreBuildErrors: true,
-  }
+  },
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;

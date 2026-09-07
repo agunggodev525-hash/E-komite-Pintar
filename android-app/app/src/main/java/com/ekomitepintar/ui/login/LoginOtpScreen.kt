@@ -2,9 +2,12 @@ package com.ekomitepintar.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,7 +53,10 @@ fun LoginOtpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
-                TextButton(onClick = onNavigateBack) {
+                TextButton(onClick = {
+                    viewModel.resetOtpState()
+                    onNavigateBack()
+                }) {
                     Text("← Kembali", color = Slate500)
                 }
             }
@@ -184,19 +190,48 @@ fun LoginOtpScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                TextButton(onClick = { viewModel.onRequestOtp() }) {
-                    Text("Kirim Ulang Kode", color = Emerald600)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    TextButton(onClick = { viewModel.onRequestOtp() }) {
+                        Text("Kirim Ulang Kode", color = Emerald600)
+                    }
+                    TextButton(onClick = { viewModel.resetOtpState() }) {
+                        Text("Ganti Nomor", color = Slate500)
+                    }
                 }
             }
 
             if (uiState.errorMessage != null) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = uiState.errorMessage ?: "",
-                    color = Rose600,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
-                )
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Rose50,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = uiState.errorMessage ?: "",
+                            modifier = Modifier.weight(1f),
+                            color = Rose600,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Clear error",
+                            tint = Rose600,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { viewModel.clearError() }
+                        )
+                    }
+                }
             }
         }
     }

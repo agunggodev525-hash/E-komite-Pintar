@@ -5,7 +5,8 @@
 const crypto = require('crypto');
 const prisma = require('../config/database');
 const { writeLog } = require('../utils/auditLog');
-const { sendNotificationToSekolahAdmins } = require('../services/notification.service');
+const { sendNotificationToSekolahAdmins, sendNotificationToUser } = require('../services/notification.service');
+const { sendNotification } = require('../services/fcm.service');
 
 /**
  * Handle Payment Gateway Webhook
@@ -93,36 +94,55 @@ const handleWebhook = async (req, res, next) => {
         }
       } else {
         // --- LOGIKA PEMBAYARAN TAGIHAN SISWA ---
-      const pembayaran = await prisma.pembayaran.findFirst({
-        where: { payment_token: identifier },
-      });
-
-      if (pembayaran && pembayaran.status !== 'LUNAS') {
-        const tagihan = await prisma.tagihan.findUnique({ where: { id: pembayaran.tagihan_id } });
-        const finalAmount = tagihan.nominal - pembayaran.nominal_diskon;
-        await prisma.pembayaran.update({
-          where: { id: pembayaran.id },
-          data: {
-            status: 'LUNAS',
-            tanggal_bayar: new Date(),
-            nominal_dibayar: finalAmount
-          },
+        const pembayaran = await prisma.pembayaran.findFirst({
+          where: { payment_token: identifier },
         });
-        
-        // Ambil info siswa untuk notifikasi
-        const siswa = await prisma.siswa.findUnique({ where: { id: pembayaran.siswa_id } });
-        if (siswa) {
-          await sendNotificationToSekolahAdmins(
-            pembayaran.sekolah_id || tagihan.sekolah_id,
-            'Pembayaran Sukses',
-            `Siswa ${siswa.nama_siswa} telah melunasi tagihan ${tagihan.judul} sejumlah Rp${finalAmount.toLocaleString('id-ID')} melalui Midtrans.`,
-            'SUCCESS'
-          );
-        }
 
-        console.log(`✅ Webhook: Pembayaran ${identifier} berhasil diupdate menjadi LUNAS.`);
+        if (pembayaran && pembayaran.status !== 'LUNAS') {
+          const tagihan = await prisma.tagihan.findUnique({ where: { id: pembayaran.tagihan_id } });
+          const finalAmount = tagihan.nominal - (pembayaran.nominal_diskon || 0);
+          await prisma.pembayaran.update({
+            where: { id: pembayaran.id },
+            data: {
+              status: 'LUNAS',
+              tanggal_bayar: new Date(),
+              nominal_dibayar: finalAmount
+            },
+          });
+          
+          // Ambil info siswa untuk notifikasi
+          const siswa = await prisma.siswa.findUnique({ where: { id: pembayaran.siswa_id } });
+          if (siswa) {
+            await sendNotificationToSekolahAdmins(
+              tagihan.sekolah_id,
+              'Pembayaran Sukses',
+              `Siswa ${siswa.nama_siswa} telah melunasi tagihan ${tagihan.judul} sejumlah Rp${finalAmount.toLocaleString('id-ID')} melalui Midtrans.`,
+              'SUCCESS'
+            );
+
+            // Kirim notifikasi ke aplikasi orang tua
+            if (siswa.orang_tua_id) {
+              const title = 'Pembayaran Berhasil';
+              const body = `Terima kasih, pembayaran tagihan ${tagihan.judul} untuk ${siswa.nama_siswa} sebesar Rp${finalAmount.toLocaleString('id-ID')} telah berhasil.`;
+              
+              // Simpan ke database untuk riwayat (NotifikasiScreen)
+              await sendNotificationToUser(siswa.orang_tua_id, title, body, 'SUCCESS');
+              
+              // Kirim Push Notification (FCM) ke perangkat HP
+              const ortu = await prisma.user.findUnique({ where: { id: siswa.orang_tua_id } });
+              if (ortu && ortu.fcm_token) {
+                await sendNotification(ortu.fcm_token, title, body, {
+                  action: 'PEMBAYARAN_SUKSES',
+                  tagihan_id: tagihan.id,
+                  pembayaran_id: pembayaran.id
+                });
+              }
+            }
+          }
+
+          console.log(`✅ Webhook: Pembayaran ${identifier} berhasil diupdate menjadi LUNAS.`);
+        }
       }
-    }
     } else if (['expire', 'cancel', 'deny', 'failed'].includes(currentStatus)) {
       if (isSaaSTransaction) {
         const saasTxId = identifier.replace('SAAS-', '');
@@ -137,24 +157,24 @@ const handleWebhook = async (req, res, next) => {
           console.log(`❌ Webhook: Transaksi SaaS ${identifier} diupdate menjadi GAGAL.`);
         }
       } else {
-        // Opsi untuk menandai sebagai GAGAL jika expired/failed
-      const pembayaran = await prisma.pembayaran.findFirst({
-        where: { payment_token: identifier },
-      });
-
-      if (pembayaran && pembayaran.status === 'PENDING') {
-        await prisma.pembayaran.update({
-          where: { id: pembayaran.id },
-          data: {
-            status: 'GAGAL',
-          },
+        // Tandai sebagai GAGAL jika expired/failed
+        const pembayaran = await prisma.pembayaran.findFirst({
+          where: { payment_token: identifier },
         });
-        console.log(`❌ Webhook: Pembayaran ${identifier} diupdate menjadi GAGAL.`);
+
+        if (pembayaran && pembayaran.status === 'PENDING') {
+          await prisma.pembayaran.update({
+            where: { id: pembayaran.id },
+            data: {
+              status: 'GAGAL',
+            },
+          });
+          console.log(`❌ Webhook: Pembayaran ${identifier} diupdate menjadi GAGAL.`);
+        }
       }
     }
-  }
 
-  // 4. Selalu kembalikan 200 OK agar PG tidak melakukan retry
+    // Selalu kembalikan 200 OK agar PG tidak melakukan retry
     return res.status(200).json({ success: true, message: 'Webhook received' });
   } catch (error) {
     console.error('❌ Webhook error:', error);

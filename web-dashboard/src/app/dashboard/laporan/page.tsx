@@ -139,7 +139,7 @@ export default function LaporanKasPage() {
     }
   };
 
-  const SummaryCards = () => (
+  const renderSummaryCards = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       {/* KOTAK TOTAL SALDO */}
       <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group h-full shadow-sm">
@@ -242,7 +242,7 @@ export default function LaporanKasPage() {
           </p>
         </div>
 
-        <SummaryCards />
+        {renderSummaryCards()}
 
         {/* Filter Card */}
         <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl mb-6 flex flex-col md:flex-row items-end gap-4 transition-colors">
@@ -477,7 +477,7 @@ export default function LaporanKasPage() {
       title="Laporan Arus Kas Komite"
       subtitle="Pantau seluruh transaksi pemasukan dan pengeluaran kas"
     >
-      <SummaryCards />
+      {renderSummaryCards()}
       
       {/* Filter Card */}
       <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl mb-6 transition-colors">

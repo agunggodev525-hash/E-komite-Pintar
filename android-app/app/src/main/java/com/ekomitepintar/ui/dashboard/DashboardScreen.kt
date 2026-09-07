@@ -91,12 +91,19 @@ fun DashboardScreen(
     DisposableEffect(context) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_REFRESH_TAGIHAN) {
-                    uiState.selectedAnak?.id?.let { viewModel.onRefresh(it) }
+                when (intent?.action) {
+                    com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_REFRESH_TAGIHAN,
+                    com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_PEMBAYARAN_SUKSES -> {
+                        // Refresh tagihan otomatis tanpa perlu user menekan refresh
+                        uiState.selectedAnak?.id?.let { viewModel.onRefresh(it) }
+                    }
                 }
             }
         }
-        val filter = IntentFilter(com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_REFRESH_TAGIHAN)
+        val filter = IntentFilter().apply {
+            addAction(com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_REFRESH_TAGIHAN)
+            addAction(com.ekomitepintar.service.MyFirebaseMessagingService.ACTION_PEMBAYARAN_SUKSES)
+        }
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter)
 
         onDispose {

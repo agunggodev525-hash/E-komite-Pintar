@@ -44,7 +44,7 @@ export default function DaftarTagihanPage() {
   const [filterBulan, setFilterBulan] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredTagihan = tagihan.filter((item) => {
+  const filteredTagihan = tagihan.filter((item: any) => {
     const matchStatus = filterStatus === "Semua" || item.status === filterStatus;
     // Dummy bulan filter: asumsi jika 'Juli 2026' dicari di keterangan atau kita anggap default semua cocok jika 'Semua'
     const matchBulan = filterBulan === "Semua" || item.keterangan.includes(filterBulan.split(' ')[0]);
@@ -55,7 +55,7 @@ export default function DaftarTagihanPage() {
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedRows(filteredTagihan.map(t => t.id));
+      setSelectedRows(filteredTagihan.map((t: any) => t.id));
     } else {
       setSelectedRows([]);
     }
@@ -220,7 +220,7 @@ export default function DaftarTagihanPage() {
             <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : filteredTagihan.length > 0 ? (
-          filteredTagihan.map((item) => (
+          filteredTagihan.map((item: any) => (
             <div 
               key={item.id} 
               className={`bg-white dark:bg-slate-900 rounded-2xl border p-4 transition-colors ${
@@ -318,7 +318,7 @@ export default function DaftarTagihanPage() {
                     </td>
                   </tr>
                 ) : filteredTagihan.length > 0 ? (
-                filteredTagihan.map((item) => (
+                filteredTagihan.map((item: any) => (
                   <tr key={item.id} className={`hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-50 dark:bg-emerald-500/10' : ''}`}>
                   <td className="px-4 lg:px-6 py-4">
                     <input 

@@ -3,42 +3,71 @@ package com.ekomitepintar.service
 import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.ekomitepintar.network.RetrofitClient
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
         const val TAG = "FCMService"
         const val ACTION_REFRESH_TAGIHAN = "com.ekomitepintar.ACTION_REFRESH_TAGIHAN"
+        const val ACTION_PEMBAYARAN_SUKSES = "com.ekomitepintar.ACTION_PEMBAYARAN_SUKSES"
     }
 
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-        // NOTE: In a production app, you should send this token to your server here
-        // However, we are handling token registration in LoginViewModel so it's tied to the user session
+        // Kirim token baru ke backend agar notifikasi tetap terkirim
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                RetrofitClient.getApiService().updateFcmToken(mapOf("fcm_token" to token))
+                Log.d(TAG, "FCM token berhasil diperbarui ke server")
+            } catch (e: Exception) {
+                Log.e(TAG, "Gagal memperbarui FCM token: ${e.message}")
+            }
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: ${remoteMessage.from}")
 
-        // Check if message contains a data payload
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-            
-            val action = remoteMessage.data["action"]
-            if (action == "NEW_TAGIHAN") {
-                // Broadcast to update UI
-                Log.d(TAG, "Broadcasting ACTION_REFRESH_TAGIHAN")
-                val intent = Intent(ACTION_REFRESH_TAGIHAN)
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        val dataPayload = remoteMessage.data
+        val action = dataPayload["action"]
+
+        // Handle data payload
+        if (dataPayload.isNotEmpty()) {
+            Log.d(TAG, "Message data payload: $dataPayload")
+
+            when (action) {
+                "NEW_TAGIHAN" -> {
+                    // Broadcast ke UI agar list tagihan refresh
+                    Log.d(TAG, "Broadcasting ACTION_REFRESH_TAGIHAN")
+                    val intent = Intent(ACTION_REFRESH_TAGIHAN)
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                }
+                "PEMBAYARAN_SUKSES" -> {
+                    // Broadcast ke UI agar status tagihan diupdate tanpa refresh manual
+                    Log.d(TAG, "Broadcasting ACTION_PEMBAYARAN_SUKSES")
+                    val intent = Intent(ACTION_PEMBAYARAN_SUKSES).apply {
+                        putExtra("tagihan_id", dataPayload["tagihan_id"])
+                        putExtra("pembayaran_id", dataPayload["pembayaran_id"])
+                    }
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                }
             }
         }
 
-        // Check if message contains a notification payload
-        remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-            showNotification(it.title, it.body)
+        // Tampilkan notifikasi visual + suara
+        // Prioritaskan notification payload dari FCM, fallback ke data payload
+        val title = remoteMessage.notification?.title ?: dataPayload["title"]
+        val body = remoteMessage.notification?.body ?: dataPayload["body"]
+
+        if (!title.isNullOrBlank() || !body.isNullOrBlank()) {
+            Log.d(TAG, "Showing notification: $title - $body")
+            showNotification(title, body)
         }
     }
 
@@ -47,24 +76,24 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val channelName = "Notifikasi Tagihan"
         val notificationManager = getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
 
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+        // Create the NotificationChannel (API 26+)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val channel = android.app.NotificationChannel(
                 channelId,
                 channelName,
                 android.app.NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Channel untuk notifikasi tagihan baru"
+                description = "Channel untuk notifikasi tagihan & pembayaran"
                 enableLights(true)
+                lightColor = android.graphics.Color.GREEN
                 enableVibration(true)
+                vibrationPattern = longArrayOf(0, 300, 200, 300)
             }
             notificationManager.createNotificationChannel(channel)
         }
 
         val defaultSoundUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-        
-        // Create an explicit intent for an Activity in your app
+
         val intent = Intent(this, com.ekomitepintar.MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -73,11 +102,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
 
         val notificationBuilder = androidx.core.app.NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(android.R.drawable.ic_dialog_info) // You can change to app icon later
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(title ?: "E-Komite Pintar")
             .setContentText(body ?: "Ada pembaruan data")
+            .setStyle(androidx.core.app.NotificationCompat.BigTextStyle().bigText(body ?: "Ada pembaruan data"))
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
+            .setVibrate(longArrayOf(0, 300, 200, 300))
             .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
 

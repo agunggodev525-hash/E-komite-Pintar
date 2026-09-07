@@ -136,7 +136,7 @@ router.post(
 router.get(
   '/me',
   authenticate,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const prisma = require('../config/database');
       const user = await prisma.user.findUnique({

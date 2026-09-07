@@ -41,8 +41,8 @@ export default function OrangTuaDashboard() {
 
   // Hitung total sisa tagihan dari tagihan yang belum lunas
   const totalTagihanBelumDibayar = tagihan
-    .filter(t => t.status_bayar !== 'LUNAS')
-    .reduce((acc, t) => {
+    .filter((t: any) => t.status_bayar !== 'LUNAS')
+    .reduce((acc: number, t: any) => {
       const diskon = t.pembayaran?.nominal_diskon || 0;
       const dibayar = t.pembayaran?.nominal_dibayar || 0;
       return acc + Math.max(0, t.nominal - diskon - dibayar);
@@ -79,7 +79,7 @@ export default function OrangTuaDashboard() {
 
       // Optimistic UI Update: langsung ubah UI seolah-olah sukses
       mutateVoting(
-        (currentData: any[]) => {
+        (currentData: any[] | undefined) => {
           if (!currentData) return currentData;
           return currentData.map((v) =>
             v.id === voting_id ? { ...v, hasVoted: true } : v
@@ -251,7 +251,7 @@ export default function OrangTuaDashboard() {
                 <p className="text-sm text-slate-500">Belum ada tagihan/data</p>
               </div>
             ) : (
-              tagihan.map(item => {
+              tagihan.map((item: any) => {
                 const diskon = item.pembayaran?.nominal_diskon || 0;
                 const dibayar = item.pembayaran?.nominal_dibayar || 0;
                 const sisa = Math.max(0, item.nominal - diskon - dibayar);

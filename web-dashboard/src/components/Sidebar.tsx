@@ -119,8 +119,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="p-4 transition-colors">
           <div className="border border-slate-200 dark:border-white/10 rounded-2xl p-2 bg-white dark:bg-transparent shadow-sm">
             <div className="flex items-center gap-3 px-2 py-2">
-              <div className="w-10 h-10 rounded-full bg-[#A3C8B8] dark:bg-cyan-neon/20 flex items-center justify-center text-sm font-bold text-[#2C7A6B] dark:neon-text-cyan dark:border dark:border-cyan-neon/30">
-                {user.nama_lengkap.charAt(0).toUpperCase()}{user.nama_lengkap.charAt(1).toUpperCase()}
+              <div className="w-10 h-10 rounded-full bg-[#A3C8B8] dark:bg-cyan-neon/20 flex items-center justify-center text-sm font-bold text-[#2C7A6B] dark:neon-text-cyan dark:border dark:border-cyan-neon/30 overflow-hidden shrink-0">
+                {user.foto_profil ? (
+                  <img
+                    src={user.foto_profil}
+                    alt={user.nama_lengkap}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback ke inisial jika gambar gagal dimuat
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.parentElement!.innerHTML = `${user.nama_lengkap.charAt(0).toUpperCase()}${user.nama_lengkap.charAt(1).toUpperCase()}`;
+                    }}
+                  />
+                ) : (
+                  <>{user.nama_lengkap.charAt(0).toUpperCase()}{user.nama_lengkap.charAt(1).toUpperCase()}</>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-slate-800 dark:text-white truncate transition-colors">

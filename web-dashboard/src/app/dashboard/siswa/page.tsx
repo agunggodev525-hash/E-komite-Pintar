@@ -226,7 +226,7 @@ export default function SiswaPage() {
         {
           "Nama Lengkap Siswa": "Ahmad Rizky",
           "NISN": "1234567890",
-          "Kelas": "10-A",
+          "Kelas": "VII.A",
           "Nama Orang Tua": "Bpk. Budi Santoso",
           "Email Orang Tua (Opsional)": "budi@email.com",
           "No. WhatsApp": "08123456789"
@@ -234,7 +234,7 @@ export default function SiswaPage() {
         {
           "Nama Lengkap Siswa": "Siti Aisyah",
           "NISN": "0987654321",
-          "Kelas": "10-A",
+          "Kelas": "VII.A",
           "Nama Orang Tua": "Ibu Ratna",
           "Email Orang Tua (Opsional)": "",
           "No. WhatsApp": "08561234567"
@@ -503,12 +503,12 @@ export default function SiswaPage() {
                     <label className="block text-sm font-semibold text-slate-700 mb-1.5">Kelas</label>
                     <select required name="kelas" value={formData.kelas} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
                       <option value="" disabled>Pilih Kelas</option>
-                      <option value="10-A">10-A</option>
-                      <option value="10-B">10-B</option>
-                      <option value="11-A">11-A</option>
-                      <option value="11-B">11-B</option>
-                      <option value="12-A">12-A</option>
-                      <option value="12-B">12-B</option>
+                      <option value="VII.A">VII.A</option>
+                      <option value="VII.B">VII.B</option>
+                      <option value="VIII.A">VIII.A</option>
+                      <option value="VIII.B">VIII.B</option>
+                      <option value="IX.A">IX.A</option>
+                      <option value="IX.B">IX.B</option>
                     </select>
                   </div>
                 </div>

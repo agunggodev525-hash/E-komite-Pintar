@@ -5,6 +5,7 @@
 const prisma = require('../config/database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const jwtConfig = require('../config/jwt');
 const { successResponse, errorResponse } = require('../utils/response');
 const { writeLog } = require('../utils/auditLog');
 
@@ -223,7 +224,7 @@ const impersonateTenant = async (req, res, next) => {
     // Generate JWT khusus untuk admin ini
     const token = jwt.sign(
       { id: admin.id, role: admin.role, sekolahId: admin.sekolah_id },
-      process.env.JWT_SECRET,
+      jwtConfig.secret,
       { expiresIn: '1h' } // Token impersonate cukup 1 jam
     );
 

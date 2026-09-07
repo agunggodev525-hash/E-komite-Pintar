@@ -246,7 +246,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             val token = task.result
             viewModelScope.launch {
                 try {
-                    val response = com.ekomitepintar.network.RetrofitClient.apiService.updateFcmToken(
+                    val response = com.ekomitepintar.network.RetrofitClient.getApiService().updateFcmToken(
                         mapOf("fcm_token" to token)
                     )
                     if (!response.isSuccessful) {

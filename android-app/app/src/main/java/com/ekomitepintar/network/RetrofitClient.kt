@@ -17,7 +17,7 @@ object RetrofitClient {
     private const val BASE_URL = "https://e-komite-pintar.onrender.com/api/v1/"
 
     private var token: String? = null
-    private var apiService: ApiService? = null
+    private var _apiService: ApiService? = null
     private var application: Application? = null
 
     /**
@@ -33,8 +33,8 @@ object RetrofitClient {
      */
     fun setToken(newToken: String?) {
         token = newToken
-        // Reset apiService agar rebuild dengan token baru
-        apiService = null
+        // Reset _apiService agar rebuild dengan token baru
+        _apiService = null
     }
 
     /**
@@ -42,10 +42,10 @@ object RetrofitClient {
      * Lazy-initialized dan di-recreate saat token berubah.
      */
     fun getApiService(): ApiService {
-        if (apiService == null) {
-            apiService = createApiService()
+        if (_apiService == null) {
+            _apiService = createApiService()
         }
-        return apiService!!
+        return _apiService!!
     }
 
     private fun createApiService(): ApiService {

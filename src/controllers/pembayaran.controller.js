@@ -134,6 +134,14 @@ const getAllPembayaran = async (req, res, next) => {
     if (status && status !== 'Semua') {
       whereClause.status = status;
     }
+    // Filter berdasarkan bulan (format: YYYY-MM)
+    if (bulan && /^\d{4}-\d{2}$/.test(bulan)) {
+      const [year, month] = bulan.split('-').map(Number);
+      whereClause.tanggal_bayar = {
+        gte: new Date(year, month - 1, 1),
+        lte: new Date(year, month, 0, 23, 59, 59, 999),
+      };
+    }
     const pembayaranList = await prisma.pembayaran.findMany({
       where: whereClause,
       skip,
@@ -174,7 +182,7 @@ const bayarManual = async (req, res, next) => {
 
     const bayarSekarang = parseFloat(nominal_bayar || 0);
     const totalDibayar = payment.nominal_dibayar + bayarSekarang;
-    const tagihanAkhir = payment.tagihan.nominal - payment.nominal_diskon;
+    const tagihanAkhir = payment.tagihan.nominal - (payment.nominal_diskon || 0);
 
     let status = 'PENDING';
     if (totalDibayar >= tagihanAkhir) {
@@ -275,12 +283,12 @@ const kirimPeringatanMassal = async (req, res, next) => {
       }
     });
 
-    // Mock integrasi Notification Service (bisa menggunakan WA Gateway atau Push Notif)
-    const { sendPushNotification } = require('../services/notification.service');
+    // Kirim Push Notification ke HP orang tua yang memiliki FCM token
+    const { sendNotification } = require('../services/fcm.service');
     const tokens = [];
 
     payments.forEach(p => {
-      // Mock kirim pesan
+      // Mock kirim pesan WA
       let pesanCustom = pesan.replace('[Nama Siswa]', p.siswa.nama_siswa);
       console.log(`[WA MOCK] To: ${p.siswa.orang_tua?.no_whatsapp || 'No WA'} -> ${pesanCustom}`);
       
@@ -290,7 +298,9 @@ const kirimPeringatanMassal = async (req, res, next) => {
     });
 
     if (tokens.length > 0) {
-      await sendPushNotification(tokens, "Peringatan Tagihan", "Harap periksa tagihan Anda yang belum lunas.");
+      await sendNotification(tokens, "Peringatan Tagihan", "Harap periksa tagihan Anda yang belum lunas.", {
+        action: 'PERINGATAN_TAGIHAN'
+      });
     }
 
     return successResponse(res, `Peringatan massal berhasil dikirim ke ${payments.length} siswa`);

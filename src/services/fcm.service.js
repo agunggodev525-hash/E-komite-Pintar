@@ -33,35 +33,57 @@ try {
  */
 const sendNotification = async (fcmTokens, title, body, data = {}) => {
   if (!isFcmInitialized || !fcmTokens || fcmTokens.length === 0) {
+    console.warn('⚠️ FCM tidak aktif atau token kosong, notifikasi tidak dikirim.');
     return false;
   }
 
   const tokens = Array.isArray(fcmTokens) ? fcmTokens : [fcmTokens];
 
+  // Pastikan semua nilai dalam data adalah string (requirement FCM)
+  const stringData = {};
+  for (const [key, val] of Object.entries(data)) {
+    stringData[key] = String(val);
+  }
+
   try {
     const message = {
       tokens: tokens,
+      // notification payload: agar muncul di tray HP meski app di background/killed
+      notification: {
+        title: title || 'E-Komite Pintar',
+        body: body || 'Ada pembaruan data'
+      },
+      // data payload: agar app bisa handle action-nya saat foreground
       data: {
-        ...data,
+        title: title || 'E-Komite Pintar',
+        body: body || 'Ada pembaruan data',
+        ...stringData,
       },
       android: {
+        priority: 'high',
         notification: {
           sound: 'default',
-          priority: 'high' // pastikan prioritas tinggi agar bunyi
+          channel_id: 'tagihan_channel',
+          notification_priority: 'PRIORITY_HIGH',
+          visibility: 'PUBLIC',
+          default_vibrate_timings: true,
+          default_sound: true
         }
       }
     };
 
-    // Tambahkan objek notification hanya jika title atau body ada isinya (bukan silent update)
-    if (title || body) {
-      message.notification = {
-        title: title || 'Notifikasi',
-        body: body || ''
-      };
-    }
-
     const response = await getMessaging().sendEachForMulticast(message);
     console.log(`📩 Notifikasi FCM berhasil dikirim ke ${response.successCount} perangkat. Gagal: ${response.failureCount}`);
+
+    // Log detail error jika ada token yang gagal
+    if (response.failureCount > 0) {
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          console.error(`  ❌ Token [${idx}] gagal: ${resp.error?.message}`);
+        }
+      });
+    }
+
     return true;
   } catch (error) {
     console.error('❌ Gagal mengirim notifikasi FCM:', error.message);

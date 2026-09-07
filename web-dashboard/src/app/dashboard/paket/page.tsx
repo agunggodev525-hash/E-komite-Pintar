@@ -168,7 +168,7 @@ export default function ManajemenPaketPage() {
           ) : packages.length === 0 ? (
             <div className="col-span-full py-12 text-center text-slate-500">Belum ada paket tersedia.</div>
           ) : (
-            packages.map((pkg, idx) => {
+            packages.map((pkg: any, idx: number) => {
               const theme = cardThemes[idx % cardThemes.length];
               return (
                 <div key={pkg.id} className={`bg-white dark:bg-[#1A1F2C] rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col shadow-xl dark:shadow-2xl ${theme.glow} transition-transform hover:-translate-y-1 duration-300`}>
@@ -256,7 +256,7 @@ export default function ManajemenPaketPage() {
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada sekolah yang berlangganan.</td>
                   </tr>
                 ) : (
-                  tenants.map((tenant) => (
+                  tenants.map((tenant: any) => (
                     <tr key={tenant.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                       <td className="px-6 py-4">
                         <p className="font-bold text-slate-900 dark:text-white text-base">{tenant.nama_sekolah}</p>
@@ -317,7 +317,7 @@ export default function ManajemenPaketPage() {
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada transaksi tercatat.</td>
                   </tr>
                 ) : (
-                  transactions.map((trx) => (
+                  transactions.map((trx: any) => (
                     <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                       <td className="px-6 py-4">
                         <p className="font-semibold text-slate-700 dark:text-slate-300">

@@ -163,7 +163,7 @@ export default function VotingAdminPage() {
             <p className="text-sm text-slate-500 mt-1">Buat voting baru untuk memulai pemungutan suara.</p>
           </div>
         ) : (
-          votings.map((voting) => (
+          votings.map((voting: Voting) => (
             <div key={voting.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 flex flex-col justify-between group hover:border-gold-500/30 transition-all duration-300">
               <div>
                 <div className="flex justify-between items-start mb-4">

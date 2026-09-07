@@ -23,6 +23,7 @@ export interface User {
   no_whatsapp?: string;
   role: UserRole;
   status: boolean;
+  foto_profil?: string | null;
 }
 
 interface AuthContextType {
@@ -74,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      const API_BASE = "https://e-komite-pintar.onrender.com/api/v1";
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://e-komite-pintar.onrender.com/api/v1";
 
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",

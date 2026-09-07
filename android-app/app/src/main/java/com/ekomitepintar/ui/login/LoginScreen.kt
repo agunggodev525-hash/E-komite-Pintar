@@ -15,6 +15,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
@@ -182,13 +183,26 @@ fun LoginScreen(
                                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6)),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(
-                                    text = uiState.errorMessage ?: "",
+                                Row(
                                     modifier = Modifier.padding(12.dp),
-                                    color = Rose600,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    textAlign = TextAlign.Center
-                                )
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = uiState.errorMessage ?: "",
+                                        modifier = Modifier.weight(1f),
+                                        color = Rose600,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = "Clear error",
+                                        tint = Rose600,
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable { viewModel.clearError() }
+                                    )
+                                }
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                         }
@@ -225,7 +239,6 @@ fun LoginScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Password Field
-                        var passwordVisible by remember { mutableStateOf(false) }
                         OutlinedTextField(
                             value = uiState.password,
                             onValueChange = { viewModel.onPasswordChange(it) },
@@ -234,13 +247,13 @@ fun LoginScreen(
                                 Icon(Icons.Filled.Lock, contentDescription = null, tint = Slate400)
                             },
                             trailingIcon = {
-                                val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                val image = if (uiState.isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                                IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
                                     Icon(imageVector = image, contentDescription = "Toggle password", tint = Slate400)
                                 }
                             },
                             singleLine = true,
-                            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
                                 imeAction = ImeAction.Done

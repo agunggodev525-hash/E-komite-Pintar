@@ -225,7 +225,7 @@ export default function DashboardPage() {
                       </td>
                     </tr>
                   ) : (
-                    data.recentTransactions.map((item) => (
+                    data.recentTransactions.map((item: any) => (
                       <tr
                         key={item.id}
                         className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"

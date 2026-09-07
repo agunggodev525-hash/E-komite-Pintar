@@ -182,6 +182,7 @@ const createVoting = async (req, res, next) => {
         deskripsi,
         tanggal_berakhir: new Date(tanggal_berakhir),
         sekolah_id,
+        status: 'AKTIF',
         kandidat: {
           create: kandidat.map(k => ({ nama_kandidat: k }))
         }
