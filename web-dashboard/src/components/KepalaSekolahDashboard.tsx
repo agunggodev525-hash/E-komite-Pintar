@@ -1,7 +1,7 @@
 "use client";
 import useSWR from "swr";
 import { formatRupiah, apiFetch } from "@/lib/api";
-import { Receipt, Wallet, TrendingUp, CreditCard, ChevronRight, Activity } from "lucide-react";
+import { Receipt, Wallet, TrendingUp, CreditCard, Activity } from "lucide-react";
 
 export default function KepalaSekolahDashboard() {
   const fetcher = (url: string) => apiFetch<any>(url).then((res) => res.data);

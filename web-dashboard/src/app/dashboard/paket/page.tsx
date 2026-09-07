@@ -3,7 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
+import { Plus, X, Package } from "lucide-react";
 import { formatRupiah, apiFetch } from "@/lib/api";
 
 export default function ManajemenPaketPage() {

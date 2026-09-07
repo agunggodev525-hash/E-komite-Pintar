@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch, formatRupiah } from "@/lib/api";
-import { Bell, Clock, History, HelpCircle, Book, Home, FileText, PieChart, User, Vote, CheckCircle2, Heart } from "lucide-react";
+import { Bell, Home, FileText, PieChart, User, Vote, CheckCircle2, Heart } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import SkeletonLoader from "./SkeletonLoader";
 import toast from "react-hot-toast";
@@ -19,12 +19,12 @@ export default function OrangTuaDashboard() {
   
   const selectedAnakId = anakList?.[0]?.id;
 
-  const { data: tagihanData, error: tagihanError, isLoading: tagihanLoading } = useSWR(
+  const { data: tagihanData, isLoading: tagihanLoading } = useSWR(
     selectedAnakId ? `/tagihan/siswa/${selectedAnakId}` : null,
     (url) => apiFetch<any>(url).then((res) => res.data)
   );
 
-  const { data: votingData, error: votingError, isLoading: votingLoading, mutate: mutateVoting } = useSWR(
+  const { data: votingData, isLoading: votingLoading, mutate: mutateVoting } = useSWR(
     "/voting",
     (url) => apiFetch<any[]>(url).then((res) => res.data)
   );

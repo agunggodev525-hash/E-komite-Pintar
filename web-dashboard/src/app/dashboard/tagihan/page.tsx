@@ -27,7 +27,7 @@ export default function DaftarTagihanPage() {
   });
 
   const { data: tagihan, error, mutate: fetchTagihan } = useSWR(`/pembayaran?limit=50`, fetcher, { fallbackData: [] });
-  const isLoading = !tagihan && !error && tagihan.length === 0;
+  const isLoading = !error && tagihan.length === 0;
   
   const [selectedTagihan, setSelectedTagihan] = useState<any>(null); // Untuk Modal Kasir Tunai
   

@@ -23,7 +23,7 @@ export default function DashboardLayout({
   titleExtra?: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, stopImpersonate } = useAuth();
+  const { stopImpersonate } = useAuth();
 
   // Cek apakah ada original_token (artinya sedang impersonate)
   const isImpersonating = typeof window !== 'undefined' ? !!localStorage.getItem("original_token") : false;

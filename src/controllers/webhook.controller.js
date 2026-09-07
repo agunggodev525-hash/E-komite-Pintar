@@ -100,6 +100,10 @@ const handleWebhook = async (req, res, next) => {
 
         if (pembayaran && pembayaran.status !== 'LUNAS') {
           const tagihan = await prisma.tagihan.findUnique({ where: { id: pembayaran.tagihan_id } });
+          if (!tagihan) {
+            console.error(`❌ Webhook: Tagihan ${pembayaran.tagihan_id} tidak ditemukan untuk pembayaran ${pembayaran.id}`);
+            return res.status(200).json({ success: false, message: 'Tagihan tidak ditemukan' });
+          }
           const finalAmount = tagihan.nominal - (pembayaran.nominal_diskon || 0);
           await prisma.pembayaran.update({
             where: { id: pembayaran.id },

@@ -24,7 +24,6 @@ export default function SekolahPage() {
   const [optimisticStatus, setOptimisticStatus] = useState<Record<string, string>>({});
 
   const isLoading = (!sekolahListResponse && !sekolahError) || (!paketListResponse && !paketError);
-  const errorMsg = (sekolahError || paketError) ? "Terjadi kesalahan sistem." : "";
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);

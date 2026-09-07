@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import useSWR from "swr";
 import { apiFetch, formatRupiah } from "@/lib/api";
 import { Building2, Users, Wallet, Activity } from "lucide-react";

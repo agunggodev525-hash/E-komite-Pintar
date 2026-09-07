@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch, formatRupiah } from "@/lib/api";
-import { Download, Filter, ArrowDownRight, Eye, Info, PieChart, Search, Flag, X } from "lucide-react";
+import { Download, Filter, ArrowDownRight, Info, PieChart, Search, Flag, X } from "lucide-react";
 import * as XLSX from 'xlsx';
 import toast from "react-hot-toast";
 

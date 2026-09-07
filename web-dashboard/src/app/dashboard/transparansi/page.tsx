@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import Link from "next/link";
 import { formatRupiah, apiFetch, formatDate } from "@/lib/api";
-import { ArrowLeft, BookOpen, Brush, Wrench, Utensils, Receipt, X, Image as ImageIcon, ArrowDownCircle, ArrowUpCircle, FileText, Download } from "lucide-react";
+import { ArrowLeft, Receipt, X, Image as ImageIcon, ArrowDownCircle, ArrowUpCircle, FileText, Download } from "lucide-react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";

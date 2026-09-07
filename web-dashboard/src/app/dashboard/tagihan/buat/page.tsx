@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/context/AuthContext";
-import { apiFetch, formatRupiah } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 // ============================================

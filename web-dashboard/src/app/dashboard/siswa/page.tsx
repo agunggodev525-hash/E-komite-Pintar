@@ -749,7 +749,7 @@ export default function SiswaPage() {
                       }
                     };
                     reader.readAsArrayBuffer(selectedFile);
-                  } catch (err) {
+                  } catch (_err) {
                     setIsSubmitting(false);
                     toast.error("Gagal membaca file.");
                   }

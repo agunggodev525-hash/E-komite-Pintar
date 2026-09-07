@@ -35,7 +35,6 @@ export default function VotingAdminPage() {
   const { data, error, mutate } = useSWR(shouldFetch ? "/voting/admin" : null, fetcher);
 
   const votings = data || [];
-  const loading = shouldFetch && !data && !error;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
