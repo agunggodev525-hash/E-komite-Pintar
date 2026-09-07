@@ -503,12 +503,48 @@ export default function SiswaPage() {
                     <label className="block text-sm font-semibold text-slate-700 mb-1.5">Kelas</label>
                     <select required name="kelas" value={formData.kelas} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
                       <option value="" disabled>Pilih Kelas</option>
-                      <option value="VII.A">VII.A</option>
-                      <option value="VII.B">VII.B</option>
-                      <option value="VIII.A">VIII.A</option>
-                      <option value="VIII.B">VIII.B</option>
-                      <option value="IX.A">IX.A</option>
-                      <option value="IX.B">IX.B</option>
+                      <optgroup label="── SD ──">
+                        <option value="I.A">I.A</option>
+                        <option value="I.B">I.B</option>
+                        <option value="I.C">I.C</option>
+                        <option value="II.A">II.A</option>
+                        <option value="II.B">II.B</option>
+                        <option value="II.C">II.C</option>
+                        <option value="III.A">III.A</option>
+                        <option value="III.B">III.B</option>
+                        <option value="III.C">III.C</option>
+                        <option value="IV.A">IV.A</option>
+                        <option value="IV.B">IV.B</option>
+                        <option value="IV.C">IV.C</option>
+                        <option value="V.A">V.A</option>
+                        <option value="V.B">V.B</option>
+                        <option value="V.C">V.C</option>
+                        <option value="VI.A">VI.A</option>
+                        <option value="VI.B">VI.B</option>
+                        <option value="VI.C">VI.C</option>
+                      </optgroup>
+                      <optgroup label="── SMP / MTs ──">
+                        <option value="VII.A">VII.A</option>
+                        <option value="VII.B">VII.B</option>
+                        <option value="VII.C">VII.C</option>
+                        <option value="VIII.A">VIII.A</option>
+                        <option value="VIII.B">VIII.B</option>
+                        <option value="VIII.C">VIII.C</option>
+                        <option value="IX.A">IX.A</option>
+                        <option value="IX.B">IX.B</option>
+                        <option value="IX.C">IX.C</option>
+                      </optgroup>
+                      <optgroup label="── SMA / SMK / MA ──">
+                        <option value="X.A">X.A</option>
+                        <option value="X.B">X.B</option>
+                        <option value="X.C">X.C</option>
+                        <option value="XI.A">XI.A</option>
+                        <option value="XI.B">XI.B</option>
+                        <option value="XI.C">XI.C</option>
+                        <option value="XII.A">XII.A</option>
+                        <option value="XII.B">XII.B</option>
+                        <option value="XII.C">XII.C</option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
