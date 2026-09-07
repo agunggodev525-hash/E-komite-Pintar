@@ -284,10 +284,10 @@ export default function SiswaPage() {
       title="Kelola Siswa"
       subtitle="Manajemen data siswa dan relasi orang tua"
     >
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden flex flex-col">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-white/10 shadow-xl overflow-hidden flex flex-col">
         
         {/* Header Table & Actions */}
-        <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+        <div className="p-6 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/30">
           <div className="flex gap-3 w-full sm:w-auto flex-col sm:flex-row">
             <div className="relative w-full sm:w-64">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -296,7 +296,7 @@ export default function SiswaPage() {
                 placeholder="Cari nama / NISN..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 shadow-sm rounded-lg text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all outline-none"
+                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-sm rounded-lg text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all outline-none"
               />
             </div>
             
@@ -307,7 +307,7 @@ export default function SiswaPage() {
               <select 
                 value={kelasFilter}
                 onChange={(e) => setKelasFilter(e.target.value)}
-                className="pl-9 pr-8 py-2 bg-white border border-slate-300 shadow-sm rounded-lg text-sm text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-400 appearance-none cursor-pointer w-full sm:w-40 transition-all"
+                className="pl-9 pr-8 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-sm rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-400 appearance-none cursor-pointer w-full sm:w-40 transition-all"
               >
                 <option value="">Semua Kelas</option>
                 {uniqueKelas.map(k => (
@@ -329,7 +329,7 @@ export default function SiswaPage() {
             )}
             <button 
               onClick={() => setIsImportModalOpen(true)}
-              className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-900 text-slate-700 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
             >
               <FileSpreadsheet className="w-4 h-4" />
               <span>Import Excel</span>
@@ -347,7 +347,7 @@ export default function SiswaPage() {
         {/* Table */}
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
+            <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-white/10">
               <tr>
                 <th scope="col" className="px-6 py-4 font-semibold w-12">
                   <input 
@@ -393,7 +393,7 @@ export default function SiswaPage() {
                 </tr>
               ) : (
                 siswa.map((s: any) => (
-                  <tr key={s.id} className={`hover:bg-slate-50/50 transition-colors ${selectedIds.includes(s.id) ? 'bg-blue-50/30' : 'bg-white'}`}>
+                  <tr key={s.id} className={`hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors ${selectedIds.includes(s.id) ? 'bg-blue-50/30 dark:bg-blue-900/10' : 'bg-white dark:bg-transparent'}`}>
                     <td className="px-6 py-4">
                       <input 
                         type="checkbox" 
@@ -402,16 +402,16 @@ export default function SiswaPage() {
                         onChange={() => handleSelectRow(s.id)}
                       />
                     </td>
-                    <td className="px-6 py-4 text-slate-400 font-mono text-xs">{s.nisn}</td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">{toTitleCase(s.nama_siswa)}</td>
+                    <td className="px-6 py-4 text-slate-400 dark:text-slate-500 font-mono text-xs">{s.nisn}</td>
+                    <td className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">{toTitleCase(s.nama_siswa)}</td>
                     <td className="px-6 py-4 text-slate-600">
-                      <span className="px-2 py-1 bg-slate-100 rounded-md text-xs font-medium text-slate-600 border border-slate-200">
+                      <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {s.kelas}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-slate-700">{toTitleCase(s.orang_tua?.nama_lengkap) || "-"}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{s.orang_tua?.email || "-"}</p>
+                      <p className="font-medium text-slate-700 dark:text-slate-300">{toTitleCase(s.orang_tua?.nama_lengkap) || "-"}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{s.orang_tua?.email || "-"}</p>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
@@ -444,21 +444,21 @@ export default function SiswaPage() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-          <p className="text-sm text-slate-500">Total <span className="font-medium text-slate-700">{meta.total}</span> data siswa</p>
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-slate-800/30 flex items-center justify-between">
+          <p className="text-sm text-slate-500 dark:text-slate-400">Total <span className="font-medium text-slate-700 dark:text-slate-200">{meta.total}</span> data siswa</p>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-500 mr-2">Halaman {page} dari {meta.totalPages || 1}</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400 mr-2">Halaman {page} dari {meta.totalPages || 1}</span>
             <button 
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="p-2 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
               disabled={page >= meta.totalPages}
-              className="p-2 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -471,9 +471,9 @@ export default function SiswaPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && handleCloseModal()}></div>
-          <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+          <div className="relative bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 border border-slate-100 dark:border-white/10">
             
-            <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 rounded-t-2xl">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 {editingSiswaId ? <Pencil className="w-5 h-5 text-blue-500" /> : <UserPlus className="w-5 h-5 text-gold-500" />}
                 {editingSiswaId ? "Edit Data Siswa" : "Tambah Siswa Baru"}
@@ -481,7 +481,7 @@ export default function SiswaPage() {
               <button 
                 onClick={handleCloseModal}
                 disabled={isSubmitting}
-                className="text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors p-1.5 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors p-1.5 rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -492,16 +492,16 @@ export default function SiswaPage() {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="col-span-1 sm:col-span-2">
-                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Lengkap Siswa</label>
-                    <input required type="text" name="nama_siswa" value={formData.nama_siswa} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="Misal: Ahmad Rizky" />
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nama Lengkap Siswa</label>
+                    <input required type="text" name="nama_siswa" value={formData.nama_siswa} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:bg-white dark:focus:bg-slate-700 focus:border-transparent outline-none transition-all" placeholder="Misal: Ahmad Rizky" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">NISN</label>
-                    <input required type="number" name="nisn" value={formData.nisn} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="10 Digit Angka" />
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">NISN</label>
+                    <input required type="number" name="nisn" value={formData.nisn} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:bg-white dark:focus:bg-slate-700 focus:border-transparent outline-none transition-all" placeholder="10 Digit Angka" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Kelas</label>
-                    <select required name="kelas" value={formData.kelas} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Kelas</label>
+                    <select required name="kelas" value={formData.kelas} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-gold-400 focus:bg-white dark:focus:bg-slate-700 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
                       <option value="" disabled>Pilih Kelas</option>
                       <optgroup label="── SD ──">
                         <option value="I.A">I.A</option>
@@ -549,28 +549,28 @@ export default function SiswaPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-5 mt-2">
-                  <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs">2</span>
+                <div className="border-t border-slate-100 dark:border-white/10 pt-5 mt-2">
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs">2</span>
                     Data Orang Tua / Wali
                   </h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Orang Tua</label>
-                      <input required type="text" name="nama_orang_tua" value={formData.nama_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="Misal: Bpk. Budi Santoso" />
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nama Orang Tua</label>
+                      <input required type="text" name="nama_orang_tua" value={formData.nama_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:bg-white dark:focus:bg-slate-700 focus:border-transparent outline-none transition-all" placeholder="Misal: Bpk. Budi Santoso" />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1.5">Foto Profil <span className="text-slate-400 font-normal">(Opsional)</span></label>
-                      <input type="file" accept="image/*" onChange={(e) => setFotoOrangTua(e.target.files?.[0] || null)} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer" />
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Foto Profil <span className="text-slate-400 font-normal">(Opsional)</span></label>
+                      <input type="file" accept="image/*" onChange={(e) => setFotoOrangTua(e.target.files?.[0] || null)} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-900/50 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800 transition-all cursor-pointer" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email <span className="text-slate-400 font-normal">(Opsional)</span></label>
-                        <input type="email" name="email_orang_tua" value={formData.email_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="Untuk login" />
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Email <span className="text-slate-400 font-normal">(Opsional)</span></label>
+                        <input type="email" name="email_orang_tua" value={formData.email_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:bg-white dark:focus:bg-slate-700 focus:border-transparent outline-none transition-all" placeholder="Untuk login" />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">No. WhatsApp</label>
-                        <input required type="tel" name="whatsapp_orang_tua" value={formData.whatsapp_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-gold-400 focus:bg-white focus:border-transparent outline-none transition-all" placeholder="0812xxxxxx" />
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">No. WhatsApp</label>
+                        <input required type="tel" name="whatsapp_orang_tua" value={formData.whatsapp_orang_tua} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:bg-white dark:focus:bg-slate-700 focus:border-transparent outline-none transition-all" placeholder="0812xxxxxx" />
                       </div>
                     </div>
                   </div>
@@ -578,12 +578,12 @@ export default function SiswaPage() {
               </form>
             </div>
 
-            <div className="px-6 py-5 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+            <div className="px-6 py-5 border-t border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-slate-800/30 rounded-b-2xl flex justify-end gap-3 shrink-0">
               <button 
                 type="button" 
                 onClick={handleCloseModal}
                 disabled={isSubmitting}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-transparent border border-slate-300 hover:bg-slate-100 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
               >
                 Batal
               </button>
@@ -612,19 +612,19 @@ export default function SiswaPage() {
       {isImportModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => setIsImportModalOpen(false)}></div>
-          <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
+          <div className="relative bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200 border border-slate-100 dark:border-white/10">
             
-            <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 rounded-t-2xl">
               <div>
-                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <FileSpreadsheet className="w-5 h-5 text-blue-500" />
                   Import Data Siswa Massal
                 </h3>
-                <p className="text-xs text-slate-500 mt-1">Tambahkan ratusan siswa sekaligus menggunakan file Excel (.xlsx atau .csv).</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Tambahkan ratusan siswa sekaligus menggunakan file Excel (.xlsx atau .csv).</p>
               </div>
               <button 
                 onClick={() => setIsImportModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors p-1.5 rounded-lg shrink-0"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors p-1.5 rounded-lg shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -633,16 +633,16 @@ export default function SiswaPage() {
             <div className="p-6 overflow-y-auto space-y-6">
               
               {/* Step 1: Download Template */}
-              <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-500/20 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                  <h4 className="text-sm font-bold text-blue-900 mb-1">Langkah 1: Unduh Template</h4>
-                  <p className="text-xs text-blue-700/80 leading-relaxed">
+                  <h4 className="text-sm font-bold text-blue-900 dark:text-blue-300 mb-1">Langkah 1: Unduh Template</h4>
+                  <p className="text-xs text-blue-700/80 dark:text-blue-400/80 leading-relaxed">
                     Gunakan template ini untuk memastikan format kolom sesuai dengan sistem kami.
                   </p>
                 </div>
                 <button 
                   onClick={handleDownloadTemplate}
-                  className="shrink-0 flex items-center gap-2 px-3 py-2 bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                  className="shrink-0 flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-500/30 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-lg transition-colors shadow-sm"
                 >
                   <Download className="w-4 h-4" />
                   Unduh Template Excel
@@ -651,7 +651,7 @@ export default function SiswaPage() {
 
               {/* Step 2: Upload Area */}
               <div>
-                <h4 className="text-sm font-bold text-slate-800 mb-3">Langkah 2: Upload File</h4>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">Langkah 2: Upload File</h4>
                 <input 
                   type="file" 
                   accept=".xlsx, .csv" 
@@ -665,20 +665,20 @@ export default function SiswaPage() {
                 />
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed ${selectedFile ? 'border-blue-400 bg-blue-50/30' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'} rounded-xl p-8 flex flex-col items-center justify-center transition-colors cursor-pointer group`}
+                  className={`border-2 border-dashed ${selectedFile ? 'border-blue-400 bg-blue-50/30 dark:bg-blue-900/10' : 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/30 hover:bg-slate-100 dark:hover:bg-slate-800/50'} rounded-xl p-8 flex flex-col items-center justify-center transition-colors cursor-pointer group`}
                 >
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-sm mb-4 transition-transform ${selectedFile ? 'bg-blue-100' : 'bg-white group-hover:scale-105'}`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-sm mb-4 transition-transform ${selectedFile ? 'bg-blue-100 dark:bg-blue-900/50' : 'bg-white dark:bg-slate-800 group-hover:scale-105'}`}>
                     <UploadCloud className={`w-8 h-8 ${selectedFile ? 'text-blue-500' : 'text-slate-400 group-hover:text-blue-500'} transition-colors`} />
                   </div>
                   {selectedFile ? (
                     <>
-                      <p className="text-sm font-bold text-blue-700 mb-1">{selectedFile.name}</p>
-                      <p className="text-xs text-blue-500/80">{(selectedFile.size / 1024).toFixed(1)} KB - Siap diproses</p>
+                      <p className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-1">{selectedFile.name}</p>
+                      <p className="text-xs text-blue-500/80 dark:text-blue-400/80">{(selectedFile.size / 1024).toFixed(1)} KB - Siap diproses</p>
                     </>
                   ) : (
                     <>
-                      <p className="text-sm font-semibold text-slate-700 mb-1">Tarik & Lepas file Excel di sini</p>
-                      <p className="text-xs text-slate-500">atau klik untuk memilih file (Maks. 5MB)</p>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tarik & Lepas file Excel di sini</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">atau klik untuk memilih file (Maks. 5MB)</p>
                     </>
                   )}
                 </div>
@@ -693,7 +693,7 @@ export default function SiswaPage() {
                   setIsImportModalOpen(false);
                   setSelectedFile(null); // Reset saat batal
                 }}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-transparent border border-slate-300 hover:bg-slate-100 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
               >
                 Batal
               </button>
