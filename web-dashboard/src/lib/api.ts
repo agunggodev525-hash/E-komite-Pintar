@@ -29,6 +29,25 @@ export async function apiFetch<T>(
     headers,
   });
 
+  // Cek apakah response adalah JSON sebelum di-parse
+  const contentType = response.headers.get("content-type");
+  const isJson = contentType && contentType.includes("application/json");
+
+  if (!isJson) {
+    // Server mengembalikan non-JSON (misal: "Not Found", HTML error page, dsb.)
+    const textBody = await response.text().catch(() => "");
+    if (!response.ok) {
+      throw new Error(
+        response.status === 404
+          ? "Layanan tidak ditemukan. Pastikan server backend aktif."
+          : response.status === 502 || response.status === 503
+          ? "Server sedang tidak tersedia. Silakan coba beberapa saat lagi."
+          : `Server error (${response.status}): ${textBody || "Tidak ada respons."}`
+      );
+    }
+    return { success: true, message: "OK", data: null as T };
+  }
+
   const data = await response.json();
 
   if (!response.ok) {
