@@ -83,6 +83,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       });
 
+      // Cek Content-Type sebelum parse JSON agar tidak crash saat server down
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text().catch(() => "");
+        throw new Error(
+          response.status === 404
+            ? "Endpoint login tidak ditemukan. Periksa konfigurasi server."
+            : response.status >= 500
+            ? "Server sedang bermasalah. Silakan coba beberapa saat lagi."
+            : `Respons tidak valid dari server: ${text || response.status}`
+        );
+      }
+
       const data = await response.json();
 
       if (!response.ok || !data.success) {
@@ -123,6 +136,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ accessToken }),
       });
+
+      // Cek Content-Type sebelum parse JSON
+      const contentTypeGoogle = response.headers.get("content-type");
+      if (!contentTypeGoogle || !contentTypeGoogle.includes("application/json")) {
+        const text = await response.text().catch(() => "");
+        throw new Error(
+          response.status >= 500
+            ? "Server sedang bermasalah. Silakan coba beberapa saat lagi."
+            : `Respons tidak valid dari server: ${text || response.status}`
+        );
+      }
 
       const data = await response.json();
 
