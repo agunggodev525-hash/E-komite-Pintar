@@ -75,7 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://e-komite-pintar.onrender.com/api/v1";
+      // Hardcode API_BASE ke Render untuk menghindari error 404 dari Vercel proxy
+      const API_BASE = "https://e-komite-pintar.onrender.com/api/v1";
 
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
@@ -129,7 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = useCallback(
     async (accessToken: string) => {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://e-komite-pintar.onrender.com/api/v1";
+      // Hardcode API_BASE ke Render untuk menghindari error 404 dari Vercel proxy
+      const API_BASE = "https://e-komite-pintar.onrender.com/api/v1";
 
       const response = await fetch(`${API_BASE}/auth/google`, {
         method: "POST",
