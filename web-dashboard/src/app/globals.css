@@ -158,6 +158,12 @@ body {
 }
 input:focus, select:focus, textarea:focus { outline: none; }
 
+/* Option elements in dark mode */
+option {
+  background-color: var(--surface);
+  color: var(--foreground);
+}
+
 /* Selection */
 ::selection {
   background: rgba(59,130,246,0.18);
