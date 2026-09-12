@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatusBadge from "@/components/StatusBadge";
 import { apiFetch, formatRupiah } from "@/lib/api";
@@ -78,13 +79,14 @@ export default function DaftarTagihanPage() {
           body: JSON.stringify({ nominal_bayar: bayar })
         });
         if (res.success) {
-          alert("Pembayaran berhasil dicatat");
+          toast.success("Pembayaran berhasil dicatat");
           fetchTagihan(); // Refresh data
         } else {
-          alert("Gagal mencatat pembayaran: " + res.message);
+          toast.error("Gagal mencatat pembayaran: " + res.message);
         }
       } catch (error) {
         console.error("Gagal melunaskan tagihan", error);
+        toast.error("Terjadi kesalahan sistem.");
       } finally {
         setSelectedTagihan(null);
       }
@@ -103,13 +105,14 @@ export default function DaftarTagihanPage() {
           body: JSON.stringify({ nominal_diskon: diskon, keterangan: keteranganDiskon })
         });
         if (res.success) {
-          alert(`Berhasil menyimpan pengaturan keringanan biaya untuk ${selectedDispensasi.nama}`);
+          toast.success(`Berhasil menyimpan pengaturan keringanan biaya untuk ${selectedDispensasi.nama}`);
           fetchTagihan();
         } else {
-          alert("Gagal menyimpan dispensasi: " + res.message);
+          toast.error("Gagal menyimpan dispensasi: " + res.message);
         }
       } catch (error) {
         console.error("Gagal update dispensasi", error);
+        toast.error("Terjadi kesalahan sistem saat menyimpan dispensasi.");
       } finally {
         setSelectedDispensasi(null);
       }
@@ -123,13 +126,14 @@ export default function DaftarTagihanPage() {
         body: JSON.stringify({ pembayaran_ids: selectedRows, pesan: pesanMassal })
       });
       if (res.success) {
-        alert(res.message);
+        toast.success(res.message);
         setSelectedRows([]);
       } else {
-        alert("Gagal mengirim pesan: " + res.message);
+        toast.error("Gagal mengirim pesan: " + res.message);
       }
     } catch (error) {
       console.error(error);
+      toast.error("Gagal mengirim pesan.");
     } finally {
       setShowPeringatanModal(false);
     }
@@ -688,7 +692,8 @@ export default function DaftarTagihanPage() {
               <div className="w-full space-y-3 relative z-10">
                 <button 
                   onClick={() => {
-                    alert("Mengarahkan ke kontak Super Admin...");
+                    toast.success("Mengarahkan ke kontak Super Admin...");
+                    window.open('https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20butuh%20bantuan%20terkait%20fitur%20Notifikasi%20WhatsApp', '_blank');
                     setShowPaywallModal(false);
                   }}
                   className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-white font-bold rounded-xl transition-all shadow-[0_4px_15px_rgba(234,179,8,0.3)] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(234,179,8,0.4)]"

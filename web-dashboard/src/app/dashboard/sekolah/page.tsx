@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import useSWR from "swr";
+import { Search, Plus, Building2, Building, Trash2, Edit2, LogIn, Key, CheckCircle, Package } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import toast from "react-hot-toast";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { AlertCircle } from "lucide-react";
@@ -75,12 +77,15 @@ export default function SekolahPage() {
           admin_email: "",
           admin_password: "",
         });
+        toast.success("Sekolah baru berhasil ditambahkan");
         loadData(); // Refresh list
       } else {
         setError(res.message);
+        toast.error(res.message || "Gagal membuat tenant baru.");
       }
     } catch (err: any) {
       setError(err.message || "Gagal membuat tenant baru.");
+      toast.error(err.message || "Gagal membuat tenant baru.");
     } finally {
       setIsSubmitting(false);
     }
@@ -96,28 +101,29 @@ export default function SekolahPage() {
         method: "PATCH"
       });
 
-      if (!res.success) {
-        alert("Gagal mengubah status tenant");
+      if (res.success) {
+        loadData();
+        toast.success("Status sekolah berhasil diubah");
+      } else {
         // Revert on failure
         setOptimisticStatus(prev => {
           const newState = { ...prev };
           delete newState[id];
           return newState;
         });
-      } else {
-        loadData();
+        toast.error("Gagal mengubah status tenant");
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan jaringan.");
       // Revert on failure
       setOptimisticStatus(prev => {
         const newState = { ...prev };
         delete newState[id];
         return newState;
       });
+      toast.error("Terjadi kesalahan sistem.");
     }
-  }
+  };
 
   const handleImpersonate = async (id: string) => {
     try {
@@ -127,10 +133,11 @@ export default function SekolahPage() {
       if (res.success && res.data) {
         impersonate(res.data.token, res.data.user);
       } else {
-        alert(res.message || "Gagal masuk sebagai klien.");
+        toast.error(res.message || "Gagal masuk sebagai klien.");
       }
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan sistem.");
+      console.error(err);
+      toast.error(err.message || "Terjadi kesalahan jaringan.");
     }
   };
 
@@ -143,13 +150,13 @@ export default function SekolahPage() {
       const res = await apiFetch(`/superadmin/tenants/${id}/reset-password`, {
         method: "POST"
       });
-      if (res.success) {
-        alert("Berhasil! Password telah diubah menjadi komite1234.");
+      if (res?.success) {
+        toast.success("Berhasil! Password telah diubah menjadi komite1234.");
       } else {
-        alert(res.message || "Gagal mereset password.");
+        toast.error(res.message || "Gagal mereset password.");
       }
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan sistem.");
+      toast.error(err.message || "Terjadi kesalahan sistem.");
     }
   };
 
@@ -164,13 +171,13 @@ export default function SekolahPage() {
         method: "DELETE"
       });
       if (res.success || !res.message?.toLowerCase().includes('gagal')) {
-        alert("Sekolah berhasil dihapus.");
+        toast.success("Sekolah berhasil dihapus.");
         loadData();
       } else {
-        alert(res.message || "Gagal menghapus sekolah.");
+        toast.error(res.message || "Gagal menghapus sekolah.");
       }
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan sistem saat menghapus.");
+      toast.error(err.message || "Terjadi kesalahan sistem saat menghapus.");
     } finally {
       setIsSubmitting(false);
     }
@@ -184,14 +191,16 @@ export default function SekolahPage() {
         method: "PUT",
         body: JSON.stringify({ paket_berlangganan: newPackage })
       });
-      if (res.success) {
+      if (res?.success) {
+        toast.success("Paket langganan berhasil diubah");
         setIsEditPackageModalOpen(false);
         loadData();
       } else {
-        alert(res.message);
+        toast.error(res.message || "Gagal mengubah paket");
       }
     } catch (e: any) {
-      alert(e.message || "Gagal mengubah paket");
+      console.error(e);
+      toast.error(e.message || "Gagal mengubah paket");
     } finally {
       setIsSubmitting(false);
     }

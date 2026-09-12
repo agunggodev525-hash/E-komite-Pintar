@@ -4,6 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Plus, X, Package } from "lucide-react";
+import toast from "react-hot-toast";
 import { formatRupiah, apiFetch } from "@/lib/api";
 
 export default function ManajemenPaketPage() {
@@ -88,10 +89,12 @@ export default function ManajemenPaketPage() {
         });
         if (res?.success) fetchPackages();
       }
+      }
       handleCloseModal();
+      toast.success(isEditMode ? "Paket berhasil diperbarui!" : "Paket berhasil ditambahkan!");
     } catch (error) {
       console.error("Gagal menyimpan paket", error);
-      alert("Terjadi kesalahan saat menyimpan data.");
+      toast.error("Terjadi kesalahan saat menyimpan data.");
     }
   };
 
@@ -99,9 +102,15 @@ export default function ManajemenPaketPage() {
     if (confirm("Yakin ingin menghapus paket ini?")) {
       try {
         const res = await apiFetch(`/superadmin/paket/${id}`, { method: "DELETE" });
-        if (res?.success) fetchPackages();
+        if (res?.success) {
+          fetchPackages();
+          toast.success("Paket berhasil dihapus.");
+        } else {
+          toast.error("Gagal menghapus paket.");
+        }
       } catch (error) {
         console.error("Gagal menghapus paket", error);
+        toast.error("Gagal menghapus paket.");
       }
     }
   };
@@ -109,9 +118,13 @@ export default function ManajemenPaketPage() {
   const toggleStatus = async (id: string) => {
     try {
       const res = await apiFetch(`/superadmin/paket/${id}/status`, { method: "PATCH" });
-      if (res?.success) fetchPackages();
+      if (res?.success) {
+        fetchPackages();
+        toast.success("Status paket berhasil diubah.");
+      }
     } catch (error) {
       console.error("Gagal mengubah status paket", error);
+      toast.error("Gagal mengubah status paket.");
     }
   };
 

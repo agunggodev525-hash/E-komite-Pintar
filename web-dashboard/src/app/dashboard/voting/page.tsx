@@ -23,10 +23,10 @@ interface Voting {
   };
   kandidat: VotingKandidat[];
 }
-
 import DashboardLayout from "@/components/DashboardLayout";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function VotingAdminPage() {
   const { user } = useAuth();
@@ -83,12 +83,13 @@ export default function VotingAdminPage() {
         setIsModalOpen(false);
         setFormData({ judul: "", deskripsi: "", tanggal_berakhir: "", kandidat: ["", ""] });
         mutate();
+        toast.success("Voting berhasil diterbitkan!");
       } else {
-        alert(res.message);
+        toast.error(res.message || "Gagal menerbitkan voting");
       }
     } catch (e: any) {
       console.error(e);
-      alert(e.message || "Terjadi kesalahan sistem.");
+      toast.error(e.message || "Terjadi kesalahan sistem.");
     } finally {
       setIsSubmitting(false);
     }
@@ -111,11 +112,12 @@ export default function VotingAdminPage() {
         setIsDeleteModalOpen(false);
         setVotingToDelete(null);
         mutate();
+        toast.success("Voting berhasil dihapus");
       } else {
-        alert(res.message);
+        toast.error(res.message || "Gagal menghapus voting");
       }
     } catch (e: any) {
-      alert(e.message || "Gagal menghapus voting");
+      toast.error(e.message || "Gagal menghapus voting");
     } finally {
       setIsDeleting(false);
     }
