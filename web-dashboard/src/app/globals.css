@@ -1,6 +1,6 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (.dark, .dark &);
 
 /* ============================================
    E-Komite Pintar — Premium Design System v2.0
