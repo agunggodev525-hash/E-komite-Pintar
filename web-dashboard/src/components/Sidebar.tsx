@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
               
-            const activeClasses = "bg-blue-50/50 dark:bg-blue-500/10 border border-blue-400/40 dark:border-blue-500/50 text-blue-700 dark:text-blue-400 font-bold rounded-2xl dark:shadow-[inset_0_0_20px_rgba(59,130,246,0.15),0_0_15px_rgba(59,130,246,0.1)] shadow-[inset_0_0_15px_rgba(59,130,246,0.05)]";
+            const activeClasses = "bg-blue-500/15 border border-blue-500/50 text-blue-600 dark:text-blue-400 font-bold rounded-2xl shadow-[inset_0_0_20px_rgba(59,130,246,0.2),0_0_15px_rgba(59,130,246,0.15)]";
 
             return (
               <Link
@@ -81,12 +81,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={`flex items-center gap-3.5 px-4 py-3 text-sm font-semibold transition-all duration-300 group relative overflow-hidden ${
                   isActive
                     ? activeClasses
-                    : "rounded-2xl border border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-white"
+                    : "rounded-2xl border border-transparent text-slate-600 dark:text-slate-400 hover:bg-blue-500/5 hover:text-blue-600 dark:hover:text-blue-400"
                 }`}
               >
                 {/* Background glow on hover for inactive */}
                 {!isActive && (
-                  <div className="absolute inset-0 bg-slate-100 dark:bg-gradient-to-r dark:from-white/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                  <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
                 )}
                 
                 <span className={`relative z-10 flex items-center justify-center transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-blue-500 dark:group-hover:text-blue-400'}`}>
