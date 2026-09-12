@@ -110,36 +110,36 @@ export default function DashboardPage() {
       title="Dashboard Utama"
       subtitle={`Selamat datang kembali, ${user?.nama_lengkap || "Admin"}!`}
       titleExtra={
-        <div className="flex items-center gap-2 sm:gap-3 ml-0 lg:ml-4 flex-wrap">
+        <div className="flex items-center gap-2.5 ml-0 lg:ml-4 flex-wrap mt-2 sm:mt-0">
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="px-3 py-1.5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-700 dark:text-slate-300 font-medium cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400/50"
+            className="px-3.5 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-800 dark:text-white cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 dark:focus:border-blue-500 outline-none transition-all shadow-sm"
             style={{ appearance: "auto" }}
           >
             {Array.from({ length: 6 }, (_, i) => {
               const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
               const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
               return (
-                <option key={val} value={val} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-300">
+                <option key={val} value={val}>
                   Periode Bulan: {formatPeriodLabel(val)}
                 </option>
               );
             })}
           </select>
           
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
             <Link 
               href="/dashboard/tagihan/buat" 
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap"
+              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold transition-all shadow-[0_4px_12px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 whitespace-nowrap flex items-center justify-center gap-1.5"
             >
-              + Buat Tagihan
+              <span>+ Buat Tagihan</span>
             </Link>
             <Link 
               href="/dashboard/pengeluaran" 
-              className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap border border-slate-600"
+              className="px-4 py-2.5 bg-white dark:bg-navy-800/80 hover:bg-slate-50 dark:hover:bg-navy-700/80 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-bold transition-all shadow-sm border border-slate-200 dark:border-white/[0.07] hover:border-slate-300 dark:hover:border-white/[0.1] hover:-translate-y-0.5 whitespace-nowrap flex items-center justify-center gap-1.5"
             >
-              + Catat Pengeluaran
+              <span>+ Catat Pengeluaran</span>
             </Link>
           </div>
         </div>
@@ -151,31 +151,70 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Saldo Kas Saat Ini</p>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent pb-1 break-words">{formatRupiah(data.saldoKas)}</h3>
-              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                <span className="text-emerald-600 dark:text-emerald-500 font-bold">Real-time</span> dari database
-              </p>
+          {/* STAT CARDS PREMIUM */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+            {/* Card 1 — Saldo Kas */}
+            <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border border-emerald-100 dark:border-emerald-500/15 shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_32px_rgba(16,185,129,0.15)] transition-all duration-300">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 rounded-t-2xl" />
+              <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 dark:bg-emerald-500/[0.12] rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="relative z-10 p-5 pt-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 border border-emerald-100 dark:border-emerald-500/30">
+                    <span className="text-xl">💰</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Saldo Kas<br/>Saat Ini</span>
+                </div>
+                <h3 className="text-2xl sm:text-[1.7rem] font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight mb-1 truncate">
+                  {formatRupiah(data.saldoKas)}
+                </h3>
+                <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+                  <span className="text-emerald-600 dark:text-emerald-500 font-bold tracking-wide">Real-time</span> dari database
+                </p>
+              </div>
             </div>
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Total Menunggak</p>
-              <h3 className={`text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br ${data.totalMenunggak === 0 ? 'from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600' : 'from-rose-600 to-red-800 dark:from-rose-400 dark:to-red-600'} bg-clip-text text-transparent pb-1`}>{data.totalMenunggak} Siswa</h3>
-              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                {data.totalMenunggak === 0 ? (
-                  <><span className="text-emerald-600 dark:text-emerald-500 font-bold">Semua lunas</span> — Tidak ada tunggakan</>
-                ) : (
-                  <><span className="text-rose-600 dark:text-rose-500 font-bold">Aktif</span> belum lunas</>
-                )}
-              </p>
+
+            {/* Card 2 — Total Menunggak */}
+            <div className={`group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300 ${data.totalMenunggak === 0 ? 'border-emerald-100 dark:border-emerald-500/15 dark:hover:shadow-[0_8px_32px_rgba(16,185,129,0.15)]' : 'border-rose-100 dark:border-rose-500/15 dark:hover:shadow-[0_8px_32px_rgba(244,63,94,0.15)]'}`}>
+              <div className={`absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl ${data.totalMenunggak === 0 ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500' : 'bg-gradient-to-r from-rose-500 via-pink-400 to-rose-500'}`} />
+              <div className={`absolute top-0 right-0 w-28 h-28 rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none ${data.totalMenunggak === 0 ? 'bg-emerald-500/10 dark:bg-emerald-500/[0.12]' : 'bg-rose-500/10 dark:bg-rose-500/[0.12]'}`} />
+              <div className="relative z-10 p-5 pt-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 border ${data.totalMenunggak === 0 ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-100 dark:border-emerald-500/30' : 'bg-rose-50 dark:bg-rose-500/15 border-rose-100 dark:border-rose-500/30'}`}>
+                    <span className="text-xl">⚠️</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Total<br/>Menunggak</span>
+                </div>
+                <h3 className={`text-2xl sm:text-[1.7rem] font-extrabold tracking-tight mb-1 truncate ${data.totalMenunggak === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                  {data.totalMenunggak} <span className="text-xl font-bold">Siswa</span>
+                </h3>
+                <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+                  {data.totalMenunggak === 0 ? (
+                    <><span className="text-emerald-600 dark:text-emerald-500 font-bold tracking-wide">Semua lunas</span> — Tidak ada tunggakan</>
+                  ) : (
+                    <><span className="text-rose-600 dark:text-rose-500 font-bold tracking-wide">Aktif</span> belum lunas</>
+                  )}
+                </p>
+              </div>
             </div>
-            <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] flex flex-col justify-between h-full space-y-2 group hover:-translate-y-1 transition-all duration-300">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">Dana Cair / Settlement</p>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-br from-blue-600 to-indigo-800 dark:from-blue-400 dark:to-indigo-600 bg-clip-text text-transparent pb-1 break-words">{formatRupiah(data.danaCair)}</h3>
-              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                Belum ada pencairan
-              </p>
+
+            {/* Card 3 — Dana Cair */}
+            <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border border-blue-100 dark:border-blue-500/15 shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_32px_rgba(59,130,246,0.15)] transition-all duration-300">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-500 rounded-t-2xl" />
+              <div className="absolute top-0 right-0 w-28 h-28 bg-blue-500/10 dark:bg-blue-500/[0.12] rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+              <div className="relative z-10 p-5 pt-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-500/15 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 border border-blue-100 dark:border-blue-500/30">
+                    <span className="text-xl">🏦</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Dana Cair /<br/>Settlement</span>
+                </div>
+                <h3 className="text-2xl sm:text-[1.7rem] font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mb-1 truncate">
+                  {formatRupiah(data.danaCair)}
+                </h3>
+                <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 tracking-wide">
+                  Belum ada pencairan
+                </p>
+              </div>
             </div>
           </div>
 
@@ -184,67 +223,85 @@ export default function DashboardPage() {
             <CashFlowChart chartData={chartData} loading={chartLoading} />
           </div>
 
-          <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-lg dark:shadow-xl transition-colors">
-            <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-slate-50 dark:bg-slate-900/50">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight transition-colors">
-                5 Transaksi Masuk Terakhir
-              </h2>
-              <Link href="/dashboard/laporan" className="text-sm font-semibold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
-                Lihat Semua &gt;
+          <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-white/[0.07] overflow-hidden shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] transition-colors">
+            <div className="px-5 py-4 border-b border-slate-100 dark:border-white/[0.06] flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/15 flex items-center justify-center">
+                  <span className="text-sm">📄</span>
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
+                    5 Transaksi Masuk Terakhir
+                  </h2>
+                </div>
+              </div>
+              <Link href="/dashboard/laporan" className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1">
+                Lihat Semua Laporan <span aria-hidden="true">&rarr;</span>
               </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-100 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10 transition-colors">
-                  <tr>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06]">
+                    <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       Siswa
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
+                    <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       Tagihan
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
+                    <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       Nominal
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
+                    <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       Metode
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
+                    <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">
+                    <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       Tgl Update
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                <tbody>
                   {data.recentTransactions.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
-                        Belum ada transaksi lunas.
+                      <td colSpan={6} className="px-5 py-14 text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-1">
+                            <span className="text-lg">📭</span>
+                          </div>
+                          <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Belum ada transaksi lunas</p>
+                        </div>
                       </td>
                     </tr>
                   ) : (
                     data.recentTransactions.map((item: any) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
+                        className="border-b border-slate-50 dark:border-white/[0.04] hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group"
                       >
-                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
-                          {item.siswa}
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{item.siswa}</p>
                         </td>
-                        <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.tagihan}</td>
-                        <td className="px-6 py-4 font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                          {formatRupiah(item.nominal)}
+                        <td className="px-5 py-4">
+                          <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">{item.tagihan}</p>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                            + {formatRupiah(item.nominal)}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4">
                           {renderMetodeBadge(item.metode)}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-4">
                           <StatusBadge status={item.status} />
                         </td>
-                        <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                          {item.tanggal ? formatDate(item.tanggal) : "-"}
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <p className="text-xs font-semibold text-slate-700 dark:text-slate-400">
+                            {item.tanggal ? formatDate(item.tanggal) : "-"}
+                          </p>
                         </td>
                       </tr>
                     ))
