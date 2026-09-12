@@ -31,12 +31,17 @@ export default function DashboardLayout({
   const mainBgClass = "bg-slate-50/50 dark:bg-transparent text-slate-900 dark:text-slate-200 min-h-screen transition-colors duration-300 relative z-10";
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#050B14] relative">
-      {/* Futuristic abstract glowing background */}
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFF] dark:bg-[#050B14] relative">
+      {/* Premium ambient background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[30%] sm:w-[50%] h-[30%] sm:h-[50%] bg-cyan-neon/10 dark:bg-cyan-neon/20 rounded-full blur-[80px] sm:blur-[120px] animate-pulse-glow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] sm:w-[60%] h-[40%] sm:h-[60%] bg-magenta-neon/10 dark:bg-magenta-neon/20 rounded-full blur-[100px] sm:blur-[150px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
-        <div className="hidden sm:block absolute top-[40%] left-[30%] w-[30%] h-[30%] bg-blue-500/10 dark:bg-blue-500/10 rounded-full blur-[100px] animate-float-subtle" />
+        {/* Primary cyan orb - top left */}
+        <div className="absolute top-[-15%] left-[-8%] w-[45%] h-[45%] bg-blue-500/8 dark:bg-blue-500/[0.12] rounded-full blur-[100px] animate-pulse-glow-blue" />
+        {/* Secondary violet orb - bottom right */}
+        <div className="absolute bottom-[-15%] right-[-8%] w-[50%] h-[50%] bg-violet-500/8 dark:bg-violet-500/[0.10] rounded-full blur-[120px]" style={{ animationDelay: '1.5s' }} />
+        {/* Accent gold orb - center */}
+        <div className="hidden sm:block absolute top-[35%] left-[25%] w-[35%] h-[35%] bg-amber-500/5 dark:bg-amber-500/[0.07] rounded-full blur-[140px] animate-float-subtle" style={{ animationDelay: '3s' }} />
+        {/* Subtle grid texture for dark mode */}
+        <div className="hidden dark:block absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
       </div>
 
       {/* Sidebar */}
@@ -93,22 +98,23 @@ export default function DashboardLayout({
         </header>
 
         {/* Content */}
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 lg:p-8">
           {/* Desktop Header Title */}
-          <div className="hidden lg:flex justify-between items-start mb-6 lg:mb-8">
+          <div className="hidden lg:flex justify-between items-start mb-7">
             <div>
-              <div className="flex items-center flex-wrap gap-y-2">
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{title}</h1>
+              <div className="flex items-center flex-wrap gap-y-2 gap-x-3">
+                <h1 className="text-[1.75rem] font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+                  {title}
+                </h1>
                 {titleExtra}
               </div>
               {subtitle && (
-                <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">{subtitle}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1.5 leading-relaxed">{subtitle}</p>
               )}
             </div>
             
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              {/* Notification Bell (Desktop) */}
               <NotificationDropdown />
             </div>
           </div>

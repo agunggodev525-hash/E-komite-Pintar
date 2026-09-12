@@ -14,7 +14,7 @@ export default function LanggananSaaSPage() {
 
   const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
   const { data, error, mutate } = useSWR("/sekolah-paket", fetcher);
-  const { data: riwayatData, mutate: mutateRiwayat } = useSWR("/sekolah-paket/riwayat", fetcher);
+  const { data: riwayatData } = useSWR("/sekolah-paket/riwayat", fetcher);
 
   const tersedia = data?.tersedia || [];
   const langgananSaatIni = data?.langganan_saat_ini;

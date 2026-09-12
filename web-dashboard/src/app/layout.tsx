@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -9,7 +9,13 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -24,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="id" className={`${inter.variable} ${plusJakarta.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script 
           type="text/javascript"
@@ -33,7 +39,7 @@ export default function RootLayout({
           async
         ></script>
       </head>
-      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-navy-800 text-slate-900 dark:text-white transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-[#F8FAFF] dark:bg-[#050B14] text-slate-900 dark:text-slate-100 transition-colors duration-300">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

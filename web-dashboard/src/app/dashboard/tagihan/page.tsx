@@ -26,8 +26,8 @@ export default function DaftarTagihanPage() {
     return [];
   });
 
-  const { data: tagihan, error, mutate: fetchTagihan } = useSWR(`/pembayaran?limit=50`, fetcher, { fallbackData: [] });
-  const isLoading = !error && tagihan.length === 0;
+  const { data: tagihan, isLoading: swrLoading, error, mutate: fetchTagihan } = useSWR(`/pembayaran?limit=50`, fetcher, { fallbackData: [] });
+  const isLoading = swrLoading && tagihan.length === 0;
   
   const [selectedTagihan, setSelectedTagihan] = useState<any>(null); // Untuk Modal Kasir Tunai
   
@@ -176,8 +176,13 @@ export default function DaftarTagihanPage() {
                 className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Bulan</option>
-                <option value="Juli 2026">Juli 2026</option>
-                <option value="Agustus 2026">Agustus 2026</option>
+                 {Array.from({ length: 12 }, (_, i) => {
+                   const d = new Date();
+                   d.setMonth(d.getMonth() - i);
+                   const label = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                   const month = d.toLocaleDateString('id-ID', { month: 'long' });
+                   return <option key={label} value={month}>{label}</option>;
+                 })}
               </select>
             </div>
           </div>

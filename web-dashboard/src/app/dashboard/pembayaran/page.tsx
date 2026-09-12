@@ -6,7 +6,7 @@ import { formatRupiah } from "@/lib/api";
 import { ArrowLeft, ChevronDown, ChevronUp, Wallet, Landmark, Store, CheckCircle2 } from "lucide-react";
 
 export default function DetailPembayaranPage() {
-  const [activeMethod, setActiveMethod] = useState<string>("BCA_VA");
+  const [activeMethod] = useState<string>("BCA_VA");
   const [openSection, setOpenSection] = useState<string>("VA"); // 'EWALLET', 'VA', 'RETAIL'
 
   const totalPembayaran = 350000;

@@ -39,12 +39,13 @@ const getAdminDashboard = async (req, res, next) => {
     const totalPengeluaran = pengeluaranAggregate._sum.nominal || 0;
     const saldoKas = totalPemasukan - totalPengeluaran;
 
-    // 2. Total Siswa Menunggak (punya tagihan BELUM_BAYAR atau PENDING yang sudah lewat jatuh tempo, atau sekadar belum bayar)
-    // Untuk sederhana: Hitung jumlah siswa unik yang memiliki tagihan dengan status BELUM_BAYAR
+    // 2. Total Siswa Menunggak (punya tagihan PENDING atau BELUM_BAYAR)
+    // Tagihan baru dibuat dengan status PENDING, bukan BELUM_BAYAR
+    // Menghitung siswa unik yang belum lunas sama sekali
     const siswaMenunggak = await prisma.pembayaran.findMany({
       where: {
         tagihan: { sekolah_id },
-        status: 'BELUM_BAYAR'
+        status: { in: ['PENDING', 'BELUM_BAYAR'] }
       },
       distinct: ['siswa_id'],
       select: { siswa_id: true }

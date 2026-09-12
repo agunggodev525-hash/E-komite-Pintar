@@ -5,6 +5,7 @@ import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { formatRupiah, apiFetch, formatDate } from "@/lib/api";
 import { Plus, Camera, UploadCloud, X, Search, FileText } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function PengeluaranPage() {
   const fetcher = (url: string) => apiFetch<any[]>(url).then(res => res.data);
@@ -37,8 +38,16 @@ export default function PengeluaranPage() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    // Fake upload process
-    alert("File " + (e.dataTransfer.files[0]?.name || "") + " disimulasikan terupload!");
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Ukuran file melebihi batas 2MB.');
+        return;
+      }
+      setFormFile(file);
+    } else if (file) {
+      toast.error('Hanya file gambar yang diperbolehkan.');
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -46,24 +55,31 @@ export default function PengeluaranPage() {
     if (!formKeterangan || !formNominal || !formTanggal) return;
     
     try {
+      // Gunakan FormData agar file nota bisa ikut dikirim
+      const formDataPayload = new FormData();
+      formDataPayload.append('tanggal', formTanggal);
+      formDataPayload.append('keterangan', formKeterangan);
+      formDataPayload.append('nominal', String(parseInt(formNominal.replace(/[^0-9]/g, '') || "0")));
+      formDataPayload.append('kategori', formKategori || 'Lain-lain');
+      if (formFile) {
+        formDataPayload.append('nota', formFile);
+      }
+
       await apiFetch("/pengeluaran", {
         method: "POST",
-        body: JSON.stringify({
-          tanggal: formTanggal,
-          keterangan: formKeterangan,
-          nominal: parseInt(formNominal.replace(/[^0-9]/g, '') || "0"),
-          kategori: formKategori || "Lain-lain",
-        })
+        body: formDataPayload,
       });
       
+      toast.success("Pengeluaran berhasil dicatat!");
       setShowAddModal(false);
       setFormKeterangan("");
       setFormNominal("");
       setFormTanggal("");
       setFormKategori("");
+      setFormFile(null);
       fetchPengeluaran();
     } catch (error: any) {
-      alert("Gagal menyimpan pengeluaran: " + error.message);
+      toast.error("Gagal menyimpan pengeluaran: " + error.message);
     }
   };
 
@@ -164,7 +180,7 @@ export default function PengeluaranPage() {
               </button>
             </div>
             
-            <form onSubmit={handleSave} className="p-6 overflow-y-auto flex-1 space-y-5">
+            <form id="form-pengeluaran" onSubmit={handleSave} className="p-6 overflow-y-auto flex-1 space-y-5">
               <div>
                 <label className="block text-sm font-semibold text-slate-900 dark:text-slate-300 mb-1.5">Keterangan</label>
                 <textarea 
@@ -260,7 +276,8 @@ export default function PengeluaranPage() {
                 Batal
               </button>
               <button 
-                onClick={handleSave}
+                form="form-pengeluaran"
+                type="submit"
                 className="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl transition-all shadow-sm text-sm"
               >
                 Simpan Pengeluaran
@@ -273,29 +290,33 @@ export default function PengeluaranPage() {
       {/* Modal 2: Preview Foto Nota */}
       {previewImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in">
-          <div className="relative max-w-3xl w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="relative max-w-3xl w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setPreviewImage(null)}
               className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors z-10"
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="w-full h-[60vh] bg-slate-100 dark:bg-slate-900/50 flex items-center justify-center">
-              {/* Dummy Image Placeholder */}
-              <div className="text-center">
-                <Camera className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-600 dark:text-slate-400 font-medium">Gambar Kuitansi Fisik</p>
-                <p className="text-slate-500 text-sm">(Preview Mode)</p>
-              </div>
+            <div className="w-full max-h-[70vh] bg-slate-100 dark:bg-slate-900/50 flex items-center justify-center overflow-auto">
+              <img 
+                src={previewImage} 
+                alt="Bukti Nota" 
+                className="max-w-full max-h-[70vh] object-contain"
+              />
             </div>
             <div className="p-5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-white/5 flex justify-between items-center">
               <div>
-                <p className="font-semibold text-slate-900 dark:text-white">Bukti_Transaksi.jpg</p>
-                <p className="text-xs text-slate-400">Diunggah pada 2026-07-02</p>
+                <p className="font-semibold text-slate-900 dark:text-white">Bukti Nota Pengeluaran</p>
+                <p className="text-xs text-slate-400 mt-0.5 break-all">{previewImage}</p>
               </div>
-              <button className="px-4 py-2 bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20 text-slate-900 dark:text-white border border-slate-300 dark:border-white/10 text-sm font-semibold rounded-lg transition-colors">
+              <a 
+                href={previewImage} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20 text-slate-900 dark:text-white border border-slate-300 dark:border-white/10 text-sm font-semibold rounded-lg transition-colors"
+              >
                 Unduh
-              </button>
+              </a>
             </div>
           </div>
         </div>

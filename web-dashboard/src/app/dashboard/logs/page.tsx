@@ -10,7 +10,7 @@ export default function LogsPage() {
   const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
   const [page, setPage] = useState(1);
   const limit = 10;
-  const { data, error: fetchError, mutate: loadData } = useSWR(`/superadmin/logs?page=${page}&limit=${limit}`, fetcher);
+  const { data, error: fetchError } = useSWR(`/superadmin/logs?page=${page}&limit=${limit}`, fetcher);
 
   const logs = data?.logs || [];
   const totalPages = data?.pagination?.totalPages || 1;

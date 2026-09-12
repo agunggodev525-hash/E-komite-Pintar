@@ -32,7 +32,7 @@ export default function VotingAdminPage() {
   const { user } = useAuth();
   const shouldFetch = user?.role === "ADMIN_KOMITE";
   const fetcher = (url: string) => apiFetch<any>(url).then(res => res.data);
-  const { data, error, mutate } = useSWR(shouldFetch ? "/voting/admin" : null, fetcher);
+  const { data, mutate } = useSWR(shouldFetch ? "/voting/admin" : null, fetcher);
 
   const votings = data || [];
   const [isModalOpen, setIsModalOpen] = useState(false);

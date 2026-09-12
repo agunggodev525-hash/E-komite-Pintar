@@ -46,6 +46,7 @@ export default function SekolahPage() {
     if (paketList.length > 0 && !formData.paket_berlangganan) {
       setFormData(prev => ({ ...prev, paket_berlangganan: paketList[0].id }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paketList]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

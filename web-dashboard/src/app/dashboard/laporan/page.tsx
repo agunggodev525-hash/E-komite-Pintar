@@ -26,20 +26,13 @@ export default function LaporanKasPage() {
   const { data, error, mutate } = useSWR(`/laporan/keuangan?bulan=${filterBulan}&tahun=${filterTahun}`, fetcher);
   
   const isLoading = !data && !error;
-  const rawTransaksiList = data?.detail_transaksi || [];
-  
-  const totalMasuk = data?.total_pemasukan || 0;
-  const totalKeluar = data?.total_pengeluaran || 0;
-  const sisaKas = data?.sisa_kas || 0;
-  const saldoAwal = data?.saldo_awal || 0;
-  const pertumbuhanPersen = data?.pertumbuhan_persen || 0;
-
   // Filter based on search (Client side for now, for quick access)
   const transaksiList = useMemo(() => {
+    const rawTransaksiList = data?.detail_transaksi || [];
     let filtered = rawTransaksiList;
     if (search.trim() !== "") {
       const s = search.toLowerCase();
-      filtered = filtered.filter((t: any) => 
+      filtered = filtered.filter((t: any) =>
         (t.siswa && t.siswa.toLowerCase().includes(s)) ||
         (t.keterangan && t.keterangan.toLowerCase().includes(s))
       );
@@ -52,7 +45,13 @@ export default function LaporanKasPage() {
     }
 
     return filtered;
-  }, [rawTransaksiList, search, filterJenis]);
+  }, [data, search, filterJenis]);
+
+  const sisaKas = data?.sisa_kas ?? 0;
+  const totalMasuk = data?.total_masuk ?? 0;
+  const totalKeluar = data?.total_keluar ?? 0;
+  const pertumbuhanPersen = data?.pertumbuhan_persen ?? 0;
+  const saldoAwal = data?.saldo_awal ?? 0;
 
   const handleExport = () => {
     try {
@@ -140,74 +139,82 @@ export default function LaporanKasPage() {
   };
 
   const renderSummaryCards = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      {/* KOTAK TOTAL SALDO */}
-      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group h-full shadow-sm">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full blur-xl group-hover:bg-blue-500/20 transition-all duration-500" />
-        <div className="relative z-10 flex items-center justify-between mb-4">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-            <PieChart className="w-5 h-5" />
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
+
+      {/* Card 1 — Saldo */}
+      <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border border-blue-100 dark:border-blue-500/15 shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_32px_rgba(59,130,246,0.15)] transition-all duration-300">
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-500 rounded-t-2xl" />
+        <div className="absolute top-0 right-0 w-28 h-28 bg-blue-500/10 dark:bg-blue-500/[0.12] rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+        <div className="relative z-10 p-5 pt-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-500/15 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <PieChart className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Saldo<br/>Saat Ini</span>
           </div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Saldo<br/>Saat Ini</span>
-        </div>
-        <div className="relative z-10">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mb-1 truncate" title={formatRupiah(sisaKas)}>
-            {formatRupiah(sisaKas)}
+          <h2 className="text-2xl sm:text-[1.7rem] font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mb-1 truncate" title={formatRupiah(sisaKas)}>
+            {isLoading ? <span className="inline-block w-32 h-7 bg-blue-100 dark:bg-blue-500/20 rounded-lg animate-pulse" /> : formatRupiah(sisaKas)}
           </h2>
-          <p className="text-xs font-medium text-slate-500">Saldo Tersedia (Bulan Ini)</p>
+          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Tersedia Bulan Ini</p>
         </div>
       </div>
 
-      {/* KOTAK TOTAL PEMASUKAN */}
-      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group h-full shadow-sm">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full blur-xl group-hover:bg-emerald-500/20 transition-all duration-500" />
-        <div className="relative z-10 flex items-center justify-between mb-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-            <ArrowDownRight className="w-5 h-5" />
+      {/* Card 2 — Pemasukan */}
+      <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border border-emerald-100 dark:border-emerald-500/15 shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_32px_rgba(16,185,129,0.15)] transition-all duration-300">
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 rounded-t-2xl" />
+        <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 dark:bg-emerald-500/[0.12] rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+        <div className="relative z-10 p-5 pt-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <ArrowDownRight className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Total<br/>Pemasukan</span>
           </div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Total<br/>Pemasukan</span>
-        </div>
-        <div className="relative z-10">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight mb-1 truncate" title={formatRupiah(totalMasuk)}>
-            {formatRupiah(totalMasuk)}
+          <h2 className="text-2xl sm:text-[1.7rem] font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight mb-1 truncate" title={formatRupiah(totalMasuk)}>
+            {isLoading ? <span className="inline-block w-32 h-7 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg animate-pulse" /> : formatRupiah(totalMasuk)}
           </h2>
-          <p className="text-xs font-medium text-slate-500">Bulan yang difilter</p>
+          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Periode Difilter</p>
         </div>
       </div>
 
-      {/* KOTAK TOTAL PENGELUARAN */}
-      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group h-full shadow-sm">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/10 rounded-bl-full blur-xl group-hover:bg-rose-500/20 transition-all duration-500" />
-        <div className="relative z-10 flex items-center justify-between mb-4">
-          <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
-            <ArrowDownRight className="w-5 h-5 rotate-180" />
+      {/* Card 3 — Pengeluaran */}
+      <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border border-rose-100 dark:border-rose-500/15 shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_32px_rgba(244,63,94,0.15)] transition-all duration-300">
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-rose-500 via-pink-400 to-rose-500 rounded-t-2xl" />
+        <div className="absolute top-0 right-0 w-28 h-28 bg-rose-500/10 dark:bg-rose-500/[0.12] rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+        <div className="relative z-10 p-5 pt-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-500/15 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <ArrowDownRight className="w-5 h-5 text-rose-600 dark:text-rose-400 rotate-180" />
+            </div>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Total<br/>Pengeluaran</span>
           </div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Total<br/>Pengeluaran</span>
-        </div>
-        <div className="relative z-10">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 tracking-tight mb-1 truncate" title={formatRupiah(totalKeluar)}>
-            {formatRupiah(totalKeluar)}
+          <h2 className="text-2xl sm:text-[1.7rem] font-extrabold text-rose-600 dark:text-rose-400 tracking-tight mb-1 truncate" title={formatRupiah(totalKeluar)}>
+            {isLoading ? <span className="inline-block w-32 h-7 bg-rose-100 dark:bg-rose-500/20 rounded-lg animate-pulse" /> : formatRupiah(totalKeluar)}
           </h2>
-          <p className="text-xs font-medium text-slate-500">Bulan yang difilter</p>
+          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Periode Difilter</p>
         </div>
       </div>
 
-      {/* KOTAK PERTUMBUHAN */}
-      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group h-full shadow-sm">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-bl-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500" />
-        <div className="relative z-10 flex items-center justify-between mb-4">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-            <PieChart className="w-5 h-5" />
+      {/* Card 4 — Pertumbuhan */}
+      <div className={`group relative overflow-hidden rounded-2xl bg-white dark:bg-navy-800/70 border shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300 ${
+        Number(pertumbuhanPersen) >= 0 ? 'border-amber-100 dark:border-amber-500/15 dark:hover:shadow-[0_8px_32px_rgba(245,158,11,0.15)]' : 'border-rose-100 dark:border-rose-500/15'
+      }`}>
+        <div className={`absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl ${Number(pertumbuhanPersen) >= 0 ? 'bg-gradient-to-r from-amber-500 via-gold-400 to-amber-500' : 'bg-gradient-to-r from-rose-500 via-pink-400 to-rose-500'}`} />
+        <div className={`absolute top-0 right-0 w-28 h-28 rounded-bl-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none ${Number(pertumbuhanPersen) >= 0 ? 'bg-amber-500/10 dark:bg-amber-500/[0.12]' : 'bg-rose-500/10 dark:bg-rose-500/[0.12]'}`} />
+        <div className="relative z-10 p-5 pt-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 ${Number(pertumbuhanPersen) >= 0 ? 'bg-amber-50 dark:bg-amber-500/15' : 'bg-rose-50 dark:bg-rose-500/15'}`}>
+              <PieChart className={`w-5 h-5 ${Number(pertumbuhanPersen) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`} />
+            </div>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] text-right leading-snug">Pertumbuhan<br/>Kas</span>
           </div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Pertumbuhan<br/>Kas</span>
-        </div>
-        <div className="relative z-10">
-          <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight mb-1 truncate ${Number(pertumbuhanPersen) >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-            {Number(pertumbuhanPersen) > 0 ? '+' : ''}{pertumbuhanPersen}%
+          <h2 className={`text-2xl sm:text-[1.7rem] font-extrabold tracking-tight mb-1 truncate ${Number(pertumbuhanPersen) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`}>
+            {isLoading ? <span className="inline-block w-24 h-7 bg-amber-100 dark:bg-amber-500/20 rounded-lg animate-pulse" /> : `${Number(pertumbuhanPersen) > 0 ? '+' : ''}${pertumbuhanPersen}%`}
           </h2>
-          <p className="text-xs font-medium text-slate-500">Bulan ke Bulan</p>
+          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Bulan ke Bulan</p>
         </div>
       </div>
+
     </div>
   );
 
@@ -470,124 +477,182 @@ export default function LaporanKasPage() {
       </DashboardLayout>
     );
   }
-
+   
   // --- View for ORANG_TUA ---
   return (
     <DashboardLayout
       title="Laporan Arus Kas Komite"
-      subtitle="Pantau seluruh transaksi pemasukan dan pengeluaran kas"
+      subtitle="Pantau seluruh transaksi pemasukan dan pengeluaran kas secara transparan"
     >
       {renderSummaryCards()}
       
-      {/* Filter Card */}
-      <div className="bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl mb-6 transition-colors">
-        <div className="flex items-center gap-2 mb-4 text-slate-800 dark:text-white font-bold">
-          <Filter className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-          Filter Pencarian
+      {/* Premium Filter Card */}
+      <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-white/[0.07] shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] mb-6 overflow-hidden transition-colors">
+        {/* Filter Header */}
+        <div className="px-5 py-4 border-b border-slate-100 dark:border-white/[0.06] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/15 flex items-center justify-center">
+              <Filter className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">Filter Pencarian</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Tampilkan berdasarkan rentang waktu & jenis</p>
+            </div>
+          </div>
+          {(filterJenis !== 'Semua') && (
+            <span className="badge badge-blue">{filterJenis}</span>
+          )}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Bulan</label>
-            <select 
-              value={filterBulan}
-              onChange={(e) => setFilterBulan(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-gold-400 cursor-pointer"
-            >
-              <option value="01">Januari</option>
-              <option value="02">Februari</option>
-              <option value="03">Maret</option>
-              <option value="04">April</option>
-              <option value="05">Mei</option>
-              <option value="06">Juni</option>
-              <option value="07">Juli</option>
-              <option value="08">Agustus</option>
-              <option value="09">September</option>
-              <option value="10">Oktober</option>
-              <option value="11">November</option>
-              <option value="12">Desember</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Tahun</label>
-            <select 
-              value={filterTahun}
-              onChange={(e) => setFilterTahun(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-gold-400 cursor-pointer"
-            >
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-              <option value="2027">2027</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Jenis</label>
-            <select 
-              value={filterJenis}
-              onChange={(e) => setFilterJenis(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-gold-400 cursor-pointer"
-            >
-              <option value="Semua">Semua</option>
-              <option value="Pemasukan Saja">Pemasukan Saja</option>
-              <option value="Pengeluaran Saja">Pengeluaran Saja</option>
-            </select>
-          </div>
-          <div className="flex items-end">
-            <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-colors shadow-sm">
-              Terapkan Filter
-            </button>
+
+        {/* Filter Controls */}
+        <div className="p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Bulan</label>
+              <select 
+                value={filterBulan}
+                onChange={(e) => setFilterBulan(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 dark:focus:border-blue-500 outline-none cursor-pointer transition-all"
+              >
+                <option value="01">Januari</option>
+                <option value="02">Februari</option>
+                <option value="03">Maret</option>
+                <option value="04">April</option>
+                <option value="05">Mei</option>
+                <option value="06">Juni</option>
+                <option value="07">Juli</option>
+                <option value="08">Agustus</option>
+                <option value="09">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Tahun</label>
+              <select 
+                value={filterTahun}
+                onChange={(e) => setFilterTahun(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 dark:focus:border-blue-500 outline-none cursor-pointer transition-all"
+              >
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jenis Transaksi</label>
+              <select 
+                value={filterJenis}
+                onChange={(e) => setFilterJenis(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 dark:focus:border-blue-500 outline-none cursor-pointer transition-all"
+              >
+                <option value="Semua">Semua Jenis</option>
+                <option value="Pemasukan Saja">Pemasukan Saja</option>
+                <option value="Pengeluaran Saja">Pengeluaran Saja</option>
+              </select>
+            </div>
+            <div className="flex items-end">
+              <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition-all shadow-[0_4px_12px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                <Filter className="w-3.5 h-3.5" />
+                Terapkan Filter
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Table Rekap */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm dark:shadow-xl transition-colors">
+      {/* Premium Transaction Table */}
+      <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-white/[0.07] overflow-hidden shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] transition-colors">
+        
+        {/* Table Header */}
+        <div className="px-5 py-4 border-b border-slate-100 dark:border-white/[0.06] flex items-center justify-between">
+          <p className="text-sm font-bold text-slate-900 dark:text-white">Riwayat Transaksi</p>
+          {!isLoading && (
+            <span className="badge badge-slate">{transaksiList.length} transaksi</span>
+          )}
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
-              <tr>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Tanggal</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Siswa / Referensi</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Keterangan</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 text-right">Nominal</th>
+            <thead>
+              <tr className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06]">
+                <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 w-32">Tanggal</th>
+                <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Siswa / Referensi</th>
+                <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Keterangan</th>
+                <th className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-right">Nominal</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-white/5">
+            <tbody>
               {isLoading ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
-                      Memuat data...
-                    </td>
-                  </tr>
-                ) : transaksiList.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
-                      Tidak ada transaksi pada periode ini.
-                    </td>
-                  </tr>
-                ) : (
+                <tr>
+                  <td colSpan={4} className="px-5 py-14 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                      <p className="text-sm text-slate-400 dark:text-slate-500">Memuat transaksi...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : transaksiList.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-5 py-14 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-1">
+                        <PieChart className="w-6 h-6 text-slate-400" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Tidak ada transaksi</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">pada periode atau filter ini</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
                 transaksiList.map((item: any) => {
                   const isMasuk = item.tipe === 'PEMASUKAN';
                   return (
-                    <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                      <td className="px-6 py-4">
-                        <p className="font-bold text-slate-900 dark:text-white">{item.siswa !== '-' ? item.siswa : 'Pengurus Komite'}</p>
-                        {item.kelas !== '-' && <p className="text-xs text-slate-500 dark:text-slate-400">{item.kelas}</p>}
+                    <tr key={item.id} className="border-b border-slate-50 dark:border-white/[0.04] hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group">
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          {new Date(item.tanggal).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'})}
+                        </p>
                       </td>
-                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{item.keterangan}</td>
-                      <td className={`px-6 py-4 text-right font-semibold whitespace-nowrap ${isMasuk ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                        {isMasuk ? '+ ' : '- '} {formatRupiah(item.nominal)}
+                      <td className="px-5 py-4">
+                        <p className="font-bold text-slate-900 dark:text-white text-sm">{item.siswa !== '-' ? item.siswa : 'Pengurus Komite'}</p>
+                        {item.kelas !== '-' && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{item.kelas}</p>}
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-2.5">
+                          <span className={`inline-flex shrink-0 w-1.5 h-1.5 rounded-full ${isMasuk ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                          <p className="text-sm text-slate-700 dark:text-slate-200 font-medium">{item.keterangan}</p>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-right whitespace-nowrap">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
+                          isMasuk 
+                            ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' 
+                            : 'bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300'
+                        }`}>
+                          {isMasuk ? '+' : '−'} {formatRupiah(item.nominal)}
+                        </span>
                       </td>
                     </tr>
-                  )
+                  );
                 })
               )}
             </tbody>
           </table>
         </div>
         
-        <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/30 text-xs text-slate-600 dark:text-slate-400 flex justify-between items-center rounded-b-3xl">
-          <span>Menampilkan {transaksiList.length} transaksi</span>
+        <div className="px-5 py-3.5 border-t border-slate-100 dark:border-white/[0.06] bg-slate-50/50 dark:bg-white/[0.02] flex justify-between items-center">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            Menampilkan <span className="font-bold text-slate-700 dark:text-slate-300">{transaksiList.length}</span> transaksi
+          </span>
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/25 text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-lg transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            Export Excel
+          </button>
         </div>
       </div>
     </DashboardLayout>

@@ -26,11 +26,16 @@ router.get(
  * POST /api/v1/pengeluaran
  * Akses: SUPER_ADMIN, ADMIN_KOMITE
  */
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 2 * 1024 * 1024 } }); // maks 2MB
+
 router.post(
   '/',
   authorize('ADMIN_KOMITE'),
+  upload.single('nota'),
   pengeluaranController.createPengeluaran
 );
+
 
 /**
  * PUT /api/v1/pengeluaran/:id
