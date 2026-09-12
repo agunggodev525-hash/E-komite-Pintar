@@ -284,30 +284,30 @@ export default function SiswaPage() {
       title="Kelola Siswa"
       subtitle="Manajemen data siswa dan relasi orang tua"
     >
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-white/10 shadow-xl overflow-hidden flex flex-col">
+      <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-white/[0.07] shadow-md dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col transition-colors">
         
         {/* Header Table & Actions */}
-        <div className="p-6 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/30">
+        <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-white/[0.06] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-white/[0.025]">
           <div className="flex gap-3 w-full sm:w-auto flex-col sm:flex-row">
             <div className="relative w-full sm:w-64">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
                 type="text" 
                 placeholder="Cari nama / NISN..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-sm rounded-lg text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all outline-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 shadow-sm rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all outline-none"
               />
             </div>
             
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Filter className="h-4 w-4 text-slate-400" />
               </div>
               <select 
                 value={kelasFilter}
                 onChange={(e) => setKelasFilter(e.target.value)}
-                className="pl-9 pr-8 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-sm rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-gold-400 appearance-none cursor-pointer w-full sm:w-40 transition-all"
+                className="pl-10 pr-8 py-2.5 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 shadow-sm rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 appearance-none cursor-pointer w-full sm:w-40 transition-all"
               >
                 <option value="">Semua Kelas</option>
                 {uniqueKelas.map(k => (
@@ -321,7 +321,7 @@ export default function SiswaPage() {
             {selectedIds.length > 0 && (
               <button 
                 onClick={handleBulkDelete}
-                className="w-full sm:w-auto px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm animate-in fade-in zoom-in duration-200"
+                className="w-full sm:w-auto px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-sm font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(244,63,94,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-200"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Hapus Terpilih ({selectedIds.length})</span>
@@ -329,14 +329,14 @@ export default function SiswaPage() {
             )}
             <button 
               onClick={() => setIsImportModalOpen(true)}
-              className="w-full sm:w-auto px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto px-4 py-2.5 bg-white dark:bg-navy-800/80 hover:bg-slate-50 dark:hover:bg-navy-700/80 border border-slate-200 dark:border-white/[0.07] text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
               <FileSpreadsheet className="w-4 h-4" />
               <span>Import Excel</span>
             </button>
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto px-4 py-2 bg-gold-400 hover:bg-gold-500 hover:shadow-md text-slate-900 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm hover:-translate-y-0.5"
+              className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
               <UserPlus className="w-4 h-4" />
               <span>Tambah Siswa</span>
@@ -347,9 +347,9 @@ export default function SiswaPage() {
         {/* Table */}
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-white/10">
-              <tr>
-                <th scope="col" className="px-6 py-4 font-semibold w-12">
+            <thead>
+              <tr className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06]">
+                <th scope="col" className="px-5 py-3.5 w-12">
                   <input 
                     type="checkbox" 
                     className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 accent-blue-600 bg-white"
@@ -358,24 +358,24 @@ export default function SiswaPage() {
                     title="Pilih Semua"
                   />
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold">NISN</th>
-                <th scope="col" className="px-6 py-4 font-semibold">
-                  <div className="flex items-center gap-1.5 cursor-pointer hover:text-gold-600 transition-colors" onClick={() => handleSort('nama_siswa')}>
+                <th scope="col" className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">NISN</th>
+                <th scope="col" className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-1.5 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onClick={() => handleSort('nama_siswa')}>
                     Nama Siswa
-                    <ArrowUpDown className={`w-3.5 h-3.5 ${sortBy === 'nama_siswa' ? 'text-gold-500' : 'text-slate-300'}`} />
+                    <ArrowUpDown className={`w-3.5 h-3.5 ${sortBy === 'nama_siswa' ? 'text-blue-500' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold">
-                  <div className="flex items-center gap-1.5 cursor-pointer hover:text-gold-600 transition-colors" onClick={() => handleSort('kelas')}>
+                <th scope="col" className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-1.5 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onClick={() => handleSort('kelas')}>
                     Kelas
-                    <ArrowUpDown className={`w-3.5 h-3.5 ${sortBy === 'kelas' ? 'text-gold-500' : 'text-slate-300'}`} />
+                    <ArrowUpDown className={`w-3.5 h-3.5 ${sortBy === 'kelas' ? 'text-blue-500' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold">Orang Tua</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-right">Aksi</th>
+                <th scope="col" className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Orang Tua</th>
+                <th scope="col" className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className={`divide-y divide-slate-100 relative ${isLoading && siswa.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
+            <tbody className={`divide-y divide-slate-100 dark:divide-white/[0.04] relative ${isLoading && siswa.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
               {isLoading && siswa.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
@@ -393,8 +393,8 @@ export default function SiswaPage() {
                 </tr>
               ) : (
                 siswa.map((s: any) => (
-                  <tr key={s.id} className={`hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors ${selectedIds.includes(s.id) ? 'bg-blue-50/30 dark:bg-blue-900/10' : 'bg-white dark:bg-transparent'}`}>
-                    <td className="px-6 py-4">
+                  <tr key={s.id} className={`hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group ${selectedIds.includes(s.id) ? 'bg-blue-50/50 dark:bg-blue-900/20' : 'bg-transparent'}`}>
+                    <td className="px-5 py-4">
                       <input 
                         type="checkbox" 
                         className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 accent-blue-600 bg-white"
@@ -402,18 +402,18 @@ export default function SiswaPage() {
                         onChange={() => handleSelectRow(s.id)}
                       />
                     </td>
-                    <td className="px-6 py-4 text-slate-400 dark:text-slate-500 font-mono text-xs">{s.nisn}</td>
-                    <td className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">{toTitleCase(s.nama_siswa)}</td>
-                    <td className="px-6 py-4 text-slate-600">
-                      <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <td className="px-5 py-4 text-slate-500 dark:text-slate-400 font-mono text-[13px]">{s.nisn}</td>
+                    <td className="px-5 py-4 font-bold text-slate-900 dark:text-white">{toTitleCase(s.nama_siswa)}</td>
+                    <td className="px-5 py-4">
+                      <span className="px-2.5 py-1 bg-slate-100 dark:bg-white/10 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.06]">
                         {s.kelas}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-slate-700 dark:text-slate-300">{toTitleCase(s.orang_tua?.nama_lengkap) || "-"}</p>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{s.orang_tua?.email || "-"}</p>
+                    <td className="px-5 py-4">
+                      <p className="font-semibold text-slate-900 dark:text-slate-200">{toTitleCase(s.orang_tua?.nama_lengkap) || "-"}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{s.orang_tua?.email || "-"}</p>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-5 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <button 
                           onClick={() => openEditModal(s)}
@@ -444,21 +444,21 @@ export default function SiswaPage() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-slate-800/30 flex items-center justify-between">
-          <p className="text-sm text-slate-500 dark:text-slate-400">Total <span className="font-medium text-slate-700 dark:text-slate-200">{meta.total}</span> data siswa</p>
+        <div className="px-5 py-4 border-t border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.025] flex items-center justify-between">
+          <p className="text-sm text-slate-600 dark:text-slate-400">Total <span className="font-bold text-slate-900 dark:text-white">{meta.total}</span> data siswa</p>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-500 dark:text-slate-400 mr-2">Halaman {page} dari {meta.totalPages || 1}</span>
+            <span className="text-sm font-semibold text-slate-600 dark:text-slate-400 mr-2">Halaman {page} dari {meta.totalPages || 1}</span>
             <button 
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-white dark:bg-navy-800"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
               disabled={page >= meta.totalPages}
-              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-white dark:bg-navy-800"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -470,18 +470,18 @@ export default function SiswaPage() {
       {/* Modal Tambah/Edit Siswa */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && handleCloseModal()}></div>
-          <div className="relative bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 border border-slate-100 dark:border-white/10">
+          <div className="absolute inset-0 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && handleCloseModal()}></div>
+          <div className="relative bg-white dark:bg-navy-900 rounded-3xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 border border-slate-100 dark:border-white/10">
             
-            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 rounded-t-2xl">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                {editingSiswaId ? <Pencil className="w-5 h-5 text-blue-500" /> : <UserPlus className="w-5 h-5 text-gold-500" />}
+            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-white/[0.025] rounded-t-3xl">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                {editingSiswaId ? <Pencil className="w-5 h-5 text-blue-500" /> : <UserPlus className="w-5 h-5 text-blue-500" />}
                 {editingSiswaId ? "Edit Data Siswa" : "Tambah Siswa Baru"}
               </h3>
               <button 
                 onClick={handleCloseModal}
                 disabled={isSubmitting}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors p-1.5 rounded-lg"
+                className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors p-1.5 rounded-xl"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -578,12 +578,12 @@ export default function SiswaPage() {
               </form>
             </div>
 
-            <div className="px-6 py-5 border-t border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-slate-800/30 rounded-b-2xl flex justify-end gap-3 shrink-0">
+            <div className="px-6 py-5 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/[0.025] rounded-b-3xl flex justify-end gap-3 shrink-0">
               <button 
                 type="button" 
                 onClick={handleCloseModal}
                 disabled={isSubmitting}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors shadow-sm"
               >
                 Batal
               </button>
@@ -591,11 +591,11 @@ export default function SiswaPage() {
                 type="submit" 
                 form="siswaForm"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 text-sm font-bold text-slate-900 bg-gold-400 hover:bg-gold-500 rounded-xl transition-all shadow-sm disabled:opacity-70 flex items-center gap-2"
+                className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-all shadow-[0_4px_12px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Menyimpan...
                   </>
                 ) : (
@@ -611,20 +611,20 @@ export default function SiswaPage() {
       {/* Modal Import Excel */}
       {isImportModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => setIsImportModalOpen(false)}></div>
-          <div className="relative bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200 border border-slate-100 dark:border-white/10">
+          <div className="absolute inset-0 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm" onClick={() => setIsImportModalOpen(false)}></div>
+          <div className="relative bg-white dark:bg-navy-900 rounded-3xl w-full max-w-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200 border border-slate-100 dark:border-white/10">
             
-            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 rounded-t-2xl">
+            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-white/[0.025] rounded-t-3xl">
               <div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  <FileSpreadsheet className="w-5 h-5 text-blue-500" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-emerald-500" />
                   Import Data Siswa Massal
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Tambahkan ratusan siswa sekaligus menggunakan file Excel (.xlsx atau .csv).</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1.5">Tambahkan ratusan siswa sekaligus menggunakan file Excel (.xlsx atau .csv).</p>
               </div>
               <button 
                 onClick={() => setIsImportModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors p-1.5 rounded-lg shrink-0"
+                className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors p-1.5 rounded-xl shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -686,14 +686,14 @@ export default function SiswaPage() {
 
             </div>
 
-            <div className="px-6 py-5 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+            <div className="px-6 py-5 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/[0.025] rounded-b-3xl flex justify-end gap-3 shrink-0">
               <button 
                 type="button" 
                 onClick={() => {
                   setIsImportModalOpen(false);
                   setSelectedFile(null); // Reset saat batal
                 }}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors shadow-sm"
               >
                 Batal
               </button>

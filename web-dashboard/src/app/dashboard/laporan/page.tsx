@@ -262,7 +262,7 @@ export default function LaporanKasPage() {
                 placeholder="Cari nama siswa atau keterangan..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 shadow-sm rounded-lg text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-800"
+                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 shadow-sm rounded-xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               />
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function LaporanKasPage() {
             <select 
               value={filterJenis}
               onChange={(e) => setFilterJenis(e.target.value)}
-              className="w-full md:w-40 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-navy-800 cursor-pointer"
+              className="w-full md:w-40 px-3 py-2.5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer transition-colors"
             >
               <option value="Semua">Semua Jenis</option>
               <option value="Pemasukan Saja">Pemasukan Saja</option>
@@ -283,7 +283,7 @@ export default function LaporanKasPage() {
             <select 
               value={filterBulan}
               onChange={(e) => setFilterBulan(e.target.value)}
-              className="w-full md:w-32 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-navy-800 cursor-pointer"
+              className="w-full md:w-32 px-3 py-2.5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer transition-colors"
             >
               <option value="01">Januari</option>
               <option value="02">Februari</option>
@@ -304,7 +304,7 @@ export default function LaporanKasPage() {
             <select 
               value={filterTahun}
               onChange={(e) => setFilterTahun(e.target.value)}
-              className="w-full md:w-28 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-navy-800 cursor-pointer"
+              className="w-full md:w-28 px-3 py-2.5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer transition-colors"
             >
               <option value="2025">2025</option>
               <option value="2026">2026</option>
@@ -314,10 +314,10 @@ export default function LaporanKasPage() {
         </div>
 
         {/* Table Transparansi (Audit) */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm dark:shadow-xl">
+        <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-3xl border border-slate-100 dark:border-white/[0.07] overflow-hidden shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] transition-colors">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
+              <thead className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06]">
                 <tr>
                   <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 w-32">Tanggal</th>
                   <th scope="col" className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Siswa / Referensi</th>
@@ -347,7 +347,7 @@ export default function LaporanKasPage() {
                   transaksiList.map((item: any) => {
                     const isMasuk = item.tipe === 'PEMASUKAN';
                     return (
-                      <tr key={item.id} className={`${item.is_flagged ? 'bg-amber-50/50' : 'hover:bg-slate-50'} dark:hover:bg-white/5 transition-colors group`}>
+                      <tr key={item.id} className={`${item.is_flagged ? 'bg-amber-50/50 dark:bg-amber-500/10' : 'hover:bg-slate-50/80'} dark:hover:bg-white/[0.03] border-b border-slate-50 dark:border-white/[0.04] transition-colors group`}>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400 font-mono text-xs whitespace-nowrap">
                           {new Date(item.tanggal).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'})}
                         </td>
@@ -372,7 +372,7 @@ export default function LaporanKasPage() {
                         <td className="px-6 py-4 text-center">
                           <button 
                             onClick={() => openAuditModal(item)}
-                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                            className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors" 
                             title="Beri Catatan Audit"
                           >
                             <Flag className="w-4 h-4 stroke-[2]" />
@@ -385,19 +385,19 @@ export default function LaporanKasPage() {
               </tbody>
             </table>
           </div>
-          <div className="p-4 border-t border-slate-100 bg-slate-50 text-xs text-slate-500 flex justify-between items-center rounded-b-3xl">
-            <span>Saldo Awal (Sebelum {filterBulan}/{filterTahun}): <strong className="text-slate-700">{formatRupiah(saldoAwal)}</strong></span>
-            <span>Menampilkan {transaksiList.length} transaksi</span>
+          <div className="p-4 border-t border-slate-100 dark:border-white/[0.06] bg-slate-50/50 dark:bg-white/[0.02] text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center rounded-b-3xl">
+            <span>Saldo Awal (Sebelum {filterBulan}/{filterTahun}): <strong className="text-slate-700 dark:text-slate-300 font-bold">{formatRupiah(saldoAwal)}</strong></span>
+            <span>Menampilkan <span className="font-bold">{transaksiList.length}</span> transaksi</span>
           </div>
         </div>
 
         {/* Modal Catatan Audit */}
         {isAuditModalOpen && selectedTrx && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => !isSubmittingNote && setIsAuditModalOpen(false)}></div>
-            <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
-              <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
-                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onClick={() => !isSubmittingNote && setIsAuditModalOpen(false)}></div>
+            <div className="relative bg-white dark:bg-navy-800 rounded-3xl w-full max-w-lg border border-slate-200 dark:border-white/10 shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
+              <div className="px-6 py-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-navy-900/50 rounded-t-3xl">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <Flag className="w-5 h-5 text-rose-500" />
                   Catatan Audit Transaksi
                 </h3>
@@ -411,55 +411,55 @@ export default function LaporanKasPage() {
               </div>
 
               <div className="p-6">
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-5 text-sm">
-                  <div className="grid grid-cols-3 gap-y-2">
-                    <span className="text-slate-500">Tanggal:</span>
-                    <span className="col-span-2 font-medium text-slate-800">{new Date(selectedTrx.tanggal).toLocaleDateString('id-ID')}</span>
-                    <span className="text-slate-500">Tipe:</span>
-                    <span className={`col-span-2 font-bold ${selectedTrx.tipe === 'PEMASUKAN' ? 'text-emerald-600' : 'text-rose-600'}`}>{selectedTrx.tipe}</span>
-                    <span className="text-slate-500">Keterangan:</span>
-                    <span className="col-span-2 font-medium text-slate-800">{selectedTrx.keterangan}</span>
-                    <span className="text-slate-500">Nominal:</span>
-                    <span className="col-span-2 font-bold text-slate-800">{formatRupiah(selectedTrx.nominal)}</span>
+                <div className="bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-5 mb-5 text-sm shadow-sm">
+                  <div className="grid grid-cols-3 gap-y-3">
+                    <span className="text-slate-500 dark:text-slate-400 font-semibold">Tanggal:</span>
+                    <span className="col-span-2 font-bold text-slate-900 dark:text-white">{new Date(selectedTrx.tanggal).toLocaleDateString('id-ID')}</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-semibold">Tipe:</span>
+                    <span className={`col-span-2 font-bold ${selectedTrx.tipe === 'PEMASUKAN' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{selectedTrx.tipe}</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-semibold">Keterangan:</span>
+                    <span className="col-span-2 font-bold text-slate-900 dark:text-white">{selectedTrx.keterangan}</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-semibold">Nominal:</span>
+                    <span className="col-span-2 font-black text-slate-900 dark:text-white">{formatRupiah(selectedTrx.nominal)}</span>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                <div className="space-y-5">
+                  <label className="flex items-center gap-3 p-4 border border-slate-200 dark:border-white/10 rounded-2xl cursor-pointer bg-white dark:bg-navy-800 hover:bg-slate-50 dark:hover:bg-navy-700/50 transition-colors shadow-sm">
                     <input 
                       type="checkbox" 
                       checked={isFlagged}
                       onChange={(e) => setIsFlagged(e.target.checked)}
-                      className="w-5 h-5 accent-rose-500 rounded border-slate-300 cursor-pointer"
+                      className="w-5 h-5 accent-rose-500 rounded border-slate-300 dark:border-white/10 cursor-pointer"
                     />
-                    <span className="text-sm font-semibold text-slate-800 select-none">Tandai (Flag) transaksi ini mencurigakan / butuh klarifikasi</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white select-none">Tandai (Flag) transaksi ini mencurigakan / butuh klarifikasi</span>
                   </label>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Catatan Audit</label>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Catatan Audit</label>
                     <textarea 
                       value={auditNote}
                       onChange={(e) => setAuditNote(e.target.value)}
                       placeholder="Tulis alasan, pertanyaan, atau catatan untuk bendahara di sini..."
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-800 focus:ring-2 focus:ring-rose-400 focus:border-transparent outline-none transition-all min-h-[120px]"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-rose-400 focus:border-transparent outline-none transition-all shadow-sm min-h-[120px]"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="px-6 py-5 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+              <div className="px-6 py-5 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-900/50 rounded-b-3xl flex justify-end gap-3 shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setIsAuditModalOpen(false)}
                   disabled={isSubmittingNote}
-                  className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-transparent border border-slate-300 hover:bg-slate-100 rounded-xl transition-colors"
+                  className="px-6 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-navy-800 hover:bg-slate-50 dark:hover:bg-navy-700 border border-slate-200 dark:border-white/10 rounded-xl transition-colors shadow-sm"
                 >
                   Batal
                 </button>
                 <button 
                   onClick={saveAuditNote}
                   disabled={isSubmittingNote}
-                  className="px-6 py-2.5 text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all shadow-sm flex items-center gap-2"
+                  className="px-6 py-2.5 text-sm font-bold text-white bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-500 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.4)] flex items-center gap-2"
                 >
                   {isSubmittingNote ? (
                     <>

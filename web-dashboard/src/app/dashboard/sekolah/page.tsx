@@ -210,7 +210,7 @@ export default function SekolahPage() {
             <input 
               type="text" 
               placeholder="Cari nama sekolah..." 
-              className="w-full rounded-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 px-5 py-2.5 pl-12 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all shadow-sm dark:shadow-none"
+              className="w-full rounded-full bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 px-5 py-2.5 pl-12 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all shadow-sm dark:shadow-none"
             />
           </div>
           <button
@@ -230,10 +230,10 @@ export default function SekolahPage() {
       )}
 
       {/* Data Table */}
-      <div className="bg-white dark:bg-slate-800/40 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl border border-slate-100 dark:border-white/[0.07] rounded-3xl shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">
-            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700/50 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
+            <thead className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06] text-slate-500 dark:text-slate-400 text-[11px] font-bold uppercase tracking-widest">
               <tr>
                 <th className="px-6 py-5">Nama Sekolah</th>
                 <th className="px-6 py-5">Kontak Admin</th>
@@ -243,7 +243,7 @@ export default function SekolahPage() {
                 <th className="px-6 py-5 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-white/10">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
               {isLoading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
@@ -268,7 +268,7 @@ export default function SekolahPage() {
                   return (
                     <tr
                       key={sk.id}
-                      className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group"
+                      className="border-b border-slate-100 dark:border-white/[0.04] hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group"
                     >
                       <td className="px-6 py-4 flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/10 dark:from-blue-500/20 to-blue-600/10 dark:to-blue-600/20 text-blue-500 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30 flex items-center justify-center font-bold text-sm shadow-inner shrink-0">
@@ -317,7 +317,7 @@ export default function SekolahPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end">
-                          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-full p-1 w-fit">
+                          <div className="flex items-center gap-1 bg-slate-100 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-full p-1 w-fit">
                             <button 
                               onClick={() => handleImpersonate(sk.id)}
                               title="Impersonate / Login Sebagai Klien"
@@ -380,14 +380,14 @@ export default function SekolahPage() {
             className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => !isSubmitting && setIsModalOpen(false)}
           />
-          <div className="relative bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+          <div className="relative bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-navy-900/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="text-gold-400">🏫</span> Tambah Sekolah Baru
               </h3>
               <button 
                 onClick={() => !isSubmitting && setIsModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
+                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-navy-700/50 text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-center"
               >
                 ✕
               </button>
@@ -411,7 +411,7 @@ export default function SekolahPage() {
                     name="nama_sekolah"
                     value={formData.nama_sekolah}
                     onChange={handleInputChange}
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                    className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm"
                     placeholder="Contoh: SMA Negeri 1 Nusantara"
                   />
                 </div>
@@ -426,7 +426,7 @@ export default function SekolahPage() {
                         name="paket_berlangganan"
                         value={formData.paket_berlangganan}
                         onChange={handleInputChange}
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none font-medium"
+                        className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none font-medium shadow-sm"
                       >
                         {paketList.length === 0 && <option value="">Memuat paket...</option>}
                         {paketList.map((p: any) => (
@@ -449,7 +449,7 @@ export default function SekolahPage() {
                       name="alamat"
                       value={formData.alamat}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm"
                       placeholder="Kota/Provinsi"
                     />
                   </div>
@@ -468,7 +468,7 @@ export default function SekolahPage() {
                 </div>
               </div>
 
-              <div className="w-full h-px bg-slate-200 dark:bg-slate-700 my-6"></div>
+              <div className="w-full h-px bg-slate-200 dark:bg-white/10 my-6"></div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
@@ -486,7 +486,7 @@ export default function SekolahPage() {
                     name="admin_nama"
                     value={formData.admin_nama}
                     onChange={handleInputChange}
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                    className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm"
                     placeholder="Nama lengkap admin"
                   />
                 </div>
@@ -502,7 +502,7 @@ export default function SekolahPage() {
                       name="admin_email"
                       value={formData.admin_email}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm"
                       placeholder="admin@sekolah.id"
                     />
                   </div>
@@ -516,19 +516,19 @@ export default function SekolahPage() {
                       name="admin_password"
                       value={formData.admin_password}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm"
                       placeholder="Minimal 6 karakter"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-6 mt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col-reverse sm:flex-row justify-end gap-3">
+              <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/10 flex flex-col-reverse sm:flex-row justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   disabled={isSubmitting}
-                  className="px-6 py-3 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto text-center"
+                  className="px-6 py-3 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-navy-700/50 transition-colors w-full sm:w-auto text-center"
                 >
                   Batal
                 </button>
@@ -554,8 +554,8 @@ export default function SekolahPage() {
       {/* Modal Ubah Paket */}
       {isEditPackageModalOpen && selectedSekolah && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-8 py-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+          <div className="bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 rounded-3xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-8 py-6 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-navy-900/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="text-2xl">📦</span> Ubah Paket Sekolah
               </h3>
@@ -583,7 +583,7 @@ export default function SekolahPage() {
                   <select
                     value={newPackage}
                     onChange={(e) => setNewPackage(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none appearance-none transition-all cursor-pointer"
+                    className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-amber-400 focus:border-amber-500 outline-none appearance-none transition-all cursor-pointer shadow-sm"
                   >
                     {paketList.map((p: any) => (
                       <option key={p.id} value={p.id}>
@@ -600,10 +600,10 @@ export default function SekolahPage() {
               </div>
             </div>
 
-            <div className="px-8 py-5 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/30">
+            <div className="px-8 py-5 border-t border-slate-200 dark:border-white/10 flex justify-end gap-3 bg-slate-50 dark:bg-navy-900/30">
               <button 
                 onClick={() => setIsEditPackageModalOpen(false)}
-                className="px-6 py-2.5 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                className="px-6 py-2.5 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-navy-700/50 transition-colors"
               >
                 Batal
               </button>

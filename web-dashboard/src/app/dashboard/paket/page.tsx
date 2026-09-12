@@ -171,10 +171,10 @@ export default function ManajemenPaketPage() {
             packages.map((pkg: any, idx: number) => {
               const theme = cardThemes[idx % cardThemes.length];
               return (
-                <div key={pkg.id} className={`bg-white dark:bg-[#1A1F2C] rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col shadow-xl dark:shadow-2xl ${theme.glow} transition-transform hover:-translate-y-1 duration-300`}>
+                <div key={pkg.id} className={`bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-3xl border border-slate-100 dark:border-white/[0.07] overflow-hidden flex flex-col shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] ${theme.glow} transition-transform hover:-translate-y-1 duration-300`}>
                   
                   {/* Card Header (Color Block) */}
-                  <div className={`${theme.bg} p-5 flex justify-between items-center`}>
+                  <div className={`${theme.bg} p-6 flex justify-between items-center`}>
                     <h3 className="text-xl font-bold text-white tracking-wide">{pkg.nama_paket}</h3>
                   </div>
                   
@@ -234,10 +234,10 @@ export default function ManajemenPaketPage() {
 
       {/* Tab Content: Sekolah Berlangganan */}
       {activeTab === "sekolah" && (
-        <div className="bg-white dark:bg-[#1A1F2C] border border-slate-200 dark:border-white/5 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl border border-slate-100 dark:border-white/[0.07] rounded-3xl shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-              <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">
+              <thead className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06] text-[11px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="px-6 py-5">Nama Sekolah / Klien</th>
                   <th className="px-6 py-5">Paket Aktif</th>
@@ -246,7 +246,7 @@ export default function ManajemenPaketPage() {
                   <th className="px-6 py-5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                 {isTenantsLoading ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat data pelanggan...</td>
@@ -257,7 +257,7 @@ export default function ManajemenPaketPage() {
                   </tr>
                 ) : (
                   tenants.map((tenant: any) => (
-                    <tr key={tenant.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                    <tr key={tenant.id} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group">
                       <td className="px-6 py-4">
                         <p className="font-bold text-slate-900 dark:text-white text-base">{tenant.nama_sekolah}</p>
                         <p className="text-xs text-slate-500 mt-1 line-clamp-1">{tenant.alamat || "Alamat tidak tersedia"}</p>
@@ -295,10 +295,10 @@ export default function ManajemenPaketPage() {
 
       {/* Tab Content: Tagihan & Transaksi */}
       {activeTab === "tagihan" && (
-        <div className="bg-white dark:bg-[#1A1F2C] border border-slate-200 dark:border-white/5 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl border border-slate-100 dark:border-white/[0.07] rounded-3xl shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-              <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">
+              <thead className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06] text-[11px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="px-6 py-5">Tanggal Transaksi</th>
                   <th className="px-6 py-5">Nama Sekolah</th>
@@ -307,7 +307,7 @@ export default function ManajemenPaketPage() {
                   <th className="px-6 py-5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                 {isTransactionsLoading ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat riwayat transaksi...</td>
@@ -318,7 +318,7 @@ export default function ManajemenPaketPage() {
                   </tr>
                 ) : (
                   transactions.map((trx: any) => (
-                    <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                    <tr key={trx.id} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group">
                       <td className="px-6 py-4">
                         <p className="font-semibold text-slate-700 dark:text-slate-300">
                           {new Date(trx.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -352,11 +352,11 @@ export default function ManajemenPaketPage() {
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#1A1F2C] border border-slate-200 dark:border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/5">
+            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/[0.06] flex justify-between items-center bg-slate-50 dark:bg-navy-900/50">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Package className="w-5 h-5 text-emerald-400" />
                 {isEditMode ? "Edit Paket" : "Tambah Paket Baru"}
@@ -380,7 +380,7 @@ export default function ManajemenPaketPage() {
                     name="nama_paket" 
                     value={formData.nama_paket} 
                     onChange={handleChange} 
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600" 
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-sm" 
                     placeholder="Contoh: Paket Enterprise" 
                   />
                 </div>
@@ -394,7 +394,7 @@ export default function ManajemenPaketPage() {
                       name="harga" 
                       value={formData.harga} 
                       onChange={handleChange} 
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600" 
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-sm" 
                       placeholder="Contoh: 1500000" 
                     />
                   </div>
@@ -404,7 +404,7 @@ export default function ManajemenPaketPage() {
                       name="durasi" 
                       value={formData.durasi} 
                       onChange={handleChange} 
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer shadow-sm"
                     >
                       <option value="1 Bulan" className="bg-slate-800">1 Bulan</option>
                       <option value="6 Bulan" className="bg-slate-800">6 Bulan</option>
@@ -420,7 +420,7 @@ export default function ManajemenPaketPage() {
                     name="batas_siswa" 
                     value={formData.batas_siswa} 
                     onChange={handleChange} 
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600" 
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-sm" 
                     placeholder="Kosongkan jika tanpa batas (unlimited)" 
                   />
                   <p className="text-xs text-slate-500 mt-2">Batas jumlah siswa yang bisa ditambahkan oleh sekolah pada paket ini.</p>
@@ -429,7 +429,7 @@ export default function ManajemenPaketPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-5 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black/20 flex justify-end gap-3">
+            <div className="px-6 py-5 border-t border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-navy-900/50 flex justify-end gap-3">
               <button 
                 type="button" 
                 onClick={handleCloseModal}

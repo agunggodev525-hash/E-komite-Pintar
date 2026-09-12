@@ -91,18 +91,18 @@ export default function TransparansiDanaPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto h-[100dvh] bg-slate-50 relative shadow-2xl flex flex-col">
+    <div className="max-w-md mx-auto h-[100dvh] bg-slate-50 dark:bg-navy-950 relative shadow-2xl flex flex-col">
       
-      <div className="bg-white p-4 flex items-center justify-between shadow-sm shrink-0 z-20">
-        <Link href="/dashboard" className="p-2 -ml-2 rounded-full hover:bg-slate-100 transition-colors">
-          <ArrowLeft className="w-6 h-6 text-slate-700" />
+      <div className="bg-white dark:bg-navy-900/80 backdrop-blur-xl p-4 flex items-center justify-between shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] border-b border-slate-100 dark:border-white/[0.06] shrink-0 z-20 transition-colors">
+        <Link href="/dashboard" className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group">
+          <ArrowLeft className="w-6 h-6 text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
         </Link>
-        <h1 className="text-lg font-bold text-slate-800 absolute left-1/2 -translate-x-1/2 whitespace-nowrap">Transparansi Dana</h1>
+        <h1 className="text-lg font-bold text-slate-800 dark:text-white absolute left-1/2 -translate-x-1/2 whitespace-nowrap">Transparansi Dana</h1>
         <div className="flex gap-2">
-          <button onClick={exportToPDF} title="Export PDF" className="p-2 bg-rose-50 text-rose-600 rounded-full hover:bg-rose-100 transition-colors">
+          <button onClick={exportToPDF} title="Export PDF" className="p-2 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-full hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors">
             <FileText className="w-5 h-5" />
           </button>
-          <button onClick={exportToExcel} title="Export Excel" className="p-2 bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors">
+          <button onClick={exportToExcel} title="Export Excel" className="p-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors">
             <Download className="w-5 h-5" />
           </button>
         </div>
@@ -113,10 +113,10 @@ export default function TransparansiDanaPage() {
         
         {/* 2. Ringkasan Kas (Visual) */}
         <div>
-          <h2 className="text-sm font-bold text-slate-800 mb-3 px-1">Ringkasan Kas Bulan Ini</h2>
-          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
-            <p className="text-sm font-medium text-slate-500 mb-1">Sisa Saldo Kas Komite</p>
-            <h3 className="text-3xl font-extrabold text-slate-800 mb-6">{formatRupiah(sisaSaldo)}</h3>
+          <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-3 px-1">Ringkasan Kas Bulan Ini</h2>
+          <div className="bg-white dark:bg-navy-800 rounded-3xl p-6 border border-slate-100 dark:border-white/10 shadow-sm dark:shadow-xl relative overflow-hidden transition-colors">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Sisa Saldo Kas Komite</p>
+            <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white mb-6">{formatRupiah(sisaSaldo)}</h3>
             
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-bold">
@@ -125,7 +125,7 @@ export default function TransparansiDanaPage() {
               </div>
               
               {/* Progress Bar */}
-              <div className="w-full h-3 bg-emerald-100 rounded-full overflow-hidden flex">
+              <div className="w-full h-3 bg-emerald-100 dark:bg-emerald-500/20 rounded-full overflow-hidden flex">
                 <div 
                   className="h-full bg-rose-500 rounded-full transition-all duration-1000 ease-out" 
                   style={{ width: `${persentaseTerpakai}%` }}
@@ -143,11 +143,11 @@ export default function TransparansiDanaPage() {
         {/* 3. Section "Pengeluaran Terbaru" */}
         <div>
           <div className="flex justify-between items-center mb-3 px-1">
-            <h2 className="text-sm font-bold text-slate-800">Riwayat Transaksi</h2>
-            <button className="text-xs font-bold text-blue-600">Bulan Ini</button>
+            <h2 className="text-sm font-bold text-slate-800 dark:text-white">Riwayat Transaksi</h2>
+            <button className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">Bulan Ini</button>
           </div>
           
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-100">
+          <div className="bg-white dark:bg-navy-800 rounded-3xl border border-slate-100 dark:border-white/10 shadow-sm dark:shadow-xl overflow-hidden divide-y divide-slate-100 dark:divide-white/[0.04] transition-colors">
             {loading ? (
               <div className="p-4 text-center text-slate-500 text-sm">Memuat data...</div>
             ) : data?.history?.length === 0 ? (
@@ -156,17 +156,17 @@ export default function TransparansiDanaPage() {
               <div key={item.id + item.jenis} className="p-4">
                 <div className="flex gap-4">
                   {/* Ikon Kategori */}
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${item.jenis === 'PEMASUKAN' ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'}`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${item.jenis === 'PEMASUKAN' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400'}`}>
                     {item.jenis === 'PEMASUKAN' ? <ArrowDownCircle className="w-6 h-6" /> : <ArrowUpCircle className="w-6 h-6" />}
                   </div>
                   
                   {/* Detail Item */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-800 leading-tight mb-1">{item.keterangan}</p>
-                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-2">
+                    <p className="text-sm font-bold text-slate-800 dark:text-white leading-tight mb-1">{item.keterangan}</p>
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
                       <span>{formatDate(item.tanggal)}</span>
-                      <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                      <span className={item.jenis === 'PEMASUKAN' ? 'text-emerald-600' : 'text-rose-600'}>{item.jenis}</span>
+                      <span className="w-1 h-1 bg-slate-300 dark:bg-slate-600 rounded-full"></span>
+                      <span className={item.jenis === 'PEMASUKAN' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>{item.jenis}</span>
                     </div>
                     
                     {/* Baris Nominal & Bukti Nota */}
@@ -179,7 +179,7 @@ export default function TransparansiDanaPage() {
                       {item.jenis === 'PENGELUARAN' && item.nota_url ? (
                         <button 
                           onClick={() => setSelectedNota(item)}
-                          className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1.5 rounded-lg transition-colors"
+                          className="flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1.5 rounded-lg transition-colors"
                         >
                           <Receipt className="w-3.5 h-3.5" />
                           Lihat Kuitansi
@@ -198,21 +198,21 @@ export default function TransparansiDanaPage() {
       {/* Modal / Image Preview untuk Kuitansi */}
       {selectedNota && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative animate-in zoom-in-95">
+          <div className="bg-white dark:bg-navy-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative border border-slate-200 dark:border-white/10 animate-in zoom-in-95">
             <button 
               onClick={() => setSelectedNota(null)}
-              className="absolute top-3 right-3 p-2 bg-black/10 hover:bg-black/20 rounded-full text-slate-600 transition-colors z-10"
+              className="absolute top-3 right-3 p-2 bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 rounded-full text-slate-600 dark:text-slate-300 transition-colors z-10"
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="p-4 border-b border-slate-100 flex items-center gap-2 bg-slate-50">
-              <ImageIcon className="w-5 h-5 text-blue-600" />
-              <h3 className="font-bold text-slate-800 text-sm">Bukti Kuitansi</h3>
+            <div className="p-4 border-b border-slate-100 dark:border-white/10 flex items-center gap-2 bg-slate-50 dark:bg-navy-900/50">
+              <ImageIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <h3 className="font-bold text-slate-800 dark:text-white text-sm">Bukti Kuitansi</h3>
             </div>
             
-            <div className="p-4 bg-slate-100 flex justify-center items-center aspect-[3/4]">
+            <div className="p-4 bg-slate-100 dark:bg-navy-900/20 flex justify-center items-center aspect-[3/4]">
               {/* Simulasi Gambar Kuitansi */}
-              <div className="w-full h-full border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 bg-white">
+              <div className="w-full h-full border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 bg-white dark:bg-navy-800">
                 <Receipt className="w-16 h-16 mb-2 opacity-50" />
                 <p className="text-xs font-bold text-center px-4">
                   Preview Foto Nota <br/> {selectedNota.judul}
@@ -220,8 +220,8 @@ export default function TransparansiDanaPage() {
               </div>
             </div>
             
-            <div className="p-4 text-center">
-              <p className="text-xs text-slate-500 font-medium">Diunggah oleh: Admin Komite pada {selectedNota.tanggal}</p>
+            <div className="p-4 text-center border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-navy-900/50">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Diunggah oleh: Admin Komite pada {selectedNota.tanggal}</p>
             </div>
           </div>
         </div>

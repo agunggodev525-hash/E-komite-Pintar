@@ -78,8 +78,8 @@ export default function SettingsPage() {
       {isLoading ? (
         <div className="text-slate-400 text-center py-8">Memuat konfigurasi...</div>
       ) : (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-xl dark:shadow-2xl max-w-3xl">
-          <div className="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30">
+        <div className="bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-3xl border border-slate-100 dark:border-white/[0.07] overflow-hidden shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] max-w-3xl">
+          <div className="p-6 border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-navy-900/50">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <span className="text-gold-400">⚙️</span> API Integrations
             </h2>
@@ -102,7 +102,7 @@ export default function SettingsPage() {
                   name="midtrans_is_production"
                   value={formData.midtrans_is_production}
                   onChange={handleChange}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors text-sm"
+                  className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm text-sm"
                 >
                   <option value="false">Sandbox (Mode Uji Coba)</option>
                   <option value="true">Production (Uang Sungguhan)</option>
@@ -118,7 +118,7 @@ export default function SettingsPage() {
                   name="midtrans_client_key"
                   value={formData.midtrans_client_key}
                   onChange={handleChange}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm font-mono text-sm"
                   placeholder="SB-Mid-client-..."
                 />
               </div>
@@ -132,13 +132,13 @@ export default function SettingsPage() {
                   name="midtrans_server_key"
                   value={formData.midtrans_server_key}
                   onChange={handleChange}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors shadow-sm font-mono text-sm"
                   placeholder="SB-Mid-server-..."
                 />
               </div>
             </div>
 
-            <hr className="border-slate-200 dark:border-slate-700" />
+            <hr className="border-slate-100 dark:border-white/[0.06]" />
 
             {/* Notification Group */}
             <div className="space-y-4">
@@ -153,7 +153,7 @@ export default function SettingsPage() {
                   name="wa_api_token"
                   value={formData.wa_api_token}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors shadow-sm font-mono text-sm"
                   placeholder="Masukkan token API WhatsApp"
                 />
               </div>
@@ -167,7 +167,7 @@ export default function SettingsPage() {
                   name="wa_api_url"
                   value={formData.wa_api_url}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors shadow-sm font-mono text-sm"
                   placeholder="Contoh: https://deu.wablas.com/api/send-message"
                 />
                 <p className="text-xs text-slate-400 mt-1.5">

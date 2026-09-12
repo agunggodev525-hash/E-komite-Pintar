@@ -156,11 +156,11 @@ export default function DaftarTagihanPage() {
           
           <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
             <div className="relative w-full sm:w-40">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Filter className="w-4 h-4"/></span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Filter className="w-4 h-4"/></span>
               <select 
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-navy-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800 focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Status</option>
                 <option value="LUNAS">Lunas</option>
@@ -169,11 +169,11 @@ export default function DaftarTagihanPage() {
               </select>
             </div>
             <div className="relative w-full sm:w-44">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Filter className="w-4 h-4"/></span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Filter className="w-4 h-4"/></span>
               <select 
                 value={filterBulan}
                 onChange={(e) => setFilterBulan(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-navy-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800 focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
               >
                 <option value="Semua">Semua Bulan</option>
                  {Array.from({ length: 12 }, (_, i) => {
@@ -188,7 +188,7 @@ export default function DaftarTagihanPage() {
           </div>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full xl:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
           <button 
             disabled={selectedRows.length === 0}
             onClick={() => {
@@ -201,7 +201,7 @@ export default function DaftarTagihanPage() {
             }}
             className={`flex items-center justify-center gap-2 px-4 py-2.5 font-bold rounded-xl transition-all shadow-sm text-sm w-full sm:w-auto ${
               selectedRows.length > 0 
-                ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] hover:-translate-y-0.5' 
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-[0_4px_12px_rgba(16,185,129,0.35)] hover:shadow-[0_6px_16px_rgba(16,185,129,0.45)] hover:-translate-y-0.5' 
                 : 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
             }`}
           >
@@ -210,7 +210,7 @@ export default function DaftarTagihanPage() {
           </button>
           <Link 
             href="/dashboard/tagihan/buat"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#428C7A] hover:bg-[#347363] text-white font-bold rounded-xl transition-all shadow-[0_4px_10px_rgba(66,140,122,0.3)] hover:-translate-y-0.5 text-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 text-sm"
           >
             <Plus className="w-4 h-4" />
             Buat Tagihan Baru
@@ -228,10 +228,10 @@ export default function DaftarTagihanPage() {
           filteredTagihan.map((item: any) => (
             <div 
               key={item.id} 
-              className={`bg-white dark:bg-slate-900 rounded-2xl border p-4 transition-colors ${
+              className={`bg-white dark:bg-navy-800/60 backdrop-blur-lg rounded-2xl border p-4 transition-colors ${
                 selectedRows.includes(item.id) 
                   ? 'border-emerald-400 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10' 
-                  : 'border-slate-200 dark:border-white/10'
+                  : 'border-slate-200 dark:border-white/[0.07]'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -290,12 +290,12 @@ export default function DaftarTagihanPage() {
       </div>
 
       {/* Desktop Table (md+) */}
-      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm dark:shadow-xl">
+      <div className="hidden md:block bg-white dark:bg-navy-800/60 backdrop-blur-xl rounded-3xl border border-slate-100 dark:border-white/[0.07] overflow-hidden shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-white/10">
-              <tr>
-                <th scope="col" className="px-4 lg:px-6 py-4">
+            <thead>
+              <tr className="bg-slate-50 dark:bg-white/[0.025] border-b border-slate-100 dark:border-white/[0.06]">
+                <th scope="col" className="px-5 lg:px-6 py-4">
                   <input 
                     type="checkbox" 
                     checked={selectedRows.length === filteredTagihan.length && filteredTagihan.length > 0}
@@ -303,16 +303,16 @@ export default function DaftarTagihanPage() {
                     className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-emerald-500 focus:ring-emerald-500"
                   />
                 </th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Nama Siswa</th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Kelas</th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Keterangan Tagihan</th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Total Tagihan</th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Sisa Tagihan</th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
-                <th scope="col" className="px-4 lg:px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 text-center">Aksi</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Nama Siswa</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Kelas</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Keterangan Tagihan</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Total Tagihan</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Sisa Tagihan</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Status</th>
+                <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-white/5 relative">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04] relative">
               {isLoading ? (
                   <tr>
                     <td colSpan={8} className="px-6 py-12 text-center text-slate-600 dark:text-slate-400">
@@ -324,8 +324,8 @@ export default function DaftarTagihanPage() {
                   </tr>
                 ) : filteredTagihan.length > 0 ? (
                 filteredTagihan.map((item: any) => (
-                  <tr key={item.id} className={`hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-50 dark:bg-emerald-500/10' : ''}`}>
-                  <td className="px-4 lg:px-6 py-4">
+                  <tr key={item.id} className={`hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-transparent'}`}>
+                  <td className="px-5 lg:px-6 py-4">
                     <input 
                       type="checkbox" 
                       checked={selectedRows.includes(item.id)}
@@ -334,10 +334,14 @@ export default function DaftarTagihanPage() {
                     />
                   </td>
                   <td className="px-4 lg:px-6 py-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.nama}</td>
-                  <td className="px-4 lg:px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{item.kelas}</td>
-                  <td className="px-4 lg:px-6 py-4 text-slate-700 dark:text-slate-300 capitalize">{item.keterangan.toLowerCase()}</td>
-                  <td className="px-4 lg:px-6 py-4 text-slate-700 dark:text-slate-300 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
-                  <td className={`px-4 lg:px-6 py-4 font-semibold whitespace-nowrap ${item.sisa_tagihan === 0 ? 'text-slate-500 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{formatRupiah(item.sisa_tagihan)}</td>
+                  <td className="px-4 lg:px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                    <span className="px-2.5 py-1 bg-slate-100 dark:bg-white/10 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.06]">
+                      {item.kelas}
+                    </span>
+                  </td>
+                  <td className="px-4 lg:px-6 py-4 font-medium text-slate-700 dark:text-slate-300 capitalize">{item.keterangan.toLowerCase()}</td>
+                  <td className="px-4 lg:px-6 py-4 text-slate-500 dark:text-slate-400 whitespace-nowrap">{formatRupiah(item.total_tagihan)}</td>
+                  <td className={`px-4 lg:px-6 py-4 font-bold whitespace-nowrap ${item.sisa_tagihan === 0 ? 'text-slate-500 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{formatRupiah(item.sisa_tagihan)}</td>
                   <td className="px-4 lg:px-6 py-4"><StatusBadge status={item.status} /></td>
                   <td className="px-4 lg:px-6 py-4 text-center">
                     {(item.status === "DICICIL" || item.status === "BELUM_BAYAR" || item.status === "PENDING") ? (
@@ -378,36 +382,42 @@ export default function DaftarTagihanPage() {
         </div>
       </div>
 
-      {/* Modal Lunas Tunai */}
+      {/* Modal Kasir Tunai */}
       {selectedTagihan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-transparent">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-navy-900 rounded-3xl border border-slate-100 dark:border-white/10 shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-white/[0.025]">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Banknote className="w-5 h-5 text-emerald-400" />
-                Terima Pembayaran Tunai
+                <Banknote className="w-5 h-5 text-emerald-500" />
+                Bayar Tagihan
               </h3>
-              <button onClick={() => setSelectedTagihan(null)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white"><X className="w-5 h-5" /></button>
+              <button 
+                onClick={() => setSelectedTagihan(null)}
+                className="p-1.5 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <div className="p-6 space-y-4">
-              <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center">
-                <p className="text-sm text-slate-400 mb-1">Nama Siswa</p>
-                <p className="font-bold text-slate-900 dark:text-white text-lg mb-2">{selectedTagihan.nama}</p>
-                <span className="px-3 py-1 bg-slate-700 text-slate-200 text-xs rounded-full font-medium mb-1">{selectedTagihan.keterangan}</span>
+            
+            <div className="p-5 space-y-4">
+              <div className="text-center p-4 bg-slate-50 dark:bg-navy-800/50 rounded-2xl border border-slate-100 dark:border-white/5">
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Siswa</p>
+                <p className="font-bold text-slate-900 dark:text-white text-lg">{selectedTagihan.nama}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{selectedTagihan.keterangan}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300 mb-1.5">Nominal yang Diterima (Rp)</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nominal yang Diterima (Rp)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">Rp</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">Rp</span>
                   <input 
                     type="number"
                     value={nominalDiterima}
                     onChange={(e) => setNominalDiterima(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 outline-none transition-all shadow-sm"
                   />
                 </div>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                   Ubah angka ini jika orang tua hanya membayar sebagian/mencicil.
                 </p>
               </div>
@@ -416,32 +426,32 @@ export default function DaftarTagihanPage() {
                 const bayar = parseInt(nominalDiterima || "0");
                 const sisa = selectedTagihan.sisa_tagihan - bayar;
                 return (
-                  <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-sm text-center">
-                    <span className="text-slate-600 dark:text-slate-300">Sisa Tagihan Saat Ini: <strong className="text-slate-900 dark:text-white">{formatRupiah(selectedTagihan.sisa_tagihan)}</strong></span>
+                  <div className="p-3 bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl text-sm text-center">
+                    <span className="text-slate-600 dark:text-slate-300 font-medium">Sisa Tagihan Saat Ini: <strong className="text-slate-900 dark:text-white">{formatRupiah(selectedTagihan.sisa_tagihan)}</strong></span>
                     <br/>
-                    <span className="text-slate-300">Sisa Tagihan Nanti: <strong className={sisa > 0 ? "text-rose-400" : "text-emerald-400"}>{formatRupiah(sisa > 0 ? sisa : 0)}</strong></span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Sisa Tagihan Nanti: <strong className={sisa > 0 ? "text-rose-500 dark:text-rose-400" : "text-emerald-500 dark:text-emerald-400"}>{formatRupiah(sisa > 0 ? sisa : 0)}</strong></span>
                   </div>
                 );
               })()}
             </div>
-            <div className="p-4 bg-slate-900/50 border-t border-white/5 flex justify-end gap-3">
+            <div className="p-4 bg-slate-50 dark:bg-white/[0.025] border-t border-slate-100 dark:border-white/10 flex justify-end gap-3 rounded-b-3xl">
               <button 
                 onClick={() => setSelectedTagihan(null)}
-                className="px-4 py-2 rounded-xl text-slate-300 font-medium hover:bg-white/10 transition-colors text-sm"
+                className="px-5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 font-bold bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-sm shadow-sm"
               >
                 Batal
               </button>
               {parseInt(nominalDiterima || "0") < selectedTagihan.sisa_tagihan ? (
                 <button 
                   onClick={handleLunas}
-                  className="px-4 py-2 bg-amber-500/20 border border-amber-500/30 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl transition-colors shadow-sm text-sm"
+                  className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_16px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 text-sm"
                 >
-                  Simpan sebagai Cicilan
+                  Simpan Cicilan
                 </button>
               ) : (
                 <button 
                   onClick={handleLunas}
-                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors shadow-sm text-sm"
+                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_16px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 text-sm"
                 >
                   Tandai Lunas
                 </button>
@@ -453,61 +463,61 @@ export default function DaftarTagihanPage() {
 
       {/* Modal Dispensasi */}
       {selectedDispensasi && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-navy-900 rounded-3xl border border-slate-100 dark:border-white/10 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
             {/* Header Modal */}
-            <div className="p-5 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+            <div className="p-5 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-white/[0.025] rounded-t-3xl">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Settings className="w-5 h-5 text-slate-400" />
+                <Settings className="w-5 h-5 text-blue-500" />
                 Pengaturan Keringanan Biaya
               </h3>
               <button 
                 onClick={() => setSelectedDispensasi(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
+                className="p-1.5 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             {/* User Info */}
-            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-white/5 flex justify-between items-center">
+            <div className="px-6 py-4 bg-white dark:bg-navy-800/50 border-b border-slate-100 dark:border-white/10 flex justify-between items-center">
               <div>
-                <p className="text-sm text-slate-400">Siswa</p>
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-0.5">Siswa</p>
                 <p className="font-bold text-slate-900 dark:text-white">{selectedDispensasi.nama} ({selectedDispensasi.kelas})</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-slate-400">Total Tagihan</p>
-                <p className="font-bold text-rose-400">{formatRupiah(selectedDispensasi.total_tagihan)}</p>
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-0.5">Total Tagihan</p>
+                <p className="font-bold text-rose-500 dark:text-rose-400">{formatRupiah(selectedDispensasi.total_tagihan)}</p>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex px-6 pt-4 gap-4 bg-slate-800 border-b border-white/5">
+            <div className="flex px-6 pt-4 gap-6 bg-white dark:bg-navy-900 border-b border-slate-100 dark:border-white/10">
               <button
                 onClick={() => setDispensasiTab('cicilan')}
-                className={`pb-3 font-semibold text-sm transition-colors relative ${dispensasiTab === 'cicilan' ? 'text-blue-400' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`pb-3 font-bold text-sm transition-colors relative ${dispensasiTab === 'cicilan' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
               >
                 Pecah Menjadi Cicilan
-                {dispensasiTab === 'cicilan' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 rounded-t-full"></div>}
+                {dispensasiTab === 'cicilan' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full"></div>}
               </button>
               <button
                 onClick={() => setDispensasiTab('diskon')}
-                className={`pb-3 font-semibold text-sm transition-colors relative ${dispensasiTab === 'diskon' ? 'text-blue-400' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`pb-3 font-bold text-sm transition-colors relative ${dispensasiTab === 'diskon' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
               >
                 Berikan Diskon/Beasiswa
-                {dispensasiTab === 'diskon' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 rounded-t-full"></div>}
+                {dispensasiTab === 'diskon' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full"></div>}
               </button>
             </div>
 
             {/* Form Content */}
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-800 min-h-[220px]">
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-navy-900 min-h-[220px]">
               {dispensasiTab === 'cicilan' ? (
                 <div className="space-y-5 animate-in fade-in slide-in-from-right-2">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Jumlah Pembagian Cicilan</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Jumlah Pembagian Cicilan</label>
                     <div className="flex gap-3">
                       {[2, 3, 4].map((num) => (
-                        <label key={num} className={`flex-1 flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all ${cicilanCount === num ? 'border-blue-500 bg-blue-500/10 text-blue-400 ring-1 ring-blue-500' : 'border-white/10 bg-slate-900/50 text-slate-400 hover:bg-slate-900'}`}>
+                        <label key={num} className={`flex-1 flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all shadow-sm ${cicilanCount === num ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 ring-1 ring-blue-500' : 'border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-navy-800'}`}>
                           <input 
                             type="radio" 
                             name="cicilan" 
@@ -521,8 +531,8 @@ export default function DaftarTagihanPage() {
                       ))}
                     </div>
                   </div>
-                  <div className="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
-                    <p className="text-sm text-slate-400 leading-relaxed">
+                  <div className="p-4 bg-white dark:bg-navy-800/50 border border-slate-200 dark:border-white/10 rounded-xl shadow-sm">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                       Tagihan ini akan dipecah menjadi <span className="font-bold text-slate-900 dark:text-white">{cicilanCount}</span> sub-tagihan terpisah dengan nominal masing-masing sebesar <span className="font-bold text-blue-600 dark:text-blue-400">{formatRupiah(selectedDispensasi.sisa_tagihan / cicilanCount)}</span>. Siswa dapat mencicilnya satu per satu.
                     </p>
                   </div>
@@ -530,7 +540,7 @@ export default function DaftarTagihanPage() {
               ) : (
                 <div className="space-y-5 animate-in fade-in slide-in-from-left-2">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Besaran Diskon</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Besaran Diskon</label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <input 
@@ -538,23 +548,23 @@ export default function DaftarTagihanPage() {
                           placeholder="Nominal Diskon"
                           value={nominalDiskon}
                           onChange={(e) => setNominalDiskon(e.target.value)}
-                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                          className="w-full px-4 py-3 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 font-bold shadow-sm"
                         />
                       </div>
-                      <select className="w-24 px-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-semibold appearance-none">
+                      <select className="w-24 px-3 py-3 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none transition-all font-bold appearance-none shadow-sm cursor-pointer">
                         <option value="persen">%</option>
                         <option value="rupiah">Rp</option>
                       </select>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Alasan Pemberian Diskon</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Alasan Pemberian Diskon</label>
                     <textarea 
                       rows={3}
                       placeholder="Misal: Beasiswa Anak Berprestasi, Keringanan Yatim Piatu..."
                       value={keteranganDiskon}
                       onChange={(e) => setKeteranganDiskon(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                      className="w-full px-4 py-3 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none transition-all resize-none placeholder:text-slate-400 font-medium shadow-sm"
                     />
                   </div>
                 </div>
@@ -562,17 +572,17 @@ export default function DaftarTagihanPage() {
             </div>
 
             {/* Footer */}
-            <div className="p-5 border-t border-white/5 bg-slate-900/50 flex justify-end gap-3 shrink-0">
+            <div className="p-5 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/[0.025] flex justify-end gap-3 shrink-0 rounded-b-3xl">
               <button 
                 type="button"
                 onClick={() => setSelectedDispensasi(null)}
-                className="px-5 py-2.5 rounded-xl text-slate-400 font-medium hover:bg-white/10 transition-colors text-sm"
+                className="px-5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 font-bold bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-sm shadow-sm"
               >
                 Batal
               </button>
               <button 
                 onClick={handleSaveDispensasi}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-sm text-sm"
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 text-sm"
               >
                 Simpan Perubahan
               </button>
@@ -583,63 +593,52 @@ export default function DaftarTagihanPage() {
 
       {/* Modal Peringatan Massal */}
       {showPeringatanModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-navy-900 rounded-3xl border border-slate-100 dark:border-white/10 shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-white/[0.025]">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-emerald-400" />
+                <MessageCircle className="w-5 h-5 text-emerald-500" />
                 Kirim Peringatan Massal
               </h3>
               <button 
                 onClick={() => setShowPeringatanModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
+                className="p-1.5 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6">
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-4 text-sm">
-                Sistem akan mengirimkan pesan pengingat tagihan otomatis (via WhatsApp & Email) kepada 
-                <span className="font-bold text-slate-900 dark:text-white mx-1">
-                  {selectedRows.length}
-                </span> 
-                siswa yang Anda pilih. Anda dapat menyesuaikan template pesan di bawah ini:
-              </p>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-semibold text-slate-900 dark:text-slate-300 mb-2">Isi Pesan Peringatan</label>
+            <div className="p-6 space-y-4">
+              <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 p-4 rounded-xl flex gap-3 text-sm text-blue-700 dark:text-blue-300 font-medium">
+                <MessageCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                <p>Pesan ini akan dikirim via WhatsApp API ke <strong>{selectedRows.length} orang tua siswa</strong> yang dipilih secara otomatis.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Pesan WhatsApp</label>
                 <textarea 
                   rows={6}
                   value={pesanMassal}
                   onChange={(e) => setPesanMassal(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-navy-800/50 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 outline-none transition-all resize-none shadow-sm font-medium"
                 />
-                <p className="text-xs text-slate-500 mt-2">
-                  * Teks <code className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 px-1 py-0.5 rounded">[Nama Siswa]</code> akan diganti secara otomatis sesuai nama siswa saat pesan dikirim.
-                </p>
-              </div>
-
-              <div className="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl">
-                <p className="text-xs text-amber-600 dark:text-amber-400 font-medium text-center">
-                  Pastikan isi pesan sudah benar sebelum mengirim.
-                </p>
+                <p className="text-xs text-slate-500 mt-2">Tag `[Nama Siswa]` akan otomatis diganti oleh sistem saat pengiriman.</p>
               </div>
             </div>
 
-            <div className="p-5 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 shrink-0">
+            <div className="p-5 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/[0.025] flex justify-end gap-3 rounded-b-3xl">
               <button 
-                type="button"
                 onClick={() => setShowPeringatanModal(false)}
-                className="px-5 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-100 dark:hover:bg-white/10 transition-colors text-sm"
+                className="px-5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 font-bold bg-white dark:bg-navy-800 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-sm shadow-sm"
               >
                 Batal
               </button>
               <button 
                 onClick={handleKirimPeringatan}
-                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all shadow-sm text-sm"
+                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_16px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 flex items-center gap-2 text-sm"
               >
-                Ya, Kirim Sekarang
+                <MessageCircle className="w-4 h-4" />
+                Kirim Pesan WA
               </button>
             </div>
           </div>
