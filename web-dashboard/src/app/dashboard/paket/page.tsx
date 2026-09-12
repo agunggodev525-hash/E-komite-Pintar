@@ -5,6 +5,7 @@ import useSWR from "swr";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Plus, X, Package } from "lucide-react";
 import toast from "react-hot-toast";
+import { Skeleton, CardSkeleton, TableRowSkeleton } from "@/components/Skeleton";
 import { formatRupiah, apiFetch } from "@/lib/api";
 
 export default function ManajemenPaketPage() {
@@ -177,7 +178,11 @@ export default function ManajemenPaketPage() {
       {activeTab === "paket" && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {isLoading ? (
-            <div className="col-span-full py-12 text-center text-slate-500">Memuat data paket...</div>
+            <>
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+            </>
           ) : packages.length === 0 ? (
             <div className="col-span-full py-12 text-center text-slate-500">Belum ada paket tersedia.</div>
           ) : (
@@ -261,9 +266,11 @@ export default function ManajemenPaketPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                 {isTenantsLoading ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat data pelanggan...</td>
-                  </tr>
+                  <>
+                    <TableRowSkeleton columns={5} />
+                    <TableRowSkeleton columns={5} />
+                    <TableRowSkeleton columns={5} />
+                  </>
                 ) : tenants.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada sekolah yang berlangganan.</td>
@@ -322,9 +329,11 @@ export default function ManajemenPaketPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                 {isTransactionsLoading ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Memuat riwayat transaksi...</td>
-                  </tr>
+                  <>
+                    <TableRowSkeleton columns={5} />
+                    <TableRowSkeleton columns={5} />
+                    <TableRowSkeleton columns={5} />
+                  </>
                 ) : transactions.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Belum ada transaksi tercatat.</td>

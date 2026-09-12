@@ -8,6 +8,7 @@ import { apiFetch, formatRupiah } from "@/lib/api";
 import { Download, Filter, ArrowDownRight, Info, PieChart, Search, Flag, X } from "lucide-react";
 import * as XLSX from 'xlsx';
 import toast from "react-hot-toast";
+import { Skeleton, TableRowSkeleton } from "@/components/Skeleton";
 
 export default function LaporanKasPage() {
   const { user } = useAuth();
@@ -329,14 +330,11 @@ export default function LaporanKasPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/5 relative">
                 {isLoading ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                      <div className="flex justify-center mb-2">
-                        <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-                      </div>
-                      Memuat data...
-                    </td>
-                  </tr>
+                  <>
+                    <TableRowSkeleton columns={6} />
+                    <TableRowSkeleton columns={6} />
+                    <TableRowSkeleton columns={6} />
+                  </>
                 ) : transaksiList.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-12 text-center text-slate-400">

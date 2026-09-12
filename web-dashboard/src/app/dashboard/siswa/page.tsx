@@ -8,6 +8,7 @@ import { apiFetch } from "@/lib/api";
 import { UserPlus, Pencil, Trash2, Search, X, Key, ChevronLeft, ChevronRight, Filter, FileSpreadsheet, UploadCloud, Download, ArrowUpDown } from "lucide-react";
 import * as XLSX from 'xlsx';
 import toast from "react-hot-toast";
+import { Skeleton, TableRowSkeleton } from "@/components/Skeleton";
 
 // Helper function untuk Title Case
 const toTitleCase = (str: string) => {
@@ -375,16 +376,13 @@ export default function SiswaPage() {
                 <th scope="col" className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className={`divide-y divide-slate-100 dark:divide-white/[0.04] relative ${isLoading && siswa.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
-              {isLoading && siswa.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <div className="flex justify-center mb-2">
-                      <div className="w-6 h-6 border-2 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                    Memuat data siswa...
-                  </td>
-                </tr>
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
+              {isLoading ? (
+                <>
+                  <TableRowSkeleton columns={6} />
+                  <TableRowSkeleton columns={6} />
+                  <TableRowSkeleton columns={6} />
+                </>
               ) : siswa.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400">

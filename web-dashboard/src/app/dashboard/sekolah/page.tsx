@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { Search, Plus, Building2, Building, Trash2, Edit2, LogIn, Key, CheckCircle, Package } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import toast from "react-hot-toast";
+import { Skeleton, TableRowSkeleton } from "@/components/Skeleton";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { AlertCircle } from "lucide-react";
@@ -256,8 +257,8 @@ export default function SekolahPage() {
               {isLoading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-8 h-8 border-4 border-navy-600 border-t-gold-400 rounded-full animate-spin"></div>
+                    <div className="flex items-center justify-center p-8 space-x-3 bg-slate-50 dark:bg-white/[0.02] rounded-xl border border-dashed border-slate-200 dark:border-white/10">
+                      <Skeleton className="w-5 h-5 rounded-full" />
                       <span className="text-slate-400 dark:text-slate-500 font-medium">Memuat data klien...</span>
                     </div>
                   </td>

@@ -9,6 +9,7 @@ import StatusBadge from "@/components/StatusBadge";
 import { apiFetch, formatRupiah } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { Plus, MessageCircle, Banknote, Search, Settings, X, Filter, Crown, Check } from "lucide-react";
+import { Skeleton, TableRowSkeleton } from "@/components/Skeleton";
 
 export default function DaftarTagihanPage() {
   const { user } = useAuth();
@@ -316,17 +317,14 @@ export default function DaftarTagihanPage() {
                 <th scope="col" className="px-4 lg:px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04] relative">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
               {isLoading ? (
-                  <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center text-slate-600 dark:text-slate-400">
-                      <div className="flex justify-center mb-2">
-                        <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-                      </div>
-                      Memuat data...
-                    </td>
-                  </tr>
-                ) : filteredTagihan.length > 0 ? (
+                <>
+                  <TableRowSkeleton columns={8} />
+                  <TableRowSkeleton columns={8} />
+                  <TableRowSkeleton columns={8} />
+                </>
+              ) : filteredTagihan.length > 0 ? (
                 filteredTagihan.map((item: any) => (
                   <tr key={item.id} className={`hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors group ${selectedRows.includes(item.id) ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-transparent'}`}>
                   <td className="px-5 lg:px-6 py-4">

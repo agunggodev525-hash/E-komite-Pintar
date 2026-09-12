@@ -6,6 +6,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { formatRupiah, apiFetch, formatDate } from "@/lib/api";
 import { Plus, Camera, UploadCloud, X, Search, FileText } from "lucide-react";
 import toast from "react-hot-toast";
+import { TableRowSkeleton } from "@/components/Skeleton";
 
 export default function PengeluaranPage() {
   const fetcher = (url: string) => apiFetch<any[]>(url).then(res => res.data);
@@ -123,9 +124,11 @@ export default function PengeluaranPage() {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04] relative">
               {loading ? (
-                <tr>
-                  <td colSpan={5} className="text-center py-6 text-slate-400 text-sm">Memuat data...</td>
-                </tr>
+                <>
+                  <TableRowSkeleton columns={5} />
+                  <TableRowSkeleton columns={5} />
+                  <TableRowSkeleton columns={5} />
+                </>
               ) : pengeluaran.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-6 text-slate-400 text-sm">Belum ada data pengeluaran.</td>
